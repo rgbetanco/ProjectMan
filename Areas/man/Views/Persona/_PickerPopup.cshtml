@@ -1,0 +1,80 @@
+﻿<!--Modal Body Start-->
+<div class="modal-content">
+
+    <!--Modal Header Start-->
+    <div class="modal-header">
+        <h4 class="modal-title">選擇商品</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="關閉" />
+    </div>
+    <!--Modal Header End-->
+
+    <div class="modal-body">
+
+        <div class="row py-2">
+
+            <div class="col-auto">
+                @Html.AntiForgeryToken()
+                <label for="query_keyword" class="form-label">品名</label>
+                <input type="text" class="form-control" id="picker_list_keyword" name="search">
+            </div>
+
+            <div class="col text-end align-self-end">
+                <button id="picker_list_query" class="btn btn-primary" role="button">搜尋</button>
+            </div>
+        </div>
+
+
+        <table id="picker_list"
+               class="table table-noresize"
+               data-cs-table
+               data-cs-url="@Url.Action("PickerQuery", "Persona")"
+               data-cs-on-prepare-fetch="updatePickerList">
+            <thead>
+                <tr>
+                    <th data-cs-field="id" data-cs-sortable="local">ID</th>
+                    <th data-cs-field="name" data-cs-sortable="local">名稱</th>
+                    @*<th data-cs-field="job_title" data-cs-sortable="local">職稱</th>
+                    <th data-cs-field="phone" data-cs-sortable="local">電話</th>*@
+                </tr>
+            </thead>
+        </table>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" id="picker_list_ok" class="btn btn-secondary" disabled>確定</button>
+    </div>
+
+</div>
+<!--Modal Body End-->
+<script>
+
+    function updatePickerList(params, options, table) {
+        params.append('search', $('#picker_list_keyword').val());
+    }
+
+
+    $(function () {
+        var table = new CSTable($("#picker_list")[0], {
+            minSelItems: 1,
+            maxSelItems: 1
+        });
+
+        table.addEventListener('clickcell', evt => {
+            $('#picker_list_ok').prop('disabled', table.selections.size == 0)
+        });
+
+        $('#picker_list_query').on('click', evt => {
+            evt.preventDefault();    // prevent default behavior
+            table.fetch();
+        });
+
+        $('#picker_list_ok').initDismissModalButton(true, dialog => {
+            let [idx] = table.selections;
+            return {
+                "persona_id": table.data[idx]["id"],
+                "persona.name": table.data[idx]["name"]
+            }
+        });
+    })
+
+</script>

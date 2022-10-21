@@ -1,0 +1,97 @@
+﻿@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor
+@model repairman.Models.Member
+@using CSHelper.Extensions
+@{
+    ViewData["Title"] = "用戶 " + Model.name;
+    Layout = "_Layout";
+}
+
+
+<div class="container h-100 d-flex flex-column">
+
+    <div class="row mb-3 mt-4">
+        <div class="col">
+            <button type="button" class="btn btn-light btn-back"><i class="fas fa-caret-left"></i></button>
+
+            <button class="btn btn-primary btn-modal" type="button" data-url="@Url.ActionLink("ChangePassword", "Member", new { ID = Model.ID })" data-toggle="modal" data-target="#modal-changepwd-popup">
+                更改密碼...
+            </button>
+            <div aria-hidden="true" role="dialog" tabindex="-1" id="modal-changepwd-popup" class="modal fade">
+                <div class="modal-dialog">
+                </div>
+            </div>
+
+            <button class="btn btn-primary" type="button" id="update-enable-button">編輯</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+
+            <form id="update" data-enable-button="#update-enable-button" asp-action="View" asp-route-id="@Model.ID">
+                @Html.AntiForgeryToken()
+
+                <button type="reset" class="btn btn-secondary">取消</button>
+                <button type="submit" class="btn btn-primary">更新</button>
+
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.name, new { @class = "form-label form-view-hide" })
+                    @Html.TextBoxFor(m => m.name, new { @class = "form-control input-lg" })
+                </div>
+
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.username, new { @class = "form-label" })
+                    @Html.TextBoxFor(m => m.username, new { @class = "form-control" })
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">狀態</label>
+                    <div>
+                        <div class="form-check">
+                            @Html.CheckBoxFor(m => m.enabled, new { @class = "form-check-input" })
+                            @Html.LabelFor(m => m.enabled, new { @class = "form-check-label" })
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.dept_id, new { @class = "form-label" })
+                    @Html.DropDownListFor(m => m.dept_id, (IEnumerable<SelectListItem>)ViewData["dept"], new { @class = "form-select" })
+                </div>
+
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.desc, new { @class = "form-label" })
+                    @Html.TextAreaFor(m => m.desc, new { @class = "form-control" })
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+
+</div>
+
+@section Scripts {
+    <script>
+
+    function onPrepareFetch(params, options, table) {
+        params.append('userID', @Model.ID );
+    }
+
+    function logResultFactory(data, row, table) {
+        var i = document.createElement("i");
+        i.classList.add('fa');
+        i.classList.add(((data == 1) ? 'fa-check-circle' : (data == 2) ? 'fa-times-circle' : (data == 4) ? 'fa-info-circle' : 'fa-question-circle'));
+        i.setAttribute('aria-hidden', "true");
+
+        return i;
+    }
+
+    $(function () {
+        $('#update').initAsToggleForm(false);
+    });
+
+
+    </script>
+} 

@@ -1,0 +1,267 @@
+﻿@model repairman.Models.ServiceRequest
+@using CSHelper.Extensions
+@{
+    ViewData["Title"] = "報修登記";
+}
+@section Header {
+    <link rel="stylesheet" href="~/css/site-man.css" />
+
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form id="update" asp-action="New">
+    @Html.AntiForgeryToken()
+
+    <div class="col-md-4">
+        @Html.LabelFor(m => m.dept_id, new { @class = "form-label" })
+        @Html.DropDownListFor(m => m.dept_id, (IEnumerable<SelectListItem>)ViewData["dept"], new { @class = "form-select" })
+    </div>
+
+    <div class="col-md-3">
+        @Html.LabelFor(m => m.name, new { @class = "form-label form-view-hide" })
+        @Html.TextBoxFor(m => m.name, new { @class = "form-control form-text" })
+    </div>
+                
+    <div class="col-md-3">
+        @Html.LabelFor(m => m.phone, new { @class = "form-label form-view-hide" })
+        @Html.TextBoxFor(m => m.phone, new { @class = "form-control form-text" })
+    </div>
+                
+    <div class="col-md-6">
+        @Html.LabelFor(m => m.email, new { @class = "form-label form-view-hide" })
+        @Html.TextBoxFor(m => m.email, new { @class = "form-control form-text" })
+    </div>
+
+
+    <div class="col-md-2">
+        @Html.Label( "cat_id", "主類別", new { @class = "form-label" })
+        @Html.DropDownList( "cat_id", (IEnumerable<SelectListItem>)ViewData["cat"], new { @class = "form-select", @onchange = "javascript:GetCats(this.value);" })
+    </div>
+
+    <div class="col-6">
+        @Html.LabelFor(m => m.sub_cat_id, new { @class = "form-label" })
+        @Html.DropDownListFor(m => m.sub_cat_id, (IEnumerable<SelectListItem>)ViewData["subcat"], new { @class = "form-select" })
+    </div>
+
+    <div class="mb-3">
+        @Html.LabelFor(m => m.desc, new { @class = "form-label" })
+        @Html.TextAreaFor(m => m.desc, new { @class = "form-control" })
+    </div>
+                                
+    <div class="mb-3">
+        @Html.LabelFor(m => m.files, new { @class = "form-label" })
+
+        <div class="row mb-1">
+            <div class="col-auto align-items-center d-flex" data-form-group-start="files">
+                <div class="col-auto m-1 d-none" data-form-group="files">
+                    <div class="row">
+                        <div class="col-auto">
+                            <i class="far fa-file"></i> <span class="form-upload-file filename" data-form-group-tempname="name"></span>
+                        </div>
+                        <input type="file" data-form-group-subname="file" class="d-none" />
+                        <div class="col-auto">
+                            <button type="button" class="btn" onclick="formGroupRemove(this)">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <label class="form-upload-area btn btn-secondary" for="file_upload">
+                    <input type="file" name="file_upload" id="file_upload" accept=".zip,.rar,.doc,.docx,.odf"
+                            multiple />
+                    <i class="fas fa-file-upload"></i>
+                    <span>拖放或點這裡<br>新增檔案<br>(限制zip,rar,doc,odf)</span>
+                </label>
+            </div>
+        </div>
+    </div>
+                
+    <div class="mb-3">
+        @Html.LabelFor(m => m.pics, new { @class = "form-label" })
+
+        <div class="row mb-1">
+            <div class="col-auto align-items-center d-flex" data-form-group-start="pics">
+                <div class="col-auto m-1 d-none" data-form-group="pics">
+                    <img src="~/img/logo-man-sm.png" class="form-upload-pic" data-form-group-tempname="pic" />
+                    <div class="row">
+                        <input type="file" data-form-group-subname="file" accept="image/*,jpg,jpeg,png" class="d-none" />
+                        <div class="col-auto">
+                            <button type="button" class="btn" onclick="formGroupRemove(this)">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <label class="form-upload-area btn btn-secondary" for="pic_upload">
+                    <input type="file" name="pic_upload" id="pic_upload"
+                            accept="image/*,jpg,jpeg,png" multiple />
+                    <i class="fas fa-file-upload"></i>
+                    <span>拖放或點這裡<br>新增圖片</span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-danger d-none" role="alert">
+    </div>
+
+    <button type="submit" class="btn btn-primary">新增</button>
+
+</form>
+
+@section Scripts {
+<script src="~/js/site-man.js" asp-append-version="true"></script>
+    
+<script>
+    $(function () {
+        
+        var form = $('#update');
+        form.initAsAjaxForm({
+            success: function (data) {
+                var result = createErrorList(data);
+                if (result == null) {
+                    location.reload();
+                } else {
+                    var alert = form.find(".alert");
+                    alert.html(result);
+                    alert.removeClass('d-none');
+                }
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                var alert = form.find(".alert");
+                alert.text(AjaxErrorToString(xhr, textStatus, errorThrown));
+                alert.removeClass('d-none');
+            },
+            validate: function() {
+                return null
+            }
+        });
+        
+        // handle file uploads
+        var $file_upload = $('#file_upload');
+        $file_upload.change(evt => {
+
+            var ele = $file_upload[0];
+            const files = ele.files;
+
+            if (files.length == 1) {
+                // process single file
+                let file = files.item(0);
+                
+                let ext = getFileExt(file.name).toLowerCase();
+                if( ext=='zip' || ext=='rar' || ext=='doc' || ext=='docx' || ext=='odf' ) {
+                
+                    let reader = new FileReader();
+                    let $group = formGroupAdd(ele);
+                    $group.find('[data-form-group-subname="file"]')[0].files = files;
+                
+                    let $pic = $group.find('[data-form-group-tempname="pic"]');
+
+                    if( $pic.length ) {
+                        reader.onload = e => {
+                            $pic.attr("src", e.target.result);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+
+                    let $name = $group.find('[data-form-group-tempname="name"]')
+                    $name.text(file.name)
+                }
+            } else {
+                // Loop through files and then split them into new inputs (not supported by safari iOS)
+                for (let i = 0; i < files.length; i++) {
+                    let file = files.item(i);
+
+                    let ext = getFileExt(file.name).toLowerCase();
+                    if (ext == 'zip' || ext == 'rar' || ext == 'doc' || ext == 'docx' || ext == 'odf') {
+                        let reader = new FileReader();
+                        let $group = formGroupAdd(ele);
+
+                        // new DataTransfer
+                        let dt = new DataTransfer();
+
+                        // add current file to it
+                        dt.items.add(file);
+
+                        // and set it to the hidden input
+                        $group.find('[data-form-group-subname="file"]')[0].files = dt.files;
+
+                        let $pic = $group.find('[data-form-group-tempname="pic"]');
+
+                        if( $pic.length ) {
+                            reader.onload = e => {
+                               $pic.attr("src", e.target.result);
+                            };
+                            reader.readAsDataURL(file);
+                        }
+
+                        let $name = $group.find('[data-form-group-tempname="name"]')
+                        $name.text(file.name)
+                    }
+                }
+            }
+            ele.files = null;
+        });
+        
+        // handle file uploads
+        var $pic_upload = $('#pic_upload');
+        $pic_upload.change(evt => {
+
+            var ele = $pic_upload[0];
+            const files = ele.files;
+
+            if (files.length == 1) {
+                // process single file
+                let file = files.item(0);
+                let reader = new FileReader();
+                let $group = formGroupAdd(ele);
+                $group.find('[data-form-group-subname="file"]')[0].files = files;
+                reader.onload = e => {
+                    $group.find('[data-form-group-tempname="pic"]').attr("src", e.target.result);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                // Loop through files and then split them into new inputs (not supported by safari iOS)
+                for (let i = 0; i < files.length; i++) {
+                    let file = files.item(i);
+                    let reader = new FileReader();
+                    let $group = formGroupAdd(ele);
+
+                    // new DataTransfer
+                    let dt = new DataTransfer();
+
+                    // add current file to it
+                    dt.items.add(file);
+
+                    // and set it to the hidden input
+                    $group.find('[data-form-group-subname="file"]')[0].files = dt.files;
+
+                    reader.onload = e => {
+                       $group.find('[data-form-group-tempname="pic"]').attr("src", e.target.result);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+            ele.files = null;
+        });
+
+    });
+    
+    function GetCats(_type) {
+        $("#sub_cat_id").loadSelect(
+            '@HttpUtility.JavaScriptStringEncode(Url.Action("ListSubCatsForType"))',
+            { type: _type },
+            {
+                blankOption: "選擇類別..."
+            });
+    }
+
+    
+    function getFileExt(s) {
+        return s.slice((Math.max(0, s.lastIndexOf('.')) || Infinity) + 1)
+    }
+
+</script>
+
+}

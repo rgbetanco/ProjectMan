@@ -1,0 +1,96 @@
+﻿@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor _hc
+@using CSHelper.Extensions
+@using CSHelper.Authorization
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - 管理平台</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/fontawesome/dist/css/all.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap-multiselect/dist/css/bootstrap-multiselect.min.css" />
+    <link rel="stylesheet" href="~/lib/cstable/css/cstable.min.css" />
+    <link rel="stylesheet" href="~/css/site-man.css" />
+</head>
+<body>
+    <!-- Bootstrap NavBar -->
+    <header class="header">
+        <nav class="navbar navbar-expand-sm navbar-dark box-shadow py-0">
+            <a class="navbar-brand" asp-action="Dashboard" asp-controller="Project">
+                <img src="~/img/logo-man-sm.png" height="30" class="d-inline-block align-top" alt="">
+                 管理平台
+            </a>
+
+            <div class="navbar-nav ms-auto py-0">
+                <div class="nav-item dropdown">
+                    <a href="#" id="navUserDropdown" class="nav-link py-0" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        @_hc.HttpContext.User.Identity.Name
+                        <i class="fa fa-user m-3"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navUserDropdown">
+                        <a class="dropdown-item btn-modal" data-url="@Url.ActionLink("ChangePassword", "Admin")" data-toggle="modal" data-target="#modal-changepwd-popup" href="#">更改密碼...</a>
+                        <a class="dropdown-item" asp-controller="Home" asp-action="Logout">登出</a>
+                    </div>
+                </div>
+            </div>
+
+            @if (ViewData["NavBarID"] != null)
+            {
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="@ViewData["NavBarID"]" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            }
+
+        </nav>
+    </header>
+    <div aria-hidden="true" role="dialog" tabindex="-1" id="modal-popup" class="modal fade">
+        <div class="modal-dialog">
+        </div>
+    </div>
+    <div aria-hidden="true" role="dialog" tabindex="-1" id="modal-changepwd-popup" class="modal fade">
+        <div class="modal-dialog">
+        </div>
+    </div>
+
+    <!-- Main body -->
+    <section class="body d-flex flex-column flex-md-row">
+        @RenderBody()
+    </section>
+
+    <!-- Error Dialog -->
+    <div aria-hidden="true" class="modal fade" id="error-dialog" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5>錯誤</h5>
+                </div>
+                <div class="modal-body">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @RenderSection("Footer", required: false)
+    <script src="~/lib/jquery/dist/jquery-3.6.0.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/bootstrap-multiselect/dist/js/bootstrap-multiselect.min.js"></script>
+    <script src="~/lib/cstable/js/cstable.min.js"></script>
+    <script src="~/js/site-man.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+    @if (ViewData["AutoReload"] != null)
+    {
+        <script>
+            enableAutoReload();
+        </script>
+    }
+
+    <script>
+    var _ip = '@Context.Request.HttpContext.Connection.RemoteIpAddress';
+    var _user = '@System.Web.HttpUtility.JavaScriptStringEncode(_hc.HttpContext.User.Identity.Name)';
+    </script>
+
+</body>
+</html>

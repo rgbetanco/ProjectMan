@@ -1,0 +1,444 @@
+/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+
+a.navbar-brand {
+    white-space: normal;
+    text-align: center;
+    word-break: break-all;
+}
+
+/* Provide sufficient contrast against white background */
+a {
+    color: #0366d6;
+}
+
+h5 {
+    padding-top: 1em;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+.navbar {
+    background-color: #25282D;
+}
+
+html {
+    font-size: .8rem;
+    position: relative;
+    height: 100%;
+    min-height: 100%;
+}
+
+#shop-parent {
+    position: relative;
+    top: 0px;
+    left: 0px;
+    overflow: auto;
+    height: 100px;
+}
+
+#shop-list-parent {
+    position: sticky;
+    z-index: 1;
+    top: 0px;
+    left:0px;
+}
+
+#shop-info-parent {
+    position: relative;
+    z-index: 2;
+    background-color: #fff;
+    margin-top: 1em;
+}
+
+#shop-info-parent > h3 {
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-top: .5em;
+}
+
+.col-fixed-width {
+    max-width: 540px;
+}
+
+.voucher-icon {
+    width: 4em;
+}
+
+ul.dl li {
+    list-style-type: none;
+    list-style: none;
+}
+
+ul.dl li::before {
+    content: "\f56d";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    margin-right: .5em;
+}
+
+/* "md" type and up */
+@media (min-width: 768px) {
+    html {
+        font-size: 1rem;
+    }
+
+
+}
+
+.border-top {
+    border-top: 1px solid #e5e5e5;
+}
+
+.border-bottom {
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow {
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button.accept-policy {
+    font-size: 1rem;
+    line-height: inherit;
+}
+
+
+body {
+    background-color: #f1f1f1;
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+    width: 100%;
+    min-height: 100%;
+}
+
+.header {
+    flex: 0 0 auto;
+}
+
+.body {
+    display: flex;
+    margin-left: 0;
+    margin-right: 0;
+    flex: 1 1 auto;
+}
+
+.body > :first-child {
+    flex: 0 0 auto;
+}
+
+.body > :not(:first-child) {
+    flex: 1 1 auto;
+    min-width: 0.1vh; /* force reflow when sidepane changes size */
+}
+
+.body-fixed {
+    display: flex;
+    flex: 1 1 auto;
+}
+
+.body-fixed > :first-child {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+}
+
+.body-fixed > :first-child > :nth-child(2) {
+    flex: 1 1 auto;
+}
+
+
+footer {
+    width: 100%;
+    padding-top: .5em;
+    padding-bottom: .75em;
+    flex: 0 1 auto;
+    font-size: .8em;
+}
+
+button#footer-show,button#footer-hide {
+    position: absolute;
+    bottom: 0px;
+    left: 0px
+}
+
+.table {
+    background-color: #FAFAFA;
+}
+
+.cs-table.table-noresize {
+    height: 200px;
+}
+
+#log-table {
+    height: 300px;
+}
+
+#leftpane-container {
+    background-color: #fff;
+    padding: 0;
+}
+
+
+.sidebar {
+    background-color: #333;
+    padding: 0;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.sidebar .nav-item {
+    display: block;
+    color: white;
+    padding: 8px 12px 8px 12px;
+    text-decoration: none;
+}
+
+/* Sidebar sizes when expanded and expanded */
+
+/* Menu item*/
+.sidebar a {
+}
+
+.sidebar a:hover {
+    background-color: #29588F;
+}
+
+
+.sidebar .active {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16px' height='24px' viewbox='0 0 16 24'%3E%3Cpath d='M 0 12 L 16 0 L 16 24 L 0 12 Z' style='fill:rgb(241,241,241);'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-color: #4978AF;
+}
+
+/* Submenu item*/
+
+.sidebar .sidebar-submenu {
+    font-size: 0.9rem;
+    background-color: #383838;
+}
+
+/* "md" type and up */
+@media (min-width: 768px) {
+    .sidebar {
+        width: 230px;
+    }
+
+    .sidebar.sidebar-collapsed {
+        width: 60px;
+    }
+
+    .sidebar.sidebar-collapsed .collapsible,
+    .sidebar.sidebar-collapsed .sidebar-title {
+        display: none;
+    }
+}
+
+@media (max-width: 767px) {
+    .sidebar [data-toggle="sidebar-collapse"] {
+        display: none;
+    }
+}
+
+.sidebar [data-bs-toggle="collapse"] {
+    font-weight: 900;
+    padding: 1em 1em .5em 1em;
+}
+
+.sidebar [data-bs-toggle="collapse"] :first-child::after {
+    font-family: "Font Awesome 5 Free";
+    content: "\f107";
+    float: right;
+}
+
+.sidebar [data-bs-toggle="collapse"][aria-expanded="false"] :first-child::after {
+    content: " \f106";
+}
+
+
+.sidebar.sidebar-collapsed [data-bs-toggle="collapse"] {
+    display: none;
+}
+
+.sidebar.sidebar-collapsed .collapse {
+    display: block;
+}
+
+/* Separators */
+
+.sidebar .sidebar-separator {
+    background-color: #383838;
+    height: 25px;
+}
+
+.sidebar [data-toggle="sidebar-collapse"] :first-child::after {
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    content: "\f100";
+}
+
+.sidebar.sidebar-collapsed [data-toggle="sidebar-collapse"] :first-child::after {
+    content: "\f101";
+}
+
+
+/* Toggle Button checkbox */
+
+input[type="checkbox"].toggle {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 2em;
+    height: 1em;
+    background: #ddd;
+    border-radius: 2.5em;
+    position: relative;
+    cursor: pointer;
+    outline: none;
+    -webkit-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+}
+
+input[type="checkbox"].toggle:checked {
+    background: #0ebeff;
+}
+
+input[type="checkbox"].toggle:after {
+    position: absolute;
+    content: "";
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    background: #fff;
+    -webkit-box-shadow: 0 0 .25em rgba(0,0,0,.3);
+    box-shadow: 0 0 .25em rgba(0,0,0,.3);
+    -webkit-transform: scale(.7);
+    transform: scale(.7);
+    left: 0;
+    -webkit-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+}
+
+input[type="checkbox"].toggle:checked:after {
+    left: calc(100% - 1em);
+}
+
+/* print-related */
+.watermark {
+    visibility: hidden;
+}
+
+@media print {
+    .watermark {
+        visibility: visible;
+    }
+
+        .watermark h5 {
+            position: absolute;
+            left: 5%;
+            width: 90%;
+            text-align: center;
+            -webkit-transform: rotate(-15deg);
+            -moz-transform: rotate(-15deg);
+            color: #EEEEEE80;
+            -webkit-font-smoothing: antialiased;
+            font-size: 45px;
+        }
+
+}
+
+
+/* table form */
+.form-table {
+    display: flex;
+    flex-flow: column;
+    flex: 1 1 auto;
+    height: 0px;
+    overflow: hidden;
+}
+
+.form-table > .table-parent {
+    flex: 1 1 auto;
+    overflow: auto;
+}
+
+.form-table > .table-parent > table > thead {
+    position: sticky; 
+    top: 0px;
+    background-color: inherit;
+    z-index: 1;
+}
+
+/* form-related*/
+.input-lg {
+    font-size: 1.5em;
+    font-weight: bolder;
+}
+
+.form-editmode .form-edit-hide {
+    display: none;
+}
+
+.form-viewmode .form-view-hide {
+    display: none;
+}
+
+.form-viewmode :not(.form-check-alwaysshow) input[type="checkbox"]:not(:checked), .form-viewmode :not(.form-check-alwaysshow) input[type="checkbox"]:not(:checked):not(.form-check-alwaysshow) + label {
+    display: none;
+}
+
+.form-viewmode .form-check-input:disabled ~ .form-check-label, .form-check-input[disabled] ~ .form-check-label {
+    opacity: 100%;
+}
+
+.form-viewmode .form-select {
+    background: none;
+    border: none;
+}
+
+.form-viewmode .form-label {
+    font-weight: bold;
+    margin-top: 1em;
+    margin-bottom: 0em;
+}
+
+.form-label {
+    margin-bottom: 0em;
+}
+
+.form-upload-pic {
+    width: 150px;
+    height: 150px;
+    object-fit: scale-down;
+}
+
+.form-upload-area {
+    position: relative;
+}
+
+.form-upload-area > input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}

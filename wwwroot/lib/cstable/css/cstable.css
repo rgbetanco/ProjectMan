@@ -1,0 +1,96 @@
+﻿/* CSTable-related styles */
+
+/* table header sorting */
+.cs-table thead th.cs-sortable {
+    position: relative;
+    cursor: pointer;
+}
+
+.cs-table thead th.cs-sortable:before,
+.cs-table thead th.cs-sortable:after {
+    border: 4px solid transparent;
+    content: "";
+    display: block;
+    right: 5px;
+    top: 50%;
+    position: absolute;
+}
+
+.cs-table thead th.cs-sortable:before {
+    border-bottom-color: #CCC;
+    margin-top: -9px;
+}
+
+.cs-table thead th.cs-sortable:after {
+    border-top-color: #CCC;
+    margin-top: 2px;
+}
+
+.cs-table thead th.cs-sort-asc:before {
+    border-bottom-color: #555;
+}
+
+.cs-table thead th.cs-sort-desc:after {
+    border-top-color: #555;
+}
+
+/* dark version */
+.cs-table.table-dark thead th.cs-sortable:before {
+    border-bottom-color: #777;
+}
+
+.cs-table.table-dark thead th.cs-sortable:after {
+    border-top-color: #777;
+}
+
+.cs-table.table-dark thead th.cs-sort-asc:before {
+    border-bottom-color: #FFF;
+}
+
+.cs-table.table-dark thead th.cs-sort-desc:after {
+    border-top-color: #FFF;
+}
+
+/* full table status display */
+.cs-table-msg {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* table status display row */
+.cs-table-msg-row {
+    text-align: center;
+}
+
+/* waiting animation */
+.cs-waiting-icon {
+    width: 1.75em;
+    height: 1.75em;
+    border: .25em solid #CCC;
+    border-left-color: black;
+    border-radius: 50%;
+    background: transparent;
+    animation-name: cs-waiting-icon-anim;
+    animation-iteration-count: infinite;
+    animation-duration: 1.5s;
+    animation-timing-function: linear;
+    position: relative;
+}
+
+.table-dark .cs-waiting-icon {
+    border: .25em solid #555;
+    border-left-color: white;
+}
+
+@keyframes cs-waiting-icon-anim {
+    from {
+        transform: rotate(0);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}

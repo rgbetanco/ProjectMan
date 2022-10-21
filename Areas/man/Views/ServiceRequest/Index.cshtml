@@ -1,0 +1,89 @@
+﻿@{
+    ViewData["Title"] = "報修清單";
+    ViewData["AutoReload"] = true;
+    Layout = "_MenuLayout";
+}
+<div class="row">
+    <div class="col">
+        <h5>@ViewData["Title"]</h5>
+    </div>
+    <div class="col text-end align-self-end">
+        <a class="btn btn-primary" role="button" asp-action="New">新增...</a>
+    </div>
+</div>
+
+<div class="row py-2 align-items-end">
+    <div class="col-auto">
+        <label for="query_keyword" class="form-label">關鍵字</label>
+        <input type="text" class="form-control" id="query_keyword">
+
+    </div>
+    <div class="col-auto">
+        @Html.Label("status", "狀態", new { @class = "form-label form-view-hide" })
+        @Html.DropDownList("status", CSHelper.Extensions.RenderingExtension.GetSelectList<ServiceRequestStatus>(), "所有", new { @class = "form-select" })
+    </div>
+
+    <div class="col text-end">
+        <button id="query_start" class="btn btn-primary" role="button">搜尋</button>
+    </div>
+</div>
+
+<div class="flex-grow-1 table-parent">
+
+    <table id="table"
+           data-cs-table
+           class="table h-100 table-hover"
+           data-cs-url="@Url.ActionLink("Query")"
+           data-cs-sort-field="date"
+           data-cs-sort-order="desc"
+           data-cs-on-prepare-fetch="onPrepareFetch">
+        <thead>
+            <tr>
+                <th data-cs-field="id">ID</th>
+                <th data-cs-field="date" data-cs-sortable="local" data-cs-formatter="datetimeFormatter">建檔時間</th>
+                <th data-cs-field="name" data-cs-sortable="local">申請人</th>
+                <th data-cs-field="dept" data-cs-sortable="local">單位</th>
+                <th data-cs-field="desc" data-cs-sortable="local">說明</th>
+                <th data-cs-field="status" data-cs-sortable="local">狀態</th>
+                <th data-cs-field="moddate" data-cs-sortable="local" data-cs-formatter="datetimeFormatter">更新時間</th>
+            </tr>
+        </thead>
+    </table>
+
+</div>
+
+@section Scripts {
+
+<script>
+
+function onPrepareFetch(params, options, table) {
+    params.append('search', $('#query_keyword').val() );
+    params.append('status', $('#status').val());
+}
+
+var reloadNow;
+
+$(function () {
+    let tableEle = document.getElementById('table');
+    let table = CSTable.getInstance(tableEle);
+
+    table.addEventListener('clickcell', evt => {
+        if (evt.detail.fieldname != 'enabled') {
+            window.location.href = '@Url.Action("View")/' + evt.detail.data.id;
+        }
+    });
+
+    $('#query_start').on('click', evt => {
+        evt.preventDefault();    // prevent default behavior
+        reloadNow();
+    });
+
+    reloadNow = () => {
+        table.fetch();
+    }
+
+})
+
+</script>
+
+}

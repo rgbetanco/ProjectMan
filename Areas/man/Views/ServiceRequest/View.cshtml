@@ -1,0 +1,334 @@
+﻿@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor
+@model repairman.Models.ServiceRequest
+@using CSHelper.Extensions
+@{
+    ViewData["Title"] = "報修案 " + Model.ID;
+    Layout = "_Layout";
+}
+
+
+<div class="container h-100 d-flex flex-column msg">
+
+    <div class="row mb-3 mt-4">
+        <div class="col">
+            <button type="button" class="btn btn-light btn-back"><i class="fas fa-caret-left"></i></button>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header">
+                報修案 @Model.ID - <b>建檔日期</b> <span class="msg-date" data-datetime="@Model.date.ToString("o")"></span> - <b>使用者</b> @((Model.member!=null)?Model.member.name:"")
+        </div>
+
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <div>
+                    <b>部門</b> @Model.dept.name
+                </div>
+                <div>
+                    <b>聯絡人</b> @Model.name
+                </div>
+                <div>
+                    <b>聯絡人電話</b> @Model.phone
+                </div>
+                <div>
+                    <b>聯絡人e-mail</b> @Model.email
+                </div>
+            </li>
+        </ul>
+
+        <div class="card-body">
+            <h5>@Model.sub_cat.cat.name - @Model.sub_cat.name <button class="btn" role="button" data-bs-toggle="modal" data-bs-target="#msg-mod-modal"><i class="fas fa-edit"></i></button></h5>
+            <p>
+                @Model.desc
+            </p>
+            
+            @if(Model.files!=null && Model.files.Count>0)
+            {
+                <ul class="dl">
+                @foreach( var r in Model.files )
+                {
+                    <li><a asp-action="dl" asp-route-id="@Model.ID" asp-route-fileid="@r.ID">@r.filename</a></li>
+                }
+                </ul>
+            }
+
+            @if(Model.pics!=null && Model.pics.Count>0)
+            {
+                <div class="row mb-3">
+                    <div class="col">
+                    @foreach( var r in Model.pics)
+                    {
+                        <a href="~/dl/img/a/@r.output_file" target="_blank">
+                            <img src="~/dl/img/a/@r.thumb_file" />
+                        </a>
+                    }
+                    </div>
+
+                </div>
+            }
+        </div>
+
+        <div class="card-footer">
+            <div>
+                <span class="msg-status">@Model.status.GetDisplayName()</span>
+                - <span class="msg-date" data-datetime="@Model.modify_date.ToString("o")"></span>
+            </div>
+            <div>
+                                <button class="btn btn-primary btn-add" role="button" data-bs-toggle="modal" data-bs-target="#msg-reply-modal">新增狀態</button>
+                                @if( (bool)ViewData["allow_edit"]) {
+                                <button class="btn btn-danger btn-delete btn-modal" type="button" data-url="@Url.ActionLink("ConfirmDel", null, new { ID = Model.ID })" data-toggle="modal" data-target="#modal-changepwd-popup">
+                                    刪除報修案
+                                </button>
+                                }
+            </div>
+        </div>
+
+    </div>
+
+        @foreach( var m in Model.replies.OrderByDescending(x => x.date).ToList() )
+    {
+        <div class="card mb-3">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card-header">
+                        <div>@m.status.GetDisplayName()</div>
+                        <div><span class="msg-date" data-datetime="@m.date.ToString("o")"></span></div>
+                        <div>@m.user.name</div>
+                    </div>
+                </div>
+
+                <div class="col-md-9">
+                    <div class="card-body">
+                        <h6>@m.title</h6>
+                        <div>@m.desc</div>
+                                    
+                        @if(m.files!=null && m.files.Count>0)
+                        {
+                            <ul class="dl">
+                            @foreach( var r in m.files )
+                            {
+                                <li><a asp-action="dl" asp-route-replyid="@m.ID" asp-route-fileid="@r.ID">@r.filename</a></li>
+                            }
+                            </ul>
+                        }
+            
+                        @if(m.pics!=null && m.pics.Count>0)
+                        {
+                            <div class="row mb-3">
+                                <div class="col">
+                                @foreach( var r in m.pics)
+                                {
+                                    <a href="~/dl/img/a2/@r.output_file" target="_blank">
+                                        <img src="~/dl/img/a2/@r.thumb_file" />
+                                    </a>
+                                }
+                                </div>
+
+                            </div>
+                        }
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+    }
+
+</div>
+
+<!-- Modify modal -->
+<div class="modal fade" id="msg-mod-modal" tabindex="-1" aria-labelledby="modModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      <form id="mod-modal-form" asp-action="View">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">修正項目</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+                @Html.Label( "cat_id", "主類別", new { @class = "form-label" })
+                @Html.DropDownList( "cat_id", (IEnumerable<SelectListItem>)ViewData["cat"], new { @class = "form-select", @onchange = "javascript:GetCats(this.value);" })
+            </div>
+
+            <div class="mb-3">
+                @Html.LabelFor(m => m.sub_cat_id, new { @class = "form-label" })
+                @Html.DropDownListFor(m => m.sub_cat_id, (IEnumerable<SelectListItem>)ViewData["subcat"], new { @class = "form-select" })
+            </div>
+
+            @if( (bool)ViewData["allow_edit"])
+            {
+                <hr />
+            <div class="col-md-4">
+                @Html.LabelFor(m => m.dept_id, new { @class = "form-label" })
+                @Html.DropDownListFor(m => m.dept_id, (IEnumerable<SelectListItem>)ViewData["dept"], new { @class = "form-select" })
+            </div>
+
+            <div class="col-md-3">
+                @Html.LabelFor(m => m.name, new { @class = "form-label" })
+                @Html.TextBoxFor(m => m.name, new { @class = "form-control form-text" })
+            </div>
+                
+            <div class="col-md-3">
+                @Html.LabelFor(m => m.phone, new { @class = "form-label" })
+                @Html.TextBoxFor(m => m.phone, new { @class = "form-control form-text" })
+            </div>
+                
+            <div class="col-md-6">
+                @Html.LabelFor(m => m.email, new { @class = "form-label" })
+                @Html.TextBoxFor(m => m.email, new { @class = "form-control form-text" })
+            </div>
+
+            <div class="mb-3">
+                @Html.LabelFor(m => m.desc, new { @class = "form-label" })
+                @Html.TextAreaFor(m => m.desc, new { @class = "form-control" })
+            </div>
+
+            }
+
+            <input name="id" value="@Model.ID" type="hidden" />
+            @Html.AntiForgeryToken()
+
+            <div class="alert alert-danger d-none mt-3" role="alert">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+            <button type="submit" class="btn btn-primary">送出</button>
+          </div>
+        </div>
+      </form>
+  </div>
+</div>
+
+<!-- New reply Modal -->
+<div class="modal fade" id="msg-reply-modal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      <form id="add-modal-form" asp-action="NewReply">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">新增狀態</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+                <label for="title" class="form-label">@Html.DisplayNameForInnerType( (ServiceRequestReply sr) => sr.title )</label>
+                <input name="title" type="text" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label for="date" class="form-label">@Html.DisplayNameForInnerType( (ServiceRequestReply sr) => sr.date )</label>
+                @Html.LocalDateTimeInput( "date", (DateTime.UtcNow.ToString("o")) , new { @class = "form-control", @step = "0.001" })
+            </div>
+
+            <div class="mb-3">
+                <label for="desc" class="form-label">@Html.DisplayNameForInnerType( (ServiceRequestReply sr) => sr.desc )</label>
+                <textarea name="desc" class="form-control"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="status" class="form-label">@Html.DisplayNameForInnerType( (ServiceRequestReply sr) => sr.status )</label>
+                @Html.DropDownList("status", CSHelper.Extensions.RenderingExtension.GetSelectList<ServiceRequestStatus>(), new { @class = "form-select" })
+            </div>
+            
+            <div class="mb-3">
+                <label for="files" class="form-label">附件</label>
+
+                <div class="row mb-1">
+                    <div class="col-auto align-items-center d-flex" data-form-group-start="files">
+                        <div class="col-auto m-1 d-none" data-form-group="files">
+                            <div class="row">
+                                <div class="col-auto">
+                                    <i class="far fa-file"></i> <span class="form-upload-file filename" data-form-group-tempname="name"></span>
+                                </div>
+                                <input type="file" data-form-group-subname="file" class="d-none" />
+                                <div class="col-auto">
+                                    <button type="button" class="btn" onclick="formGroupRemove(this)">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <label class="form-upload-area btn btn-secondary" for="file_upload">
+                            <input type="file" name="file_upload" data-form-group-target="files" multiple />
+                            <i class="fas fa-file-upload"></i>
+                            <span>拖放或點這裡<br>新增檔案</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="mb-3">
+                <label for="pics" class="form-label">相片</label>
+
+                <div class="row mb-1">
+                    <div class="col-auto align-items-center d-flex" data-form-group-start="pics">
+                        <div class="col-auto m-1 d-none" data-form-group="pics">
+                            <img src="~/img/logo-man-sm.png" class="form-upload-pic" data-form-group-tempname="pic" />
+                            <div class="row">
+                                <input type="file" data-form-group-subname="file" accept="image/*,jpg,jpeg,png" class="d-none" />
+                                <div class="col-auto">
+                                    <button type="button" class="btn" onclick="formGroupRemove(this)">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <label class="form-upload-area btn btn-secondary" for="pic_upload">
+                            <input type="file" name="pic_upload" data-form-group-target="pics"
+                                    accept="image/*,jpg,jpeg,png" multiple />
+                            <i class="fas fa-file-upload"></i>
+                            <span>拖放或點這裡<br>新增圖片</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <input name="id" value="@Model.ID" type="hidden" />
+            @Html.AntiForgeryToken()
+
+            <div class="alert alert-danger d-none mt-3" role="alert">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+            <button type="submit" class="btn btn-primary">送出</button>
+          </div>
+        </div>
+      </form>
+  </div>
+</div>
+@section Scripts {
+<script>
+    _uploadFilePath = '@Url.ActionLink("UploadFile")';
+</script>
+
+
+<script>
+
+$(function() {
+    var $update = $('#update');
+    $update.initAsToggleForm(false);
+    
+    $('#mod-modal-form').initAsAjaxForm();
+
+    $('#add-modal-form').initAsAjaxForm();
+
+
+});
+
+    function GetCats(_type) {
+        $("#sub_cat_id").loadSelect(
+            '@HttpUtility.JavaScriptStringEncode(Url.Action("ListSubCatsForType", "ServiceRequest"))',
+            { type: _type },
+            {
+                blankOption: "選擇類別..."
+            });
+    }
+
+</script>
+} 

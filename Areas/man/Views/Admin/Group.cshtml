@@ -1,0 +1,92 @@
+﻿@model IList<repairman.Models.Group>
+@{
+    ViewData["Title"] = "群組管理";
+    ViewData["AutoReload"] = true;
+    Layout = "_MenuLayout";
+}
+<h5>@ViewData["Title"]</h5>
+<form id="update" asp-action="Group" class="form-table">
+    <div>
+        <button type="submit" class="btn btn-primary my-1">儲存</button>
+        @Html.AntiForgeryToken()
+
+        <div class="alert alert-danger d-none" role="alert">
+        </div>
+    </div>
+
+    <div class="table-parent">
+
+        <table id="table"
+               class="table table-hover"
+               data-form-table-group="Group">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th data-cs-field="name">@Html.LabelFor(m => m.FirstOrDefault().name)</th>
+                    <th data-cs-field="desc">@Html.LabelFor(m => m.FirstOrDefault().desc)</th>
+
+                    <th>功能</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var e in Model)
+                {
+                <tr data-cs-key="@e.ID">
+                    <th>@e.ID</th>
+                    <td contenteditable="true" data-cs-orig-value="@e.name">
+                        @e.name
+                    </td>
+                    <td contenteditable="true" data-cs-orig-value="@e.desc">
+                        @e.desc
+                    </td>
+                    <td>
+                        <button type="button" class="btn-delete btn"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+                }
+            <tr class="d-none" data-form-table-row="ProductCat">
+                <th><i class="fas fa-magic"></i></th>
+                <td contenteditable="true"></td>
+                <td contenteditable="true"></td>
+                <td>
+                    <button type="button" class="d-none btn-delete btn"><i class="fas fa-trash"></i></button>
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+
+    </div>
+</form>
+@section Scripts {
+
+    <script>
+
+        $(function () {
+            let $form = $('#update');
+            $form.initAsAjaxForm({
+                success: function (data) {
+                    var result = createErrorList(data);
+                    if (result == null) {
+                        location.reload();
+                    } else {
+                        var alert = $form.find(".alert");
+                        alert.html(result);
+                        alert.removeClass('d-none');
+                    }
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    var alert = $form.find(".alert");
+                    alert.text(AjaxErrorToString(xhr, textStatus, errorThrown));
+                    alert.removeClass('d-none');
+                },
+                validate: function () {
+                    return null;
+                }
+            });
+
+        });
+
+    </script>
+} 

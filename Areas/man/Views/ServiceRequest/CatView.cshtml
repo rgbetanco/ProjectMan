@@ -1,0 +1,116 @@
+﻿@model repairman.Models.ServiceRequestCat
+@using CSHelper.Extensions
+@{
+    ViewData["Title"] = "編輯分類";
+    Layout = "_Layout";
+}
+
+<div class="container h-100 d-flex flex-column">
+    <div class="row mb-3 mt-4">
+        <div class="col">
+            <button type="button" class="btn btn-light btn-back"><i class="fas fa-caret-left"></i></button>
+            <h2>@ViewData["Title"]</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col mx-1 mx-md-5">
+
+            <form id="update" asp-action="CatView" asp-route-id="@Model.ID">
+                @Html.AntiForgeryToken()
+
+                <button type="submit" class="btn btn-primary">更新</button>
+
+                <div class="alert alert-danger d-none" role="alert">
+                </div>
+
+                <div class="col-md-3">
+                    @Html.LabelFor(m => m.name, new { @class = "form-label form-view-hide" })
+                    @Html.TextBoxFor(m => m.name, new { @class = "form-control form-text" })
+                </div>
+
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.desc, new { @class = "form-label" })
+                    @Html.TextAreaFor(m => m.desc, new { @class = "form-control" })
+                </div>
+                
+                <div class="table-parent">
+
+                    <table id="table"
+                           class="table table-hover"
+                           data-form-table-group="SubCats">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th data-cs-field="name">名稱</th>
+                                <th data-cs-field="desc">說明</th>
+                                <th>功能</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var e in Model.subcats)
+                            {
+                                <tr data-cs-key="@e.ID">
+                                    <th>@e.ID</th>
+                                    <td contenteditable="true" data-data-cs-orig-value="@e.name">@e.name</td>
+                                    <td contenteditable="true" data-data-cs-orig-value="@e.desc">@e.desc</td>
+                                    <td>
+                                        <button type="button" class="btn-delete btn"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                            }
+
+                            <tr class="d-none" data-form-table-row="subcat">
+                                <th><i class="fas fa-magic"></i></th>
+                                <td contenteditable="true"></td>
+                                <td contenteditable="true"></td>
+                                <td>
+                                    <button type="button" class="d-none btn-delete btn"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+<script>
+
+    $(function () {
+        
+        var form = $('#update');
+        form.initAsAjaxForm({
+            success: function (data) {
+                var result = createErrorList(data);
+                if (result == null) {
+                    window.history.back();
+                } else {
+                    var alert = form.find(".alert");
+                    alert.html(result);
+                    alert.removeClass('d-none');
+                }
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                var alert = form.find(".alert");
+                alert.text(AjaxErrorToString(xhr, textStatus, errorThrown));
+                alert.removeClass('d-none');
+            },
+            validate: function() {
+                return null
+            }
+        });
+
+        
+
+    });
+   
+</script>
+} 

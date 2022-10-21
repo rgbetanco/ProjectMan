@@ -1,0 +1,204 @@
+﻿@model repairman.Models.PersonaModel
+@using CSHelper.Extensions
+@{
+    ViewData["Title"] = "新增個⼈";
+    Layout = "_Layout";
+}
+
+<div class="container h-100 d-flex flex-column">
+    <div class="row mb-3 mt-4">
+        <div class="col">
+            <button type="button" class="btn btn-light btn-back"><i class="fas fa-caret-left"></i></button>
+            <h2>@ViewData["Title"]</h2>
+        </div>
+    </div>
+    <form id="update" asp-action="PersonaNew">
+        @Html.AntiForgeryToken()
+        <div class="container text-center">
+            <div class="row mt-4">
+                <div class="col text-start">
+                    @Html.LabelFor(m => m.name, new { @class = "form-label form-view-hide" })
+                    @Html.TextBoxFor(m => m.name, new { @class = "form-control form-text" })
+                </div>
+                <div class="col text-start">
+                    @Html.LabelFor(m => m.department, new { @class = "form-label form-view-hide" })
+                    @Html.TextBoxFor(m => m.department, new { @class = "form-control form-text" })
+                </div>
+            </div>
+           
+            <div class="row mt-4">
+                <div class="col-4 text-start">
+                    @Html.LabelFor(m => m.remarks, new { @class = "form-label form-view-hide" })
+                    @Html.TextAreaFor(m => m.remarks, new { @class = "form-control form-text" })
+                </div>
+                <div class="col-8"></div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col text-start">
+                    @Html.LabelFor(m => m.phone, new { @class = "form-label" })
+
+                    <div class="row mb-1" data-form-group-start="Phone">
+                        <div class="col-auto">
+                            <div class="row mb-1 d-none" data-form-group="Phone">
+                                <div class="col-auto">
+                                    @Html.DropDownList("temp", CSHelper.Extensions.RenderingExtension.GetSelectList<PhoneType>(), new { @class = "form-select", @data_form_group_subname = "type" })
+                                </div>
+                                <div class="col-auto">
+                                    @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "number", @type = "tel" })
+                                </div>
+                                <div class="col-auto">
+                                    <div class="form-check">
+                                        @Html.CheckBox("temp", new {@class = "form-check-input", @data_form_group_subname = "default_number" })
+                                        @Html.LabelFor(m => m.phone.FirstOrDefault().default_number)
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" type="button" onclick="formGroupAdd(this)">+ 增加</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col text-start">
+                    @Html.LabelFor(m => m.address, new { @class = "form-label" })
+
+                    <div class="row mb-1" data-form-group-start="Address">
+                        <div class="col-auto">
+                            <div class="row mb-1 d-none" data-form-group="Address">
+                                <div class="col-auto">
+                                    @Html.DropDownList("temp", CSHelper.Extensions.RenderingExtension.GetSelectList<ContactType>(), new { @class = "form-select", @data_form_group_subname = "type" })
+                                </div>
+                                <div class="col-auto">
+                                    @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "addr" })
+                                </div>
+                                <div class="col-auto">
+                                    <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" type="button" onclick="formGroupAdd(this)">+ 增加</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col text-start">
+                    @Html.LabelFor(m => m.email, new { @class = "form-label" })
+
+                    <div class="row mb-1" data-form-group-start="Email">
+                        <div class="col-auto">
+                            <div class="row mb-1 d-none" data-form-group="Email">
+                                <div class="col-auto">
+                                    @Html.DropDownList("temp", CSHelper.Extensions.RenderingExtension.GetSelectList<ContactType>(), new { @class = "form-select", @data_form_group_subname = "type" })
+                                </div>
+                                <div class="col-auto">
+                                    @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "email", @type = "emailaddress" })
+                                </div>
+                                <div class="col-auto">
+                                    <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" type="button" onclick="formGroupAdd(this)">+ 增加</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <table class="table mt-4">
+                <thead>
+                    <tr>
+                        <th scope="col">@Html.LabelFor(m => m.personas_company.FirstOrDefault().company_id, new { @class = "form-label" })</th>
+                        <th scope="col">@Html.LabelFor(m => m.personas_company.FirstOrDefault().job_title, new { @class = "form-label" })</th>
+                        <th scope="col">功能</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="d-none" data-form-group-start="Personas_Company" data-form-group="Personas_Company">
+                        <td scope="row">
+                            <div class="input-group">
+                                @Html.Hidden("temp", "", new {  @class = "form-control",  @readonly = "readonly", @data_form_group_subname = "company_id" } )
+                                @Html.TextBox("temp", "", new { @class = "form-control",  @readonly = "readonly", @data_form_group_subname = "company.name" })
+                                <button type="button" class="btn btn-secondary btn-modal"
+                                        data-form-group-target="Personas_Company"
+                                        data-url="@Url.Action("Picker", "Company")"
+                                        data-toggle="modal"
+                                        data-target="#modal-popup">
+                                    <i class="fa fa-pen"></i>
+                                </button>
+                            </div>
+                        </td>
+                        <td>@Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "job_title" })</td>
+                        <td>
+                            <button type="button" class="btn btn-delete">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <button class="btn btn-secondary" type="button" data-form-group-target="Personas_Company">新增成員</button>
+
+            <div class="alert alert-danger d-none" role="alert">
+            </div>
+            <br />
+            <br />
+            <button type="submit" class="btn btn-primary mb-4 mt-4">新增</button>
+        </div>
+    </form>
+</div>
+@section Scripts {
+
+    <script>
+// Handle phone checkboxes - make them work like radio buttons
+        $(document).on('click', '[data-form-group=Phone] .form-check-input', function ($this) {
+            deselectAll($this);
+        });
+
+        function deselectAll($t) {
+            let $default_selected = $t.target.name
+            $('[data-form-group=Phone] .form-check-input').each(function(){
+                let $me = $(this);
+                if ($me[0].name != $default_selected && $me[0].name != "temp"){
+                    console.log($me[0]);
+                    $($me[0]).prop("checked", false)
+                }
+            })
+        }
+// end phone checkboxes
+        $(function () {
+            var form = $('#update');
+            form.initAsAjaxForm({
+                success: function (data) {
+                    var result = createErrorList(data);
+                    if (result == null) {
+                        window.history.back();
+                    } else {
+                        var alert = form.find(".alert");
+                        alert.html(result);
+                        alert.removeClass('d-none');
+                    }
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    var alert = form.find(".alert");
+                    alert.text(AjaxErrorToString(xhr, textStatus, errorThrown));
+                    alert.removeClass('d-none');
+                },
+                validate: function () {
+                    return null
+                }
+            });
+        });
+
+    </script>
+}

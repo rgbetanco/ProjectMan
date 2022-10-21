@@ -1,0 +1,16 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["AutoReload"] = true;
+}
+<!-- Leftpane -->
+<div id="leftpane-container">
+    @RenderSection("Leftpane", required: true)
+</div><!-- leftpane END -->
+
+<main role="main" class="p-4 pb-3">
+    @RenderBody()
+</main>
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}

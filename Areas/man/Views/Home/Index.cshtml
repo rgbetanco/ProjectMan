@@ -1,0 +1,71 @@
+﻿@{
+    ViewData["Title"] = "歡迎";
+    Layout = "_MenuLayout";
+}
+
+<div class="text-center">
+    <h1 class="display-4">歡迎</h1>
+    <p>請從左邊選單選個項目．</p>
+ </div>
+
+    <h5>前十名維修項目 (一年內)</h5>
+    
+<div class="h-25 pb-2 table-parent">
+
+    <table id="tableByCat"
+            data-cs-table
+            class="table h-100 table-hover"
+            data-cs-url="@Url.ActionLink("QueryCountByCat", "ServiceRequest")"
+            data-cs-sort-field="count"
+            data-cs-sort-order="desc">
+        <thead>
+            <tr>
+                <th data-cs-field="cat" data-cs-sortable="local">項目</th>
+                <th data-cs-field="count" data-cs-sortable="local">叫修次數</th>
+            </tr>
+        </thead>
+    </table>
+
+</div>
+
+    <h5>前十名叫修單位 (一年內)</h5>
+        
+<div class="h-25 pb-2 table-parent">
+
+    <table id="tableByDept"
+            data-cs-table
+            class="table h-100 table-hover"
+            data-cs-url="@Url.ActionLink("QueryCountByDept", "ServiceRequest")"
+            data-cs-sort-field="count"
+            data-cs-sort-order="desc">
+        <thead>
+            <tr>
+                <th data-cs-field="dept" data-cs-sortable="local">單位</th>
+                <th data-cs-field="count" data-cs-sortable="local">叫修次數</th>
+            </tr>
+        </thead>
+    </table>
+
+</div>
+
+@section Scripts {
+<script>
+
+var reloadNow;
+
+$(function () {
+    let tableByCatEle = document.getElementById('tableByCat');
+    let tableByCat = CSTable.getInstance(tableByCatEle);
+
+    let tableByDeptEle = document.getElementById('tableByDept');
+    let tableByDept = CSTable.getInstance(tableByDeptEle);
+
+    reloadNow = () => {
+        tableByCat.fetch();
+        tableByDept.fetch();
+    }
+
+});
+
+</script>
+}

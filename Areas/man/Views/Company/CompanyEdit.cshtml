@@ -1,0 +1,277 @@
+﻿@model repairman.Models.CompanyModel
+@using CSHelper.Extensions
+@{
+    ViewData["Title"] = "更新分類";
+    Layout = "_Layout";
+}
+
+<div class="container h-100 d-flex flex-column">
+    <div class="row mb-3 mt-4">
+        <div class="col">
+            <button type="button" class="btn btn-light btn-back"><i class="fas fa-caret-left"></i></button>
+            <h2>@ViewData["Title"]</h2>
+        </div>
+    </div>
+    <form id="update" asp-action="CompanyUpdate" asp-route-id="@Model.ID">
+        @Html.AntiForgeryToken()
+        <div class="container text-center">
+            <div class="row mt-4">
+                <div class="col text-start">
+                    @Html.LabelFor(m => m.name, new { @class = "form-label form-view-hide" })
+                    @Html.TextBoxFor(m => m.name, new { @class = "form-control form-text", @Value = Model.name })
+                </div>
+                <div class="col text-start">
+                    @Html.LabelFor(m => m.nationalID, new { @class = "form-label form-view-hide" })
+                    @Html.TextBoxFor(m => m.nationalID, new { @class = "form-control form-text", @Value = Model.nationalID })
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-3 text-start">
+                    @Html.LabelFor(m => m.credit, new { @class = "form-label" })
+                    @Html.DropDownListFor(m => m.credit_id, (IEnumerable<SelectListItem>)ViewData["credit"], new { @class = "form-select" })
+                </div>
+                <div class="col-3 text-start">
+                    @Html.LabelFor(m => m.website, new { @class = "form-label form-view-hide" })
+                    @Html.TextBoxFor(m => m.website, new { @class = "form-control form-text", @Value = Model.website })
+                </div>
+                <div class="col-6"></div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-4 text-start">
+                    @Html.LabelFor(m => m.remarks, new { @class = "form-label form-view-hide" })
+                    @Html.TextAreaFor(m => m.remarks, new { @class = "form-control form-text", @Value = Model.remarks })
+                </div>
+                <div class="col-8"></div>
+            </div>
+<!-- FOR EACH PHONE -->
+            <div class="row mt-4">
+                <div class="col text-start">
+                    @if (Model.phone.Count > 0)
+                    {
+                        @Html.LabelFor(m => m.phone, new { @class = "form-label" })
+                    }
+                </div>
+
+                @for (var i = 0; i < Model.phone.Count(); i++)
+                {
+                    <div class="row mb-1" data-form-group="phone">
+                        <div class="col-auto">
+                            @Html.DropDownListFor(m => m.phone[i].type, CSHelper.Extensions.RenderingExtension.GetSelectList<PhoneType>(), new { @class = "form-control", @data_form_group_subname = "type" })
+                        </div>
+                        <div class="col-auto">
+                            @Html.TextBoxFor(m => m.phone[i].number, new { @class = "form-control", @data_form_group_subname = "number" })
+                        </div>
+                        <div class="col-auto">
+                            @Html.HiddenFor(m => m.phone[i].ID)
+                            @Html.Hidden("phone.Index", i)
+                            <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                }
+             </div>
+                
+<!-- END FOR EACH PHONES -->
+<!-- PHONE -->
+            <div class="row mt-4">
+                <div class="col text-start">
+                    @Html.LabelFor(m => m.phone, new { @class = "form-label" })
+                    <div class="row mb-1" data-form-group-start="phone">
+                        <div class="col-auto">
+                            <div class="row mb-1 d-none" data-form-group="phone">
+                                <div class="col-auto">
+                                    @Html.DropDownList("temp", CSHelper.Extensions.RenderingExtension.GetSelectList<PhoneType>(), new { @class = "form-select", @data_form_group_subname = "type" })
+                                </div>
+                                <div class="col-auto">
+                                    @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "number", @type = "tel" })
+                                </div>
+                                <div class="col-auto">
+                                    <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" type="button" onclick="formGroupAdd(this)">+ 增加</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+<!-- END PHONES -->
+<!-- FOR EACH ADDRESS -->
+            <div class="row mt-4">
+                <div class="col text-start">
+                    @if (Model.address.Count > 0)
+                    {
+                        @Html.LabelFor(m => m.address, new { @class = "form-label" })
+                    }
+                </div>
+
+                @for (var i = 0; i < Model.address.Count(); i++)
+                {
+                    <div class="row mb-1" data-form-group="address">
+                        <div class="col-auto">
+                            @Html.DropDownListFor(m => m.address[i].type, CSHelper.Extensions.RenderingExtension.GetSelectList<ContactType>(), new { @class = "form-control", @data_form_group_subname = "type" })
+                        </div>
+                        <div class="col-auto">
+                            @Html.TextBoxFor(m => m.address[i].addr, new { @class = "form-control", @data_form_group_subname = "addr" })
+                        </div>
+                        <div class="col-auto">
+                            @Html.HiddenFor(m => m.address[i].ID)
+                            @Html.Hidden("address.Index", i)
+                            <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+<!-- END FOR EACH ADDRESS-->
+<!-- ADDRESS -->
+            <div class="row mt-4">
+                <div class="col text-start">
+                    @Html.LabelFor(m => m.address, new { @class = "form-label" })
+
+                    <div class="row mb-1" data-form-group-start="address">
+                        <div class="col-auto">
+                            <div class="row mb-1 d-none" data-form-group="address">
+                                <div class="col-auto">
+                                    @Html.DropDownList("temp", CSHelper.Extensions.RenderingExtension.GetSelectList<ContactType>(), new { @class = "form-select", @data_form_group_subname = "type" })
+                                </div>
+                                <div class="col-auto">
+                                    @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "addr" })
+                                </div>
+                                <div class="col-auto">
+                                    <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" type="button" onclick="formGroupAdd(this)">+ 增加</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+<!-- END ADDRESS -->
+
+<!-- FOR EACH EMAIL -->
+            <div class="row mt-4">
+                <div class="col text-start">
+                    @if (Model.address.Count > 0)
+                    {
+                        @Html.LabelFor(m => m.email, new { @class = "form-label" })
+                    }
+                </div>
+
+                @for (var i = 0; i < Model.email.Count(); i++)
+                {
+                    <div class="row mb-1" data-form-group="email">
+                        <div class="col-auto">
+                            @Html.DropDownListFor(m => m.email[i].type, CSHelper.Extensions.RenderingExtension.GetSelectList<ContactType>(), new { @class = "form-control", @data_form_group_subname = "type" })
+                        </div>
+                        <div class="col-auto">
+                            @Html.TextBoxFor(m => m.email[i].email, new { @class = "form-control", @data_form_group_subname = "email" })
+                        </div>
+                        <div class="col-auto">
+                            @Html.HiddenFor(m => m.email[i].ID)
+                            @Html.Hidden("email.Index", i)
+                            <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+<!-- END FOR EACH EMAIL-->
+<!--EMAIL-->
+            <div class="row mt-4">
+                <div class="col text-start">
+                    @Html.LabelFor(m => m.email, new { @class = "form-label" })
+
+                    <div class="row mb-1" data-form-group-start="email">
+                        <div class="col-auto">
+                            <div class="row mb-1 d-none" data-form-group="email">
+                                <div class="col-auto">
+                                    @Html.DropDownList("temp", CSHelper.Extensions.RenderingExtension.GetSelectList<ContactType>(), new { @class = "form-select", @data_form_group_subname = "type" })
+                                </div>
+                                <div class="col-auto">
+                                    @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "email" })
+                                </div>
+                                <div class="col-auto">
+                                    <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" type="button" onclick="formGroupAdd(this)">+ 增加</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+<!--END EMAIL-->
+            <table class="table mt-4">
+                <thead>
+                    <tr>
+                        <th>@Html.Label("名稱")</th>
+                        <th>@Html.Label("職稱")</th>
+                        <th>@Html.Label("電話")</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (PersonaInCompanyViewModel person in ViewData["personas"] as IQueryable<PersonaInCompanyViewModel>)
+                    {
+                        <tr>
+                            <td>
+                                @person.name
+                            </td>
+                            <td>
+                                @person.job_title
+                            </td>
+                            <td>
+                                @person.phone
+                            </td>
+                        </tr>
+                    }
+                    
+                </tbody>
+            </table>
+
+            <div class="alert alert-danger d-none" role="alert">
+            </div>
+            <br />
+            <br />
+            <button type="submit" class="btn btn-primary mb-4 mt-4">更新</button>
+        </div>
+    </form>
+</div>
+    @section Scripts {
+
+        <script>
+
+            $(function () {
+
+                var form = $('#update');
+                form.initAsAjaxForm({
+                    success: function (data) {
+                        var result = createErrorList(data);
+                        if (result == null) {
+                            window.history.back();
+                        } else {
+                            var alert = form.find(".alert");
+                            alert.html(result);
+                            alert.removeClass('d-none');
+                        }
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        var alert = form.find(".alert");
+                        alert.text(AjaxErrorToString(xhr, textStatus, errorThrown));
+                        alert.removeClass('d-none');
+                    },
+                    validate: function () {
+                        return null
+                    }
+                });
+            });
+
+        </script>
+    }

@@ -1,0 +1,46 @@
+﻿@using CSHelper.Extensions
+@{
+    ViewData["Title"] = "將到期";
+    ViewData["AutoReload"] = true;
+    Layout = "_MenuLayout";
+}
+
+<div class="flex-grow-1 table-parent">
+
+    <table id="table"
+           data-cs-table
+           class="table h-100 table-hover"
+           data-cs-url="@Url.ActionLink("ProjectAll")"
+           data-cs-sort-field="nextInvoice"
+           data-cs-sort-order="desc"
+           data-cs-on-prepare-fetch="onPrepareFetch">
+        <thead>
+            <tr>
+                <th data-cs-field="id" data-cs-sortable="local">ID</th>
+                <th data-cs-field="number" data-cs-sortable="local">編號</th>
+                <th data-cs-field="name" data-cs-sortable="local">標案名稱</th>
+                <th data-cs-field="nextInvoice" data-cs-sortable="local">⽇期</th>
+                <th data-cs-field="item" data-cs-sortable="local">項⽬</th>
+            </tr>
+        </thead>
+    </table>
+
+</div>
+
+<div aria-hidden="true" role="dialog" tabindex="-1" id="modal-confirm-delete-popup" class="modal fade">
+    <div class="modal-dialog">
+    </div>
+</div>
+
+@section Scripts {
+
+<script>
+
+        function onPrepareFetch(params, options, table) {
+            params.append('search', '');
+            params.append('service_type', '');
+            params.append('status', '');
+        }
+
+</script>
+}
