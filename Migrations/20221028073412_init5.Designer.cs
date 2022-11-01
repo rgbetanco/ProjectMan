@@ -9,11 +9,11 @@ using repairman.Data;
 
 #nullable disable
 
-namespace repairman.Migrations
+namespace projectman.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20221019072339_initial1")]
-    partial class initial1
+    [Migration("20221028073412_init5")]
+    partial class init5
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -238,6 +238,62 @@ namespace repairman.Migrations
                     b.HasIndex("project_id");
 
                     b.ToTable("incoming_payment");
+                });
+
+            modelBuilder.Entity("repairman.Models.InvoiceItemModel", b =>
+                {
+                    b.Property<long>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
+
+                    b.Property<double>("amount")
+                        .HasColumnType("float");
+
+                    b.Property<long?>("incoming_payment_id")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("invoice_id")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("incoming_payment_id");
+
+                    b.HasIndex("invoice_id");
+
+                    b.ToTable("invoice_item");
+                });
+
+            modelBuilder.Entity("repairman.Models.InvoiceModel", b =>
+                {
+                    b.Property<long>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
+
+                    b.Property<double>("amount")
+                        .HasColumnType("float");
+
+                    b.Property<long?>("company_id")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("issue_date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("number")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("company_id");
+
+                    b.ToTable("invoice");
                 });
 
             modelBuilder.Entity("repairman.Models.Member", b =>
@@ -956,9 +1012,35 @@ namespace repairman.Migrations
                 {
                     b.HasOne("repairman.Models.ProjectModel", "project")
                         .WithMany("incoming_payment")
-                        .HasForeignKey("project_id");
+                        .HasForeignKey("project_id")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("project");
+                });
+
+            modelBuilder.Entity("repairman.Models.InvoiceItemModel", b =>
+                {
+                    b.HasOne("repairman.Models.IncomingPaymentModel", "incoming_payment")
+                        .WithMany()
+                        .HasForeignKey("incoming_payment_id");
+
+                    b.HasOne("repairman.Models.InvoiceModel", "invoice")
+                        .WithMany("invoice_item")
+                        .HasForeignKey("invoice_id")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("incoming_payment");
+
+                    b.Navigation("invoice");
+                });
+
+            modelBuilder.Entity("repairman.Models.InvoiceModel", b =>
+                {
+                    b.HasOne("repairman.Models.CompanyModel", "company")
+                        .WithMany()
+                        .HasForeignKey("company_id");
+
+                    b.Navigation("company");
                 });
 
             modelBuilder.Entity("repairman.Models.Member", b =>
@@ -978,7 +1060,8 @@ namespace repairman.Migrations
 
                     b.HasOne("repairman.Models.ProjectModel", "project")
                         .WithMany("outgoing_payment")
-                        .HasForeignKey("project_id");
+                        .HasForeignKey("project_id")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("company");
 
@@ -1058,7 +1141,8 @@ namespace repairman.Migrations
 
                     b.HasOne("repairman.Models.ProjectModel", "project")
                         .WithMany("product_list")
-                        .HasForeignKey("project_id");
+                        .HasForeignKey("project_id")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("brand");
 
@@ -1218,6 +1302,11 @@ namespace repairman.Migrations
             modelBuilder.Entity("repairman.Models.Dept", b =>
                 {
                     b.Navigation("requests");
+                });
+
+            modelBuilder.Entity("repairman.Models.InvoiceModel", b =>
+                {
+                    b.Navigation("invoice_item");
                 });
 
             modelBuilder.Entity("repairman.Models.PersonaModel", b =>

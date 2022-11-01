@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace repairman.Migrations
+namespace projectman.Migrations
 {
-    public partial class initial : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -504,7 +504,8 @@ namespace repairman.Migrations
                     project_id = table.Column<long>(type: "bigint", nullable: true),
                     issueDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     item = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    amount = table.Column<double>(type: "float", nullable: false)
+                    amount = table.Column<double>(type: "float", nullable: false),
+                    invoice = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -513,7 +514,8 @@ namespace repairman.Migrations
                         name: "FK_incoming_payment_project_project_id",
                         column: x => x.project_id,
                         principalTable: "project",
-                        principalColumn: "ID");
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -539,7 +541,8 @@ namespace repairman.Migrations
                         name: "FK_outgoing_payment_project_project_id",
                         column: x => x.project_id,
                         principalTable: "project",
-                        principalColumn: "ID");
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -571,7 +574,8 @@ namespace repairman.Migrations
                         name: "FK_product_list_project_project_id",
                         column: x => x.project_id,
                         principalTable: "project",
-                        principalColumn: "ID");
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(

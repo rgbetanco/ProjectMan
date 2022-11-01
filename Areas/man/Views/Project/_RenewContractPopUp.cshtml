@@ -1,0 +1,41 @@
+﻿<!--Modal Body Start-->
+<div class="modal-content">
+
+    <form id="renew" asp-action="RenewContract">
+        <!--Modal Header Start-->
+        <div class="modal-header">
+            <h4 class="modal-title">確認</h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="關閉" />
+        </div>
+        <!--Modal Header End-->
+
+        <div class="modal-body">
+
+            @Html.AntiForgeryToken()
+            @Html.Hidden("id", ViewData["ID"] )
+            <div class="mb-3">
+                是否要在現有項目的基礎上創建項目
+            </div>
+
+            <div class="alert alert-danger d-none" role="alert">
+            </div>
+
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+            <button type="submit" class="btn btn-primary">確定</button>
+        </div>
+    </form>
+    <script>
+
+        $(() => {
+            $("#renew").initAsAjaxForm({
+                success: function (data) {
+                    $(this).closest('.modal').modal('hide');
+                }
+            }
+            );
+        })
+    </script>
+</div>

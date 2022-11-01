@@ -80,7 +80,6 @@ namespace repairman.Areas.man.Controllers
             await TryUpdateModelListAsync(m, a => a.phone, b => b.number, b => b.type);
             await TryUpdateModelListAsync(m, a => a.address, b => b.addr, b => b.type);
             await TryUpdateModelListAsync(m, a => a.email, b => b.email, b => b.type);
-            //await TryUpdateModelListAsync(m, a => a.persona, b => b.persona_id);
 
             m = await _comp.CreateCompany(m);
 
@@ -163,7 +162,8 @@ namespace repairman.Areas.man.Controllers
             return await GetTableReplyAsync(result, request, null, r => new
             {
                 id = r.ID,
-                name = r.name
+                name = r.name,
+                vatid = r.nationalID
             }, true);
         }
 

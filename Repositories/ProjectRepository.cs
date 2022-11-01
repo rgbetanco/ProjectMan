@@ -46,7 +46,7 @@ namespace repairman.Repositories
                 return _context.ProductBrands.AsQueryable().Where(m => m.category == cat);
             } else
             {
-                return _context.ProductBrands.AsQueryable();
+                return _context.ProductBrands.AsQueryable().Where(m => m.category == ProductCategoryEnum.CategoryA);
             }
         }
         //GET MODELS 
@@ -59,7 +59,7 @@ namespace repairman.Repositories
             }
             else
             {
-                return _context.ProductModels.AsQueryable();
+                return _context.ProductModels.AsQueryable().Where(m => m.category == ProductCategoryEnum.CategoryA);
             }
         }
         //GET ALL CREDIT
@@ -119,6 +119,18 @@ namespace repairman.Repositories
             return result;
         }
 
+        public IQueryable<IncomingPaymentModel> FindIncomingPaymentByCompanyId(long company_id)
+        {
+            var result = _context.IncomingPayments.AsQueryable();
+
+            if (company_id > -1)
+            {
+                result = result.Where(u => u.project.company_id == company_id);
+            }
+
+            return result;
+        }
+
         public IQueryable<ProjectModel> FindAllProject()
         {
             return _context.Projects.AsQueryable();
@@ -129,6 +141,78 @@ namespace repairman.Repositories
             await _context.Projects.AddAsync(u);
 
             return u;
+        }
+
+        public async Task<ProjectModel> DupProject(ProjectModel u)
+        {
+            ProjectModel n = new ProjectModel();
+            n.name = u.name;
+            n.number = u.number;
+            n.remarks = u.remarks;
+            n.service_type = u.service_type;
+            n.status = u.status;
+            n.starting_datetime = u.starting_datetime;
+            n.ending_datetime = u.ending_datetime;
+            n.user_id  = u.user_id;
+            n.importance_id = u.importance_id;
+            n.company_id = u.company_id;
+            n.persona_id = u.persona_id;
+            n.contact_address = u.contact_address;
+            n.contact_phone = u.contact_phone;
+            n.connected_project_id = u.ID;
+
+            await _context.Projects.AddAsync(n);
+            await _context.SaveChangesAsync();
+
+            var proj = await _context.Projects.FindAsync(n.ID);
+            if (proj != null)
+            {
+                IList<ProductModel> product_list = new List<ProductModel>();
+                foreach(var i in u.product_list)
+                {
+                    product_list.Add( new ProductModel 
+                    { 
+                        project_id = proj.ID,
+                        product_brand_id = i.product_brand_id,
+                        product_model_id = i.product_model_id,
+                        category = i.category,
+                        serial_number = i.serial_number
+                    });
+                }
+
+                IList<IncomingPaymentModel> incoming_payment_list = new List<IncomingPaymentModel>();
+                foreach (var i in u.incoming_payment)
+                {
+                    incoming_payment_list.Add(new IncomingPaymentModel 
+                    {
+                        project_id = proj.ID,
+                        issueDate = i.issueDate,
+                        item = i.item,
+                        amount = i.amount,
+                        invoice = i.invoice
+                    });
+                }
+
+                IList<OutgoingPaymentModel> outgoing_payment_list = new List<OutgoingPaymentModel>();
+                foreach (var i in u.outgoing_payment)
+                {
+                    outgoing_payment_list.Add(new OutgoingPaymentModel 
+                    {
+                        project_id = proj.ID,
+                        issueDate = i.issueDate,
+                        company_id = i.company_id,
+                        amount = i.amount
+                    });
+                }
+
+                proj.product_list = product_list;
+                proj.incoming_payment = incoming_payment_list;
+                proj.outgoing_payment = outgoing_payment_list;
+
+                await _context.SaveChangesAsync();
+            }
+
+            return n;
         }
 
         public bool DelCompany(CompanyModel s)
@@ -156,5 +240,18 @@ namespace repairman.Repositories
             _context.Projects.Remove(s);
             return true;
         }
+
+        public IQueryable<ProjectModel> FindProjects(string keyword = null)
+        {
+            var result = _context.Projects.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(keyword))
+            {
+                result = result.Where(u => u.name.Contains(keyword) || u.remarks.Contains(keyword));
+            }
+
+            return result;
+        }
+
     }
 }

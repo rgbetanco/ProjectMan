@@ -15,12 +15,15 @@
         var is_active_admin = activeController == "Admin";
         var is_active_message = activeController == "ServiceRequest";
     }
-    <div id="dashboard" class="nav-item" data-bs-toggle="collapse" data-bs-target="#message_menu" @if (!is_active_message) { <text> aria-expanded="false" </text> }>
+    <div class="nav-item" data-bs-toggle="collapse" data-bs-target="#message_menu" @if (!is_active_message) { <text> aria-expanded="false" </text> }>
         <span class="collapsible">服務管理</span>
     </div>
 
     <div class="sidebar-submenu collapse @if (is_active_message) {<text>show</text> }" id="message_menu">
-
+        <a class="nav-item @((activeController=="Project" && activeAction=="Dashboard") ? "active" : "" )" asp-controller="Project" asp-action="Dashboard">
+            <span class="fa fa-gauge fa-fw me-3"></span>
+            <span class="collapsible">儀表板</span>
+        </a>
         <a class="nav-item @((activeController=="Project" && activeAction=="Index") ? "active" : "" )" asp-controller="Project" asp-action="Index">
             <span class="fa fa-tools fa-fw me-3"></span>
             <span class="collapsible">案件管理</span>
@@ -33,6 +36,10 @@
         <a class="nav-item  @((activeController=="Persona" && activeAction=="Index") ? "active" : "" )" asp-controller="Persona" asp-action="Index">
             <span class="fa fa-building fa-fw me-3"></span>
             <span class="collapsible">個⼈管理</span>
+        </a>
+        <a class="nav-item  @((activeController=="Invoice" && activeAction=="Index") ? "active" : "" )" asp-controller="Invoice" asp-action="Index">
+            <span class="fa fa-book-open fa-fw me-3"></span>
+            <span class="collapsible">發票</span>
         </a>
     </div>
 
@@ -92,7 +99,7 @@ enableAutoReload();
             $(dashboard).on('click', (e) => {
                 window.location.href = '@Url.Action("Dashboard")';
             });
-        }
+        });
 </script>
 @RenderSection("Scripts", required: false)
 }

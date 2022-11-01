@@ -44,7 +44,7 @@
             @Html.DropDownListFor(m => m.status, CSHelper.Extensions.RenderingExtension.GetSelectList<ProjectStatusEnum>(), new { @class = "form-select" })
         </div>
         <div class="col-2 mt-4">
-            <button class="btn btn-secondary">轉出新案</button>
+            @*<button class="btn btn-secondary">轉出新案</button>*@
         </div>
         <div class="col-4">
             @Html.LabelFor(m => m.starting_datetime, new { @class = "form-label form-view-hide" })
@@ -75,6 +75,7 @@
                     @Html.TextBoxFor(m => m.company.name, new { @class = "form-control",  @readonly = "readonly" })
                     <button type="button" class="btn btn-secondary btn-modal"
                             data-form-target ="#update"
+                            id="change-company"
                             data-url="@Url.Action("Picker", "Company")"
                             data-toggle="modal"
                             data-target="#modal-popup">
@@ -84,15 +85,7 @@
         </div>
         <div class="col-6">
                 <div class="input-group">
-                    @Html.HiddenFor(m => m.persona_id, new { @class = "form-control",  @readonly = "readonly" } )
-                    @Html.TextBoxFor(m => m.persona.name, new { @class = "form-control",  @readonly = "readonly" })
-                    <button type="button" class="btn btn-secondary btn-modal"
-                            data-form-target ="#update"
-                            data-url="@Url.Action("Picker", "Persona")"
-                            data-toggle="modal"
-                            data-target="#modal-popup">
-                        <i class="fa fa-crosshairs fa-fw"></i>
-                    </button>
+                    @Html.DropDownListFor(m => m.persona.name, (IEnumerable<SelectListItem>)ViewData["personas"], new { @class = "form-select" })
                 </div>
         </div>
     </div>
@@ -149,7 +142,7 @@
                 </tr>
             </tbody>
         </table>
-        <button class="btn btn-secondary" type="button" data-form-group-target="Product_List">新增成員</button>
+        <button class="btn btn-secondary" type="button" data-form-group-target="Product_List">+新增</button>
         <!-- Incoming payment -->
         <table class="table mt-4">
             <thead>
@@ -164,7 +157,7 @@
             <tbody>
                 <tr class="d-none" data-form-group-start="incoming_payment" data-form-group="incoming_payment">
                     <td scope="row">
-                        @Html.LocalDateTimeInput("temp", "", new { @class = "form-control", @data_form_group_subname = "issueDate" })
+                        @Html.LocalDateInput("temp","", new { @class = "form-control", @data_form_group_subname = "issueDate" })
                     </td>
                     <td scope="row">
                         @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "item" })
@@ -173,7 +166,7 @@
                         @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "amount" })
                     </td>
                     <td scope="row">
-                        @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "invoice" })
+                        @Html.TextBox("temp", "", new { @class = "form-control", @readonly = "readonly", @data_form_group_subname = "invoice" })
                     </td>
                     <td scope="row">
                         <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
@@ -183,7 +176,7 @@
                 </tr>
             </tbody>
         </table>
-        <button class="btn btn-secondary" type="button" data-form-group-target="incoming_payment">新增成員</button>
+        <button class="btn btn-secondary" type="button" data-form-group-target="incoming_payment">+新增</button>
         <!-- Outgoing payment -->
         <table class="table mt-4">
             <thead>
@@ -197,7 +190,7 @@
             <tbody>
                 <tr class="d-none" data-form-group-start="outgoing_payment" data-form-group="outgoing_payment">
                     <td scope="row">
-                        @Html.LocalDateTimeInput("temp", "", new { @class = "form-control", @data_form_group_subname = "issueDate" })
+                        @Html.LocalDateInput("temp", "", new { @class = "form-control", @data_form_group_subname = "issueDate" })
                     </td>
                     <td scope="row">
                         <div class="input-group">
@@ -223,7 +216,7 @@
                 </tr>
             </tbody>
         </table>
-        <button class="btn btn-secondary" type="button" data-form-group-target="outgoing_payment">新增成員</button>
+        <button class="btn btn-secondary mb-4" type="button" data-form-group-target="outgoing_payment">+新增</button>
     </form>
         
 </div>
@@ -231,6 +224,14 @@
 @section Scripts {
     <script>
         $(function () {
+
+            var $btnAddDiscount = $('#change-company');
+            $btnAddDiscount.on('modal-success', (evt, $formTarget, data) => {
+                console.log($formTarget.find('#persona_name'))
+                console.log(data.company_id)
+                UpdatePersona($formTarget.find('#persona_name'), data.company_id)
+            });
+
             var form = $('#update');
             form.initAsAjaxForm({
                 success: function (data) {
@@ -267,6 +268,13 @@
             $target.loadSelect(
                 '@HttpUtility.JavaScriptStringEncode(Url.Action("ListBrandForCategory", "Project"))',
                 { ID: _prod });
+        }
+
+        function UpdatePersona(_persona, _comp) {
+            var $target = _persona
+            $target.loadSelect(
+                '@HttpUtility.JavaScriptStringEncode(Url.Action("ListPersonaPerCompany", "Project"))',
+                { ID: _comp });
         }
 
         function UpdateModel(_prod, _this)

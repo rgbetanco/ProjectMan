@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using repairman.Data;
 
@@ -11,9 +12,10 @@ using repairman.Data;
 namespace projectman.Migrations
 {
     [DbContext(typeof(DBContext))]
-    partial class DBContextModelSnapshot : ModelSnapshot
+    [Migration("20221026084836_init1")]
+    partial class init1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,7 +46,7 @@ namespace projectman.Migrations
 
                     b.HasIndex("company_id");
 
-                    b.ToTable("company_address", (string)null);
+                    b.ToTable("company_address");
                 });
 
             modelBuilder.Entity("repairman.Models.CompanyEmailModel", b =>
@@ -69,7 +71,7 @@ namespace projectman.Migrations
 
                     b.HasIndex("company_id");
 
-                    b.ToTable("company_email", (string)null);
+                    b.ToTable("company_email");
                 });
 
             modelBuilder.Entity("repairman.Models.CompanyModel", b =>
@@ -99,7 +101,7 @@ namespace projectman.Migrations
 
                     b.HasIndex("credit_id");
 
-                    b.ToTable("company", (string)null);
+                    b.ToTable("company");
                 });
 
             modelBuilder.Entity("repairman.Models.CompanyPhoneModel", b =>
@@ -124,7 +126,7 @@ namespace projectman.Migrations
 
                     b.HasIndex("company_id");
 
-                    b.ToTable("company_phone", (string)null);
+                    b.ToTable("company_phone");
                 });
 
             modelBuilder.Entity("repairman.Models.ContactModel", b =>
@@ -146,7 +148,7 @@ namespace projectman.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("contact", (string)null);
+                    b.ToTable("contact");
                 });
 
             modelBuilder.Entity("repairman.Models.CreditModel", b =>
@@ -162,7 +164,7 @@ namespace projectman.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("credit", (string)null);
+                    b.ToTable("credit");
                 });
 
             modelBuilder.Entity("repairman.Models.Dept", b =>
@@ -182,7 +184,7 @@ namespace projectman.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Depts", (string)null);
+                    b.ToTable("Depts");
                 });
 
             modelBuilder.Entity("repairman.Models.Group", b =>
@@ -205,7 +207,7 @@ namespace projectman.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("group", (string)null);
+                    b.ToTable("group");
                 });
 
             modelBuilder.Entity("repairman.Models.IncomingPaymentModel", b =>
@@ -235,7 +237,7 @@ namespace projectman.Migrations
 
                     b.HasIndex("project_id");
 
-                    b.ToTable("incoming_payment", (string)null);
+                    b.ToTable("incoming_payment");
                 });
 
             modelBuilder.Entity("repairman.Models.InvoiceItemModel", b =>
@@ -261,7 +263,7 @@ namespace projectman.Migrations
 
                     b.HasIndex("invoice_id");
 
-                    b.ToTable("invoice_item", (string)null);
+                    b.ToTable("invoice_item");
                 });
 
             modelBuilder.Entity("repairman.Models.InvoiceModel", b =>
@@ -275,12 +277,6 @@ namespace projectman.Migrations
                     b.Property<double>("amount")
                         .HasColumnType("float");
 
-                    b.Property<long?>("company_id")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("created")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime>("issue_date")
                         .HasColumnType("datetime2");
 
@@ -289,9 +285,7 @@ namespace projectman.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("company_id");
-
-                    b.ToTable("invoice", (string)null);
+                    b.ToTable("invoice");
                 });
 
             modelBuilder.Entity("repairman.Models.Member", b =>
@@ -338,7 +332,7 @@ namespace projectman.Migrations
 
                     b.HasIndex("dept_id");
 
-                    b.ToTable("member", (string)null);
+                    b.ToTable("member");
                 });
 
             modelBuilder.Entity("repairman.Models.OutgoingPaymentModel", b =>
@@ -367,7 +361,7 @@ namespace projectman.Migrations
 
                     b.HasIndex("project_id");
 
-                    b.ToTable("outgoing_payment", (string)null);
+                    b.ToTable("outgoing_payment");
                 });
 
             modelBuilder.Entity("repairman.Models.PermGroup", b =>
@@ -391,7 +385,7 @@ namespace projectman.Migrations
 
                     b.HasIndex("group_id");
 
-                    b.ToTable("perm_group", (string)null);
+                    b.ToTable("perm_group");
                 });
 
             modelBuilder.Entity("repairman.Models.PersonaAddressModel", b =>
@@ -416,7 +410,7 @@ namespace projectman.Migrations
 
                     b.HasIndex("persona_id");
 
-                    b.ToTable("persona_address", (string)null);
+                    b.ToTable("persona_address");
                 });
 
             modelBuilder.Entity("repairman.Models.PersonaCompanyModel", b =>
@@ -442,7 +436,7 @@ namespace projectman.Migrations
 
                     b.HasIndex("persona_id");
 
-                    b.ToTable("persona_company", (string)null);
+                    b.ToTable("persona_company");
                 });
 
             modelBuilder.Entity("repairman.Models.PersonaEmailModel", b =>
@@ -467,7 +461,7 @@ namespace projectman.Migrations
 
                     b.HasIndex("persona_id");
 
-                    b.ToTable("persona_email", (string)null);
+                    b.ToTable("persona_email");
                 });
 
             modelBuilder.Entity("repairman.Models.PersonaModel", b =>
@@ -489,7 +483,7 @@ namespace projectman.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("persona", (string)null);
+                    b.ToTable("persona");
                 });
 
             modelBuilder.Entity("repairman.Models.PersonaPhoneModel", b =>
@@ -517,7 +511,7 @@ namespace projectman.Migrations
 
                     b.HasIndex("persona_id");
 
-                    b.ToTable("persona_phone", (string)null);
+                    b.ToTable("persona_phone");
                 });
 
             modelBuilder.Entity("repairman.Models.ProductBrandModel", b =>
@@ -536,7 +530,7 @@ namespace projectman.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("product_brand", (string)null);
+                    b.ToTable("product_brand");
                 });
 
             modelBuilder.Entity("repairman.Models.ProductModel", b =>
@@ -570,7 +564,7 @@ namespace projectman.Migrations
 
                     b.HasIndex("project_id");
 
-                    b.ToTable("product_list", (string)null);
+                    b.ToTable("product_list");
                 });
 
             modelBuilder.Entity("repairman.Models.ProductModelModel", b =>
@@ -589,7 +583,7 @@ namespace projectman.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("product_model", (string)null);
+                    b.ToTable("product_model");
                 });
 
             modelBuilder.Entity("repairman.Models.ProjectModel", b =>
@@ -651,7 +645,7 @@ namespace projectman.Migrations
 
                     b.HasIndex("user_id");
 
-                    b.ToTable("project", (string)null);
+                    b.ToTable("project");
                 });
 
             modelBuilder.Entity("repairman.Models.ServiceRequest", b =>
@@ -703,7 +697,7 @@ namespace projectman.Migrations
 
                     b.HasIndex("sub_cat_id");
 
-                    b.ToTable("ServiceRequests", (string)null);
+                    b.ToTable("ServiceRequests");
                 });
 
             modelBuilder.Entity("repairman.Models.ServiceRequestCat", b =>
@@ -723,7 +717,7 @@ namespace projectman.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("ServiceRequestCats", (string)null);
+                    b.ToTable("ServiceRequestCats");
                 });
 
             modelBuilder.Entity("repairman.Models.ServiceRequestFile", b =>
@@ -748,7 +742,7 @@ namespace projectman.Migrations
 
                     b.HasIndex("request_id");
 
-                    b.ToTable("ServiceRequestFiles", (string)null);
+                    b.ToTable("ServiceRequestFiles");
                 });
 
             modelBuilder.Entity("repairman.Models.ServiceRequestPic", b =>
@@ -775,7 +769,7 @@ namespace projectman.Migrations
 
                     b.HasIndex("request_id");
 
-                    b.ToTable("ServiceRequestPics", (string)null);
+                    b.ToTable("ServiceRequestPics");
                 });
 
             modelBuilder.Entity("repairman.Models.ServiceRequestReply", b =>
@@ -813,7 +807,7 @@ namespace projectman.Migrations
 
                     b.HasIndex("user_id");
 
-                    b.ToTable("ServiceRequestReplies", (string)null);
+                    b.ToTable("ServiceRequestReplies");
                 });
 
             modelBuilder.Entity("repairman.Models.ServiceRequestReplyFile", b =>
@@ -838,7 +832,7 @@ namespace projectman.Migrations
 
                     b.HasIndex("reply_id");
 
-                    b.ToTable("ServiceRequestReplyFiles", (string)null);
+                    b.ToTable("ServiceRequestReplyFiles");
                 });
 
             modelBuilder.Entity("repairman.Models.ServiceRequestReplyPic", b =>
@@ -865,7 +859,7 @@ namespace projectman.Migrations
 
                     b.HasIndex("reply_id");
 
-                    b.ToTable("ServiceRequestReplyPics", (string)null);
+                    b.ToTable("ServiceRequestReplyPics");
                 });
 
             modelBuilder.Entity("repairman.Models.ServiceRequestSubCat", b =>
@@ -890,7 +884,7 @@ namespace projectman.Migrations
 
                     b.HasIndex("cat_id");
 
-                    b.ToTable("ServiceRequestSubCats", (string)null);
+                    b.ToTable("ServiceRequestSubCats");
                 });
 
             modelBuilder.Entity("repairman.Models.User", b =>
@@ -938,7 +932,7 @@ namespace projectman.Migrations
                     b.HasIndex("username")
                         .IsUnique();
 
-                    b.ToTable("user", (string)null);
+                    b.ToTable("user");
                 });
 
             modelBuilder.Entity("repairman.Models.UserGroup", b =>
@@ -961,7 +955,7 @@ namespace projectman.Migrations
 
                     b.HasIndex("user_id");
 
-                    b.ToTable("user_group", (string)null);
+                    b.ToTable("user_group");
                 });
 
             modelBuilder.Entity("repairman.Models.CompanyAddressModel", b =>
@@ -1030,15 +1024,6 @@ namespace projectman.Migrations
                     b.Navigation("incoming_payment");
 
                     b.Navigation("invoice");
-                });
-
-            modelBuilder.Entity("repairman.Models.InvoiceModel", b =>
-                {
-                    b.HasOne("repairman.Models.CompanyModel", "company")
-                        .WithMany()
-                        .HasForeignKey("company_id");
-
-                    b.Navigation("company");
                 });
 
             modelBuilder.Entity("repairman.Models.Member", b =>

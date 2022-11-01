@@ -58,11 +58,33 @@ namespace repairman.Data
         public DbSet<ProductModel> Products { get; set; }
         public DbSet<IncomingPaymentModel> IncomingPayments { get; set; }
         public DbSet<OutgoingPaymentModel> OutgoingPayments { get; set; }
+        public DbSet<InvoiceModel> Invoices { get; set; }
+        public DbSet<InvoiceItemModel> InvoiceItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
+            //Invoice
+            builder.Entity<InvoiceModel>()
+                .HasMany(e => e.invoice_item)
+                .WithOne(e => e.invoice)
+                .OnDelete(DeleteBehavior.Cascade);
+            // Project product list
+            builder.Entity<ProjectModel>()
+                .HasMany(e => e.product_list)
+                .WithOne(e => e.project)
+                .OnDelete(DeleteBehavior.Cascade);
+            // Project incoming payment
+            builder.Entity<ProjectModel>()
+                .HasMany(e => e.incoming_payment)
+                .WithOne(e => e.project)
+                .OnDelete(DeleteBehavior.Cascade);
+            // Project outcoming payment
+            builder.Entity<ProjectModel>()
+                .HasMany(e => e.outgoing_payment)
+                .WithOne(e => e.project)
+                .OnDelete(DeleteBehavior.Cascade);
             // Company phones
             builder.Entity<CompanyModel>()
                 .HasMany(e => e.phone)

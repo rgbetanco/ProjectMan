@@ -27,5 +27,8 @@ namespace repairman.Repositories
         bool DelCompany(CompanyModel s);
         IQueryable<IncomingPaymentModel> GetNextDueIncomingPayment();
         bool DelProject(ProjectModel s);
+        Task<ProjectModel> DupProject(ProjectModel u);
+        IQueryable<ProjectModel> FindProjects(string keyword = null);
+        IQueryable<IncomingPaymentModel> FindIncomingPaymentByCompanyId(long company_id);
     }
 }

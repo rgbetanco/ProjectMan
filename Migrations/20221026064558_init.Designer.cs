@@ -9,11 +9,11 @@ using repairman.Data;
 
 #nullable disable
 
-namespace repairman.Migrations
+namespace projectman.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20221018091525_initial")]
-    partial class initial
+    [Migration("20221026064558_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -220,6 +220,9 @@ namespace repairman.Migrations
 
                     b.Property<double>("amount")
                         .HasColumnType("float");
+
+                    b.Property<string>("invoice")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("issueDate")
                         .HasColumnType("datetime2");
@@ -953,7 +956,8 @@ namespace repairman.Migrations
                 {
                     b.HasOne("repairman.Models.ProjectModel", "project")
                         .WithMany("incoming_payment")
-                        .HasForeignKey("project_id");
+                        .HasForeignKey("project_id")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("project");
                 });
@@ -975,7 +979,8 @@ namespace repairman.Migrations
 
                     b.HasOne("repairman.Models.ProjectModel", "project")
                         .WithMany("outgoing_payment")
-                        .HasForeignKey("project_id");
+                        .HasForeignKey("project_id")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("company");
 
@@ -1055,7 +1060,8 @@ namespace repairman.Migrations
 
                     b.HasOne("repairman.Models.ProjectModel", "project")
                         .WithMany("product_list")
-                        .HasForeignKey("project_id");
+                        .HasForeignKey("project_id")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("brand");
 

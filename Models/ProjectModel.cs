@@ -151,7 +151,7 @@ namespace repairman.Models
         [Display(Name = "型號")]
         public long? product_model_id { get; set; }
     }
-    
+
     [Table("product_list")]
     public class ProductModel : ProductCategoryFK
     {
@@ -175,7 +175,7 @@ namespace repairman.Models
         [Display(Name = "⽇期")]
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "yyyy-MM-dd")]
-        public DateTime issueDate { get; set; }
+        public DateTime issueDate { get; set; } = DateTime.UtcNow;
 
         [Display(Name = "項⽬")]
         public string item { get; set; }
@@ -184,8 +184,6 @@ namespace repairman.Models
         public double amount { get; set; }
 
         [Display(Name = "發票")]
-        [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "yyyy-MM-dd")]
         public string invoice { get; set; }
     }
     public enum ProductCategoryEnum : int
@@ -223,7 +221,7 @@ namespace repairman.Models
         public long? project_id { get; set; }
 
         [Display(Name = "⽇期")]
-        [DataType(DataType.Date)]
+        [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "yyyy-MM-dd")]
         public DateTime issueDate { get; set; }
 
@@ -261,10 +259,10 @@ namespace repairman.Models
         [Display(Name = "網址")]
         public string website { get; set; }
         //PHONE NUMBER
-        [Display  (Name = "電話")]
+        [Display(Name = "電話")]
         public IList<CompanyPhoneModel> phone { get; set; }
         //ADDRESS
-        [Display (Name = "地址")]
+        [Display(Name = "地址")]
         public IList<CompanyAddressModel> address { get; set; }
         //EMAIL
         [Display(Name = "電⼦信箱")]
@@ -493,6 +491,9 @@ namespace repairman.Models
 
     public class PersonaInCompanyViewModel
     {
+        [Display(Name = "ID")]
+        public long ID { get; set; }
+
         [Display(Name = "名稱")]
         public string name { get; set; }
         [Display(Name = "職稱")]
@@ -508,5 +509,49 @@ namespace repairman.Models
         public string job_title { get; set; }
     }
     #endregion
-    
+    #region Invoice
+    [Table("invoice")]
+    public class InvoiceModel : UsesID
+    {
+        [Display(Name = "公司名稱")]
+        [ForeignKey("company_id")]
+        public virtual CompanyModel company { get; set; }
+
+        [Display(Name = "公司名稱")]
+        public long? company_id { get; set; }
+        [Display(Name = "發票號碼")]
+        public string number { get; set; }
+
+        [Display(Name = "開立日期")]
+        [DataType(DataType.DateTime)]
+        [DisplayFormat(DataFormatString = "yyyy-MM-dd, HH:mm:ss.FFF")]
+        public DateTime issue_date { get; set; }
+        [Display(Name = "小計")]
+        public double amount { get; set; }
+        public IList<InvoiceItemModel> invoice_item { get; set; }
+        [Display(Name = "⽇期")]
+        [DataType(DataType.DateTime)]
+        [DisplayFormat(DataFormatString = "yyyy-MM-dd, HH:mm:ss.FFF")]
+        public DateTime created { get; set; } = DateTime.Now;
+    }
+    [Table("invoice_item")]
+    public class InvoiceItemModel : UsesID
+    {
+        [Display(Name = "ID")]
+        [ForeignKey("invoice_id")]
+        public virtual InvoiceModel invoice { get; set; }
+
+        [Display(Name = "ID")]
+        public long? invoice_id { get; set; }
+
+        [Display(Name = "Payment_ID")]
+        [ForeignKey("incoming_payment_id")]
+        public virtual IncomingPaymentModel incoming_payment { get; set; }
+
+        [Display(Name = "Payment_ID")]
+        public long? incoming_payment_id { get; set; }
+        [Display(Name = "小計")]
+        public double amount { get; set; }
+    }
+    #endregion
 }

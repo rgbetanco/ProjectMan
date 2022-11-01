@@ -53,6 +53,13 @@
                 </div>
 
                 <div class="mb-3">
+                    @Html.LabelFor(m => m.isSalePerson, new { @class = "form-label" })
+                    <div>
+                        @Html.CheckBoxFor(m => m.isSalePerson, new { @class = "form-check-input" })
+                    </div>
+                </div>
+
+                <div class="mb-3">
                     <label class="form-label">狀態</label>
                     <div>
                         <div class="form-check">

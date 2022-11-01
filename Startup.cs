@@ -40,6 +40,7 @@ namespace repairman
             services.AddScoped<IProjectRepository, ProjectRepository>();
             services.AddScoped<ICompanyRepository, CompanyRepository>();
             services.AddScoped<IPersonaRepository, PersonaRepository>();
+            services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 
             services.AddScoped<ILDAPClient, LDAPClient>();
 

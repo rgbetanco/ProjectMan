@@ -38,17 +38,13 @@
             <!-- FOR EACH PHONE -->
             <div class="row mt-4">
                 <div class="col text-start">
-                    @if (Model.phone.Count > 0)
-                    {
-                        @Html.LabelFor(m => m.phone, new { @class = "form-label" })
-                    }
+                    @Html.LabelFor(m => m.phone, new { @class = "form-label" })
                 </div>
-
                 @for (var i = 0; i < Model.phone.Count(); i++)
                 {
                     <div class="row mb-1" data-form-group="phone">
                         <div class="col-auto">
-                            @Html.DropDownListFor(m => m.phone[i].type, CSHelper.Extensions.RenderingExtension.GetSelectList<PhoneType>(), new { @class = "form-control", @data_form_group_subname = "type" })
+                            @Html.DropDownListFor(m => m.phone[i].type, CSHelper.Extensions.RenderingExtension.GetSelectList<PhoneType>(), new { @class = "form-select form-control", @data_form_group_subname = "type" })
                         </div>
                         <div class="col-auto">
                             @Html.TextBoxFor(m => m.phone[i].number, new { @class = "form-control", @data_form_group_subname = "number" })
@@ -68,54 +64,45 @@
                         </div>
                     </div>
                 }
-            </div>
-
-            <!-- END FOR EACH PHONES -->
-            <!-- PHONE -->
-            <div class="row mt-4">
-                <div class="col text-start">
-                    @Html.LabelFor(m => m.phone, new { @class = "form-label" })
-                    <div class="row mb-1" data-form-group-start="phone">
-                        <div class="col-auto">
-                            <div class="row mb-1 d-none" data-form-group="phone">
-                                <div class="col-auto">
-                                    @Html.DropDownList("temp", CSHelper.Extensions.RenderingExtension.GetSelectList<PhoneType>(), new { @class = "form-select", @data_form_group_subname = "type" })
-                                </div>
-                                <div class="col-auto">
-                                    @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "number", @type = "tel" })
-                                </div>
-                                <div class="col-auto">
-                                    <div class="form-check">
-                                        @Html.CheckBox("temp", new {@class = "form-check-input", @data_form_group_subname = "default_number" })
-                                        @Html.LabelFor(m => m.phone.FirstOrDefault().default_number)
-                                    </div>
-                                </div>
-                                <div class="col-auto">
-                                    <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
-                                        <i class="fa fa-trash" aria-hidden="true"></i>
-                                    </button>
+                <div class="row mb-1" data-form-group-start="phone">
+                    <div class="col-auto">
+                        <div class="row mb-1 d-none" data-form-group="phone">
+                            <div class="col-auto">
+                                @Html.DropDownList("temp", CSHelper.Extensions.RenderingExtension.GetSelectList<PhoneType>(), new { @class = "form-select", @data_form_group_subname = "type" })
+                            </div>
+                            <div class="col-auto">
+                                @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "number", @type = "tel" })
+                            </div>
+                            <div class="col-auto">
+                                <div class="form-check">
+                                    @Html.CheckBox("temp", new {@class = "form-check-input", @data_form_group_subname = "default_number" })
+                                    @Html.LabelFor(m => m.phone.FirstOrDefault().default_number)
                                 </div>
                             </div>
-                            <button class="btn btn-primary" type="button" onclick="formGroupAdd(this)">+ 增加</button>
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                </button>
+                            </div>
                         </div>
+                        <button class="btn btn-primary" type="button" onclick="formGroupAdd(this)">+ 增加</button>
                     </div>
                 </div>
             </div>
-            <!-- END PHONES -->
-            <!-- FOR EACH ADDRESS -->
+           <!-- END FOR EACH PHONES -->
+           <!-- FOR EACH ADDRESS -->
             <div class="row mt-4">
                 <div class="col text-start">
-                    @if (Model.address.Count > 0)
-                    {
+                    
                         @Html.LabelFor(m => m.address, new { @class = "form-label" })
-                    }
+                    
                 </div>
 
                 @for (var i = 0; i < Model.address.Count(); i++)
                 {
                     <div class="row mb-1" data-form-group="address">
                         <div class="col-auto">
-                            @Html.DropDownListFor(m => m.address[i].type, CSHelper.Extensions.RenderingExtension.GetSelectList<ContactType>(), new { @class = "form-control", @data_form_group_subname = "type" })
+                            @Html.DropDownListFor(m => m.address[i].type, CSHelper.Extensions.RenderingExtension.GetSelectList<ContactType>(), new { @class = "form-select form-control", @data_form_group_subname = "type" })
                         </div>
                         <div class="col-auto">
                             @Html.TextBoxFor(m => m.address[i].addr, new { @class = "form-control", @data_form_group_subname = "addr" })
@@ -129,48 +116,41 @@
                         </div>
                     </div>
                 }
-            </div>
-            <!-- END FOR EACH ADDRESS-->
-            <!-- ADDRESS -->
-            <div class="row mt-4">
-                <div class="col text-start">
-                    @Html.LabelFor(m => m.address, new { @class = "form-label" })
-
-                    <div class="row mb-1" data-form-group-start="address">
-                        <div class="col-auto">
-                            <div class="row mb-1 d-none" data-form-group="address">
-                                <div class="col-auto">
-                                    @Html.DropDownList("temp", CSHelper.Extensions.RenderingExtension.GetSelectList<ContactType>(), new { @class = "form-select", @data_form_group_subname = "type" })
-                                </div>
-                                <div class="col-auto">
-                                    @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "addr" })
-                                </div>
-                                <div class="col-auto">
-                                    <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
-                                        <i class="fa fa-trash" aria-hidden="true"></i>
-                                    </button>
-                                </div>
+                <div class="row mb-1" data-form-group-start="address">
+                    <div class="col-auto">
+                        <div class="row mb-1 d-none" data-form-group="address">
+                            <div class="col-auto">
+                                @Html.DropDownList("temp", CSHelper.Extensions.RenderingExtension.GetSelectList<ContactType>(), new { @class = "form-select", @data_form_group_subname = "type" })
                             </div>
-                            <button class="btn btn-primary" type="button" onclick="formGroupAdd(this)">+ 增加</button>
+                            <div class="col-auto">
+                                @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "addr" })
+                            </div>
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                </button>
+                            </div>
                         </div>
+                        <button class="btn btn-primary" type="button" onclick="formGroupAdd(this)">+ 增加</button>
                     </div>
                 </div>
             </div>
-            <!-- END ADDRESS -->
+            <!-- END FOR EACH ADDRESS-->
+            
             <!-- FOR EACH EMAIL -->
             <div class="row mt-4">
                 <div class="col text-start">
-                    @if (Model.address.Count > 0)
-                    {
+                    
+                    
                         @Html.LabelFor(m => m.email, new { @class = "form-label" })
-                    }
+                    
                 </div>
 
                 @for (var i = 0; i < Model.email.Count(); i++)
                 {
                     <div class="row mb-1" data-form-group="email">
                         <div class="col-auto">
-                            @Html.DropDownListFor(m => m.email[i].type, CSHelper.Extensions.RenderingExtension.GetSelectList<ContactType>(), new { @class = "form-control", @data_form_group_subname = "type" })
+                            @Html.DropDownListFor(m => m.email[i].type, CSHelper.Extensions.RenderingExtension.GetSelectList<ContactType>(), new { @class = "form-select form-control", @data_form_group_subname = "type" })
                         </div>
                         <div class="col-auto">
                             @Html.TextBoxFor(m => m.email[i].email, new { @class = "form-control", @data_form_group_subname = "email" })
@@ -184,34 +164,27 @@
                         </div>
                     </div>
                 }
-            </div>
-            <!-- END FOR EACH EMAIL-->
-            <!--EMAIL-->
-            <div class="row mt-4">
-                <div class="col text-start">
-                    @Html.LabelFor(m => m.email, new { @class = "form-label" })
-
-                    <div class="row mb-1" data-form-group-start="email">
-                        <div class="col-auto">
-                            <div class="row mb-1 d-none" data-form-group="email">
-                                <div class="col-auto">
-                                    @Html.DropDownList("temp", CSHelper.Extensions.RenderingExtension.GetSelectList<ContactType>(), new { @class = "form-select", @data_form_group_subname = "type" })
-                                </div>
-                                <div class="col-auto">
-                                    @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "email" })
-                                </div>
-                                <div class="col-auto">
-                                    <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
-                                        <i class="fa fa-trash" aria-hidden="true"></i>
-                                    </button>
-                                </div>
+                <div class="row mb-1" data-form-group-start="email">
+                    <div class="col-auto">
+                        <div class="row mb-1 d-none" data-form-group="email">
+                            <div class="col-auto">
+                                @Html.DropDownList("temp", CSHelper.Extensions.RenderingExtension.GetSelectList<ContactType>(), new { @class = "form-select", @data_form_group_subname = "type" })
                             </div>
-                            <button class="btn btn-primary" type="button" onclick="formGroupAdd(this)">+ 增加</button>
+                            <div class="col-auto">
+                                @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "email" })
+                            </div>
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                </button>
+                            </div>
                         </div>
+                        <button class="btn btn-primary" type="button" onclick="formGroupAdd(this)">+ 增加</button>
                     </div>
                 </div>
             </div>
-            <!--END EMAIL-->
+            <!-- END FOR EACH EMAIL-->
+            
             <table class="table mt-4">
                 <thead>
                     <tr>
@@ -228,8 +201,17 @@
                             <div class="input-group">
                                 @Html.HiddenFor(m => m.personas_company[i].company_id, new { @data_form_group_subname = "company_id" } )
                                 @Html.HiddenFor(m => m.personas_company[i].ID)
-                                    @Html.Hidden("personas_company.Index", i)
-                                @Html.TextBoxFor(m => m.personas_company[i].company.name, "", new { @class = "form-control",  @readonly = "readonly", @data_form_group_subname = "company.name" })
+                                @Html.Hidden("personas_company.Index", i)
+                                <div class="input-group flex-nowrap">
+                                    @Html.TextBoxFor(m => m.personas_company[i].company.name, "", new { @class = "form-control",  @readonly = "readonly", @data_form_group_subname = "company.name" })
+                                    <button type="button" class="btn btn-secondary btn-modal"
+                                        data-form-group-target="personas_company"
+                                        data-url="@Url.Action("Picker", "Company")"
+                                        data-toggle="modal"
+                                        data-target="#modal-popup">
+                                        <i class="fa fa-pen"></i>
+                                    </button>
+                                </div>
                             </div>
                         </td>
                             <td>@Html.TextBoxFor(m => m.personas_company[i].job_title, "", new { @class = "form-control", @data_form_group_subname = "job_title" })</td>

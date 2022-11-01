@@ -70,7 +70,7 @@ namespace repairman.Repositories
 
         public IQueryable<PersonaInCompanyViewModel> GetPersonaPerCompany(long comp_id)
         {
-            var q = (from pc in _context.PersonaCompanies join p in _context.Personas on pc.persona_id equals p.ID where pc.company_id == comp_id select new PersonaInCompanyViewModel { name = p.name, job_title = pc.job_title, phone = p.phone.Where(m => m.default_number == true).FirstOrDefault().number }).AsNoTracking();
+            var q = (from pc in _context.PersonaCompanies join p in _context.Personas on pc.persona_id equals p.ID where pc.company_id == comp_id select new PersonaInCompanyViewModel { ID = p.ID, name = p.name, job_title = pc.job_title, phone = p.phone.Where(m => m.default_number == true).FirstOrDefault().number }).AsNoTracking();
             return q;
         }
 

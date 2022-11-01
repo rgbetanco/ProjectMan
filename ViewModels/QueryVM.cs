@@ -15,6 +15,7 @@ namespace repairman.Models
         public int? offset { get; set; }
         public string search { get; set; }
         public string searchPhone { get; set; }
+        public long? company_id { get; set; }
         public ProjectStatusEnum? status { get; set; }
         public ServiceTypeEnum? service_type { get; set; }
 

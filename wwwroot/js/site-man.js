@@ -172,7 +172,7 @@ function enableAutoReload() {
                 window.location.reload();
             }
         }
-    });
+    })
 }
 
 // update datetime input field using hidden utc date input field
@@ -962,7 +962,7 @@ function _formGroupPrepareAdd(element) {
 
 function _formGroupFinalizeAdd($group, $parent) {
     let event = $.Event('form-group-add');
-    var childFields = $group.find("[data-form-group-subname]");
+    var childFields = $group.find("input[data-form-group-subname]");
 
     // add to form
     $group.insertBefore($parent);
@@ -1041,19 +1041,31 @@ function formGroupApplyData($formGroup, data) {
     prefix = (prefix != null) ? `${prefix}.` : ""
 
     $.each(data, function (name, value) {
-        let optional = name.startsWith('*');
-        let $e = $formGroup.find(`input[name='${prefix}${(optional) ? name.substring(1) : name}']`);
+        let optional = name.startsWith('*')
+        let subname = (optional) ? name.substring(1) : name
+        let $e = $formGroup.find(`[name='${prefix}${subname}']`)
 
-        // checkboxes and radio buttons will always be set even if the field is optional
-        if ($e.is(":checkbox") || $e.is(":radio")) {
-            if (value) {
-                $e.prop('checked', value);
-            } else {
-                $e.removeProp('checked');
-            }
-        } else if (!optional || $e.val() == '') {
-            $e.val(value);
+        if ($e.length == 0 ) {
+            // see if we can find using data-form-group-subname
+            $e = $formGroup.find(`[data-form-group-subname='${subname}']`);
         }
+
+        $e.each(function (idx) {
+            let $this = $(this);
+            if ($this.is(":checkbox") || $this.is(":radio")) {
+                // checkboxes and radio buttons will always be set even if the field is optional
+                if (value) {
+                    $this.prop('checked', value);
+                } else {
+                    $this.removeProp('checked');
+                }
+            } else if (!optional || $this.val() == '') {
+                if ($this.is("input"))
+                    $this.val(value);
+                else
+                    $this.text(value);
+            }
+        })
     });
 }
 

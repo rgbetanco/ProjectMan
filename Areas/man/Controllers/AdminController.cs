@@ -62,6 +62,7 @@ namespace repairman.Areas.Man.Controllers
                 a => a.username,
                 a => a.UnencryptedPassword,
                 a => a.desc,
+                a => a.isSalePerson,
                 a => a.perm
             ))
             {
@@ -119,6 +120,7 @@ namespace repairman.Areas.Man.Controllers
                 a => a.username,
                 a => a.UnencryptedPassword,
                 a => a.desc,
+                a => a.isSalePerson,
                 a => a.perm
             ))
             {

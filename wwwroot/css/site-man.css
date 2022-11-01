@@ -1,10 +1,15 @@
-/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
 a.navbar-brand {
+    margin-left: 8px;
     white-space: normal;
     text-align: center;
     word-break: break-all;
+}
+
+a.navbar-brand img {
+    height: 30px;
 }
 
 /* Provide sufficient contrast against white background */
@@ -73,18 +78,6 @@ html {
 
 .voucher-icon {
     width: 4em;
-}
-
-ul.dl li {
-    list-style-type: none;
-    list-style: none;
-}
-
-ul.dl li::before {
-    content: "\f56d";
-    font-family: "Font Awesome 5 Free";
-    font-weight: 900;
-    margin-right: .5em;
 }
 
 /* "md" type and up */
@@ -183,6 +176,15 @@ button#footer-show,button#footer-hide {
 
 #log-table {
     height: 300px;
+}
+
+#picker_list table.table tr:hover {
+    background-color: #8aa9cc;
+}
+
+#picker_list table.table tr.selected {
+    background-color: #0366d6;
+    color: white;
 }
 
 #leftpane-container {
@@ -400,7 +402,10 @@ input[type="checkbox"].toggle:checked:after {
     display: none;
 }
 
-.form-viewmode :not(.form-check-alwaysshow) input[type="checkbox"]:not(:checked), .form-viewmode :not(.form-check-alwaysshow) input[type="checkbox"]:not(:checked):not(.form-check-alwaysshow) + label {
+.form-viewmode :not(.form-check-alwaysshow) input[type="checkbox"]:not(:checked),
+.form-viewmode :not(.form-check-alwaysshow) input[type="checkbox"]:not(:checked):not(.form-check-alwaysshow) + label,
+.form-viewmode :not(.form-check-alwaysshow) input[type="radio"]:not(:checked),
+.form-viewmode :not(.form-check-alwaysshow) input[type="radio"]:not(:checked):not(.form-check-alwaysshow) + label {
     display: none;
 }
 
@@ -417,6 +422,11 @@ input[type="checkbox"].toggle:checked:after {
     font-weight: bold;
     margin-top: 1em;
     margin-bottom: 0em;
+}
+
+.form-viewmode .input-group-text {
+    background: none;
+    border: none;
 }
 
 .form-label {

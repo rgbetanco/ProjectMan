@@ -11,6 +11,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using static repairman.Models.History;
+using Microsoft.Identity.Client;
+using Azure.Core;
 
 namespace repairman.Areas.Man.Controllers
 {
@@ -66,6 +68,16 @@ namespace repairman.Areas.Man.Controllers
 
             return result;
         }
+        
+        protected IEnumerable<SelectListItem> GetPersonasList(long comp_id)
+        {
+            var r = _persona.GetPersonaPerCompany(comp_id).Select(n => new SelectListItem { Value = n.ID.ToString(), Text = n.name });
+            if (!r.Any())
+            {
+                r.Append(new SelectListItem { Value = "所有", Text = "所有" });
+            }
+            return r;
+        }
 
         public async Task<IActionResult> ProjectQuery(QueryVM request)
         {
@@ -116,6 +128,7 @@ namespace repairman.Areas.Man.Controllers
             // generate list of modules for dropdown lists
             ViewData["brands"] = _proj.GetBrands().Select(m => new SelectListItem { Value = m.ID.ToString(), Text = m.brand_name });
             ViewData["models"] = _proj.GetModels().Select(m => new SelectListItem { Value = m.ID.ToString(), Text = m.model_name });
+            ViewData["personas"] = GetPersonasList(-1);
 
             a.starting_datetime = DateTime.UtcNow;
             a.ending_datetime = a.starting_datetime.AddMonths(3);
@@ -173,9 +186,10 @@ namespace repairman.Areas.Man.Controllers
             // generate list of modules for dropdown lists
             ViewData["brands"] = _proj.GetBrands().Select(m => new SelectListItem { Value = m.ID.ToString(), Text = m.brand_name });
             ViewData["models"] = _proj.GetModels().Select(m => new SelectListItem { Value = m.ID.ToString(), Text = m.model_name });
-
+            ViewData["personas"] = GetPersonasList(-1);
             if (project.company_id != null)
             {
+                ViewData["personas"] = GetPersonasList((long)project.company_id);
                 project.company = await _comp.GetCompany((long)project.company_id);   
             }
 
@@ -227,6 +241,13 @@ namespace repairman.Areas.Man.Controllers
             );
 
             return await CommitModel(project);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public IActionResult ListPersonaPerCompany(long ID)
+        {
+            return Json(GetPersonasList(ID));
         }
 
         [HttpPost]
@@ -286,5 +307,48 @@ namespace repairman.Areas.Man.Controllers
             return Ok();
         }
 
+        public IActionResult RenewContractPopUp(long ID)
+        {
+            ViewData["ID"] = ID;
+            return PartialView("_RenewContractPopUp");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RenewContract([FromForm]long ID)
+        {
+            var c = await _proj.GetProject(ID, "product_list", "incoming_payment", "outgoing_payment");
+
+            if (c == null)
+            {
+                return NotFound();
+            }
+
+            await _proj.DupProject(c);
+
+            ViewData["ID"] = ID;
+
+            await _tran.Commit();
+            return Ok();
+        }
+
+        // picker
+        public IActionResult Picker(string company_id)
+        {
+            ViewBag.company_id = company_id;   
+            return PartialView("_PickerPopup");
+        }
+
+        public async Task<IActionResult> PickerQuery(QueryVM request)
+        {
+            var result = _proj.FindIncomingPaymentByCompanyId((long)request.company_id);
+
+            return await GetTableReplyAsync(result, request, null, r => new
+            {
+                id = r.ID,
+                item = r.item,
+                amount = r.amount
+            }, true);
+        }
     }
 }
