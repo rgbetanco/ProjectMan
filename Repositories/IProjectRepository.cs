@@ -20,6 +20,7 @@ namespace repairman.Repositories
         IQueryable<CompanyModel> GetCompanies();
         IQueryable<ProjectModel> FindProjects(ProjectStatusEnum status, ServiceTypeEnum service_type, string keyword = null);
         IQueryable<ProjectModel> FindAllProject();
+        IQueryable<ProjectModel> GetAllProject();
         CreditModel GetCredits(long ID);
         Task<ProjectModel> CreateProject(ProjectModel u);
         Task<ProjectModel> GetProject(long ID, params string[] includeFields);

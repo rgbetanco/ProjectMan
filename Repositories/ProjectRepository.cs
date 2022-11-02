@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Runtime.InteropServices;
+using Microsoft.IdentityModel.Tokens;
 
 namespace repairman.Repositories
 {
@@ -136,6 +137,11 @@ namespace repairman.Repositories
             return _context.Projects.AsQueryable();
         }
 
+        public IQueryable<ProjectModel> GetAllProject()
+        {
+            return _context.Projects.Include(m => m.incoming_payment.Where(m => m.invoice != null).OrderByDescending(m => m.issueDate)).OrderBy(m => m.starting_datetime);
+        }
+
         public async Task<ProjectModel> CreateProject(ProjectModel u)
         {
             await _context.Projects.AddAsync(u);
@@ -252,6 +258,5 @@ namespace repairman.Repositories
 
             return result;
         }
-
     }
 }

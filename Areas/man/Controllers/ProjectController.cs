@@ -95,7 +95,7 @@ namespace repairman.Areas.Man.Controllers
             });
         }
 
-        public async Task<IActionResult> ProjectAll(QueryVM request)
+        public async Task<IActionResult> ProjectAllOld(QueryVM request)
         {
             var result = _proj.FindAllProject();
             var _nextInvoices = _proj.GetNextDueIncomingPayment();
@@ -110,6 +110,21 @@ namespace repairman.Areas.Man.Controllers
                 nextInvoice = String.IsNullOrEmpty(_nextInvoice.FirstOrDefault(a => a.project_id == r.ID).issueDate.ToString()) ? "沒有" : _nextInvoice.FirstOrDefault(a => a.project_id == r.ID).issueDate.ToShortDateString(),
                 item = String.IsNullOrEmpty(_nextInvoice.FirstOrDefault(a => a.project_id == r.ID).item) ? "沒有" : _nextInvoice.FirstOrDefault(a => a.project_id == r.ID).item
             });
+        }
+
+        public async Task<IActionResult> ProjectAll(QueryVM request)
+        {
+            var result = _proj.GetAllProject();
+            return await GetTableReplyAsync(result, request, null, r => new
+            {
+                id = r.ID,
+                number = r.number,
+                name = r.name,
+                remarks = r.remarks,
+                starting_date = r.starting_datetime,
+                nextInvoice = r.incoming_payment.FirstOrDefault().issueDate,
+                item = r.incoming_payment.FirstOrDefault().item
+            }); 
         }
 
         public IActionResult Index()
