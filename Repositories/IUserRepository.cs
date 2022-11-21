@@ -1,10 +1,10 @@
-﻿using repairman.Models;
+﻿using projectman.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace repairman.Repositories
+namespace projectman.Repositories
 {
     public interface IUserRepository
     {

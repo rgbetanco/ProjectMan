@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Cryptography;
 
-namespace repairman.Models
+namespace projectman.Models
 {
     public abstract class BaseUser : UsesID
     {

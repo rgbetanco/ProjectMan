@@ -1,4 +1,4 @@
-﻿@model repairman.Models.InvoiceModel
+﻿@model projectman.Models.Invoice
 @using CSHelper.Extensions
 @{
     ViewBag.company_id = -1;
@@ -41,8 +41,8 @@
                     @Html.LocalDateTimeInputFor(m => m.issue_date, new { @class = "form-control", @step = "1" })
                 </div>
                 <div class="col text-start">
-                    @Html.LabelFor(m => m.amount, new { @class = "form-label form-view-hide" })
-                    @Html.TextBoxFor(m => m.amount, new { @class = "form-control form-text" })
+                    @Html.LabelFor(m => m.total_amount, new { @class = "form-label form-view-hide" })
+                    @Html.TextBoxFor(m => m.total_amount, new { @class = "form-control form-text" })
                 </div>
                 
             </div>
@@ -55,19 +55,19 @@
             <table class="table mt-4">
                 <thead>
                     <tr>
-                        <th scope="col">@Html.LabelFor(m => m.invoice_item.FirstOrDefault().incoming_payment.item, new { @class = "form-label" })</th>
-                        <th scope="col">@Html.LabelFor(m => m.amount, new { @class="form-label"})</th>
+                        <th scope="col">@Html.LabelFor(m => m.items.FirstOrDefault().incoming_payment.item, new { @class = "form-label" })</th>
+                        <th scope="col">@Html.LabelFor(m => m.total_amount, new { @class="form-label"})</th>
                         <th scope="col">功能</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @for (var i = 0; i < Model.invoice_item.Count(); i++)
+                    @for (var i = 0; i < Model.items.Count(); i++)
                     {
                         <tr data-form-group="invoice_item">
                             <td scope="row">
                                 <div class="input-group">
-                                    @Html.HiddenFor(m => m.invoice_item[i].incoming_payment_id, new { @data_form_group_subname = "incoming_payment_id"})
-                                    @Html.TextBoxFor(m => m.invoice_item[i].incoming_payment.item, new { @class = "form-control",  @readonly = "readonly", @data_form_group_subname = "item" })
+                                    @Html.HiddenFor(m => m.items[i].incoming_payment_id, new { @data_form_group_subname = "incoming_payment_id"})
+                                    @Html.TextBoxFor(m => m.items[i].incoming_payment.item, new { @class = "form-control",  @readonly = "readonly", @data_form_group_subname = "item" })
                                     <button type="button" class="btn btn-secondary btn-modal change-item"
                                         data-form-group-target="invoice_item"
                                         id="change-item"
@@ -79,10 +79,10 @@
                                 </div>
                             </td>
                             <td scope="row">
-                                @Html.TextBoxFor(m => m.invoice_item[i].amount, new { @class = "form-control", @data_form_group_subname = "amount", @readonly="readonly" })
+                                @Html.TextBoxFor(m => m.items[i].amount, new { @class = "form-control", @data_form_group_subname = "amount", @readonly="readonly" })
                             </td>
                             <td scope="row">
-                                @Html.HiddenFor(m => m.invoice_item[i].ID)
+                                @Html.HiddenFor(m => m.items[i].ID)
                                 @Html.Hidden("invoice_item.Index", i)
                                 <button type="button" class="btn btn-secondary" onclick="RemoveItem(this)">
                                     <i class="fa fa-trash" aria-hidden="true"></i>

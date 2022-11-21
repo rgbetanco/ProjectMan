@@ -2,84 +2,84 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using repairman.Areas.Man.Controllers;
-using repairman.Models;
-using repairman.Repositories;
+using projectman.Areas.Man.Controllers;
+using projectman.Models;
+using projectman.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using CSHelper.Extensions;
 
-namespace repairman.Areas.man.Controllers
+namespace projectman.Areas.man.Controllers
 {
     [Area("man")]
     [Authorize(AuthenticationSchemes = ManDefaults.AuthenticationScheme)]
     public class CompanyController : BaseController
     {
         private readonly ICompanyRepository _comp;
-        private readonly IPersonaRepository _persona;
-        public CompanyController(ITransaction tran, ILookupRepository lookup, ICompanyRepository comp, IPersonaRepository persona)
+        private readonly IContactRepository _contact;
+        public CompanyController(ITransaction tran, ILookupRepository lookup, ICompanyRepository comp, IContactRepository persona)
            : base(tran, lookup)
         {
             _comp = comp;
-            _persona = persona;
+            _contact = persona;
         }
         public IActionResult Index()
         {
-            var c = _comp.GetCompanies();
-            return View(c);
+            return View();
         }
 
         public async Task<IActionResult> CompanyQuery(QueryVM request)
         {
             var result = _comp.FindCompanies(request.search);
-            var credits = _comp.GetCredits();
+            var credits = _comp.GetCreditRatings();
 
             return await GetTableReplyAsync(result, request, null, r => new
             {
                 id = r.ID,
                 name = r.name,
-                credit = credits.FirstOrDefault(a => a.ID == r.credit_id).name,
+                credit = r.credit_rating_code,
                 remarks = r.remarks
             });
         }
 
         [HttpGet]
-        public IActionResult CompanyNew()
+        public IActionResult New()
         {
-            ViewData["credit"] = GetCreditList();
+            ViewData["credit"] = GetCreditRatingList();
             return View();
         }
-        protected IEnumerable<SelectListItem> GetCreditList(long ID = 0)
+        protected IEnumerable<SelectListItem> GetCreditRatingList(string ID = null)
         {
-            var r = _comp.GetCredits().AsNoTracking();
+            var r = _comp.GetCreditRatings().AsNoTracking();
 
-            var result = r.Select(m => new SelectListItem { Value = m.ID.ToString(), Text = m.name, Selected = ID == m.ID });
+            var result = r.Select(m => new SelectListItem { Value = m.code, Text = m.name, Selected = ID == m.code });
 
             return result;
         }
         // new category - save
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [ActionName("CompanyNew")]
-        public async Task<IActionResult> CompanyNewPost()
+        [ActionName("New")]
+        public async Task<IActionResult> NewPost()
         {
-            var m = new CompanyModel();
+            var m = new Company();
 
-            await TryUpdateModelAsync<CompanyModel>(
+            await TryUpdateModelAsync<Company>(
                 m,
                 "",
                 a => a.name,
-                a => a.credit_id,
+                a => a.credit_rating_code,
                 a => a.remarks,
-                a => a.nationalID,
+                a => a.vatid,
                 a => a.website
             );
 
-            await TryUpdateModelListAsync(m, a => a.phone, b => b.number, b => b.type);
-            await TryUpdateModelListAsync(m, a => a.address, b => b.addr, b => b.type);
-            await TryUpdateModelListAsync(m, a => a.email, b => b.email, b => b.type);
+            await this.TryUpdateModelListAsync(m, a => a.phones, b => b.number, b => b.type);
+            await this.TryUpdateModelListAsync(m, a => a.addresses, b => b.addr, b => b.type);
+            await this.TryUpdateModelListAsync(m, a => a.emails, b => b.email, b => b.type);
 
             m = await _comp.CreateCompany(m);
 
@@ -88,50 +88,44 @@ namespace repairman.Areas.man.Controllers
             return result;
         }
 
-        [ActionName("CompanyEdit")]
-        public async Task<IActionResult> CompanyEdit(long ID)
+        public async Task<IActionResult> Edit(long ID)
         {
             Debug.WriteLine("Hello world from the controller");
-            CompanyModel company = await _comp.GetCompany(ID, "phone", "address", "email");
-            ViewData["credit"] = GetCreditList((long)company.credit_id);
-            ViewData["personas"] = _persona.GetPersonaPerCompany(ID);
+            Company company = await _comp.GetCompany(ID, "phone", "address", "email");
+            ViewData["credit"] = GetCreditRatingList(company.credit_rating_code);
+            ViewData["personas"] = _contact.GetCompanyContacts(ID);
             return View(company);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CompanyUpdate(long ID)
+        public async Task<IActionResult> Update(long ID)
         {
-            CompanyModel company = await _comp.GetCompany(ID, "phone", "address", "email");
+            Company company = await _comp.GetCompany(ID, "phone", "address", "email");
             if (company == null)
             {
                 return NotFound();
             }
 
-            await TryUpdateModelListAsync(company, a => a.phone, b => b.number, b => b.type);
-            await TryUpdateModelListAsync(company, a => a.address, b => b.addr, b => b.type);
-            await TryUpdateModelListAsync(company, a => a.email, b => b.email, b => b.type);
+            await this.TryUpdateModelListAsync(company, a => a.phones, b => b.number, b => b.type);
+            await this.TryUpdateModelListAsync(company, a => a.addresses, b => b.addr, b => b.type);
+            await this.TryUpdateModelListAsync(company, a => a.emails, b => b.email, b => b.type);
 
-            await TryUpdateModelAsync<CompanyModel>(
+            await TryUpdateModelAsync<Company>(
                 company,
                 "",
                 a => a.name,
-                a => a.credit_id,
+                a => a.credit_rating_code,
                 a => a.remarks,
-                a => a.nationalID,
+                a => a.vatid,
                 a => a.website
             );
 
             return await CommitModel(company);
         }
-        public IActionResult ConfirmDeleteCompany(long ID)
-        {
-            ViewData["ID"] = ID;
-            return PartialView("_ConfirmDeleteCompanyPopup");
-        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteCompany([FromForm] long ID)
+        public async Task<IActionResult> Delete([FromForm] long ID)
         {
             var c = await _comp.GetCompany(ID);
 
@@ -163,8 +157,13 @@ namespace repairman.Areas.man.Controllers
             {
                 id = r.ID,
                 name = r.name,
-                vatid = r.nationalID
+                vatid = r.vatid
             }, true);
+        }
+        public IActionResult CreditRatingSetting()
+        {
+            // TODO: table form to edit credit rating list
+            throw new NotImplementedException();
         }
 
     }

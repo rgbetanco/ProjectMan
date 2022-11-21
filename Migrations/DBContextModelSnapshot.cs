@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using repairman.Data;
+using projectman.Data;
 
 #nullable disable
 
@@ -17,18 +17,48 @@ namespace projectman.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.9")
+                .HasAnnotation("ProductVersion", "7.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("repairman.Models.CompanyAddressModel", b =>
+            modelBuilder.Entity("projectman.Models.Company", b =>
                 {
                     b.Property<long>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
+
+                    b.Property<string>("credit_rating_code")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("remarks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("vatid")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("website")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("credit_rating_code");
+
+                    b.ToTable("company");
+                });
+
+            modelBuilder.Entity("projectman.Models.CompanyAddress", b =>
+                {
+                    b.Property<long>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
                     b.Property<string>("addr")
                         .IsRequired()
@@ -44,16 +74,16 @@ namespace projectman.Migrations
 
                     b.HasIndex("company_id");
 
-                    b.ToTable("company_address", (string)null);
+                    b.ToTable("company_address");
                 });
 
-            modelBuilder.Entity("repairman.Models.CompanyEmailModel", b =>
+            modelBuilder.Entity("projectman.Models.CompanyEmail", b =>
                 {
                     b.Property<long>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
                     b.Property<long>("company_id")
                         .HasColumnType("bigint");
@@ -69,46 +99,16 @@ namespace projectman.Migrations
 
                     b.HasIndex("company_id");
 
-                    b.ToTable("company_email", (string)null);
+                    b.ToTable("company_email");
                 });
 
-            modelBuilder.Entity("repairman.Models.CompanyModel", b =>
+            modelBuilder.Entity("projectman.Models.CompanyPhone", b =>
                 {
                     b.Property<long>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
-
-                    b.Property<long?>("credit_id")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("nationalID")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("remarks")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("website")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("credit_id");
-
-                    b.ToTable("company", (string)null);
-                });
-
-            modelBuilder.Entity("repairman.Models.CompanyPhoneModel", b =>
-                {
-                    b.Property<long>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
                     b.Property<long>("company_id")
                         .HasColumnType("bigint");
@@ -124,74 +124,170 @@ namespace projectman.Migrations
 
                     b.HasIndex("company_id");
 
-                    b.ToTable("company_phone", (string)null);
+                    b.ToTable("company_phone");
                 });
 
-            modelBuilder.Entity("repairman.Models.ContactModel", b =>
+            modelBuilder.Entity("projectman.Models.Contact", b =>
                 {
                     b.Property<long>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
-                    b.Property<string>("address")
+                    b.Property<string>("department")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("phone")
+                    b.Property<string>("remarks")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
-                    b.ToTable("contact", (string)null);
+                    b.ToTable("contact");
                 });
 
-            modelBuilder.Entity("repairman.Models.CreditModel", b =>
+            modelBuilder.Entity("projectman.Models.ContactAddress", b =>
                 {
                     b.Property<long>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
-                    b.Property<string>("name")
+                    b.Property<string>("addr")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("contact_id")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("persona_id")
+                        .HasColumnType("bigint");
+
+                    b.Property<short>("type")
+                        .HasColumnType("smallint");
 
                     b.HasKey("ID");
 
-                    b.ToTable("credit", (string)null);
+                    b.HasIndex("persona_id");
+
+                    b.ToTable("contact_address");
                 });
 
-            modelBuilder.Entity("repairman.Models.Dept", b =>
+            modelBuilder.Entity("projectman.Models.ContactCompany", b =>
                 {
                     b.Property<long>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
+
+                    b.Property<long>("company_id")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("contact_id")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("job_title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("persona_id")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("company_id");
+
+                    b.HasIndex("contact_id");
+
+                    b.ToTable("contact_company");
+                });
+
+            modelBuilder.Entity("projectman.Models.ContactEmail", b =>
+                {
+                    b.Property<long>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
+
+                    b.Property<long>("contact_id")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("persona_id")
+                        .HasColumnType("bigint");
+
+                    b.Property<short>("type")
+                        .HasColumnType("smallint");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("persona_id");
+
+                    b.ToTable("contact_email");
+                });
+
+            modelBuilder.Entity("projectman.Models.ContactPhone", b =>
+                {
+                    b.Property<long>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
+
+                    b.Property<long>("contact_id")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("is_default")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("number")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("persona_id")
+                        .HasColumnType("bigint");
+
+                    b.Property<short>("type")
+                        .HasColumnType("smallint");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("persona_id");
+
+                    b.ToTable("contact_phone");
+                });
+
+            modelBuilder.Entity("projectman.Models.CreditRating", b =>
+                {
+                    b.Property<string>("code")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("desc")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ID");
+                    b.HasKey("code");
 
-                    b.ToTable("Depts", (string)null);
+                    b.ToTable("credit_rating");
                 });
 
-            modelBuilder.Entity("repairman.Models.Group", b =>
+            modelBuilder.Entity("projectman.Models.Group", b =>
                 {
                     b.Property<long>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
                     b.Property<DateTime>("date_created")
                         .HasColumnType("datetime2");
@@ -205,75 +301,16 @@ namespace projectman.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("group", (string)null);
+                    b.ToTable("group");
                 });
 
-            modelBuilder.Entity("repairman.Models.IncomingPaymentModel", b =>
+            modelBuilder.Entity("projectman.Models.Invoice", b =>
                 {
                     b.Property<long>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
-
-                    b.Property<double>("amount")
-                        .HasColumnType("float");
-
-                    b.Property<string>("invoice")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("issueDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("item")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long?>("project_id")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("project_id");
-
-                    b.ToTable("incoming_payment", (string)null);
-                });
-
-            modelBuilder.Entity("repairman.Models.InvoiceItemModel", b =>
-                {
-                    b.Property<long>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
-
-                    b.Property<double>("amount")
-                        .HasColumnType("float");
-
-                    b.Property<long?>("incoming_payment_id")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("invoice_id")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("incoming_payment_id");
-
-                    b.HasIndex("invoice_id");
-
-                    b.ToTable("invoice_item", (string)null);
-                });
-
-            modelBuilder.Entity("repairman.Models.InvoiceModel", b =>
-                {
-                    b.Property<long>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
-
-                    b.Property<double>("amount")
-                        .HasColumnType("float");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
                     b.Property<long?>("company_id")
                         .HasColumnType("bigint");
@@ -287,96 +324,49 @@ namespace projectman.Migrations
                     b.Property<string>("number")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ID");
-
-                    b.HasIndex("company_id");
-
-                    b.ToTable("invoice", (string)null);
-                });
-
-            modelBuilder.Entity("repairman.Models.Member", b =>
-                {
-                    b.Property<long>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
-
-                    b.Property<int>("bad_password_count")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("date_created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("dept_id")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("desc")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("enabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("pass")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("phone")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("dept_id");
-
-                    b.ToTable("member", (string)null);
-                });
-
-            modelBuilder.Entity("repairman.Models.OutgoingPaymentModel", b =>
-                {
-                    b.Property<long>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
-
-                    b.Property<double>("amount")
-                        .HasColumnType("float");
-
-                    b.Property<long?>("company_id")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("issueDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("project_id")
-                        .HasColumnType("bigint");
+                    b.Property<decimal>("total_amount")
+                        .HasColumnType("money");
 
                     b.HasKey("ID");
 
                     b.HasIndex("company_id");
 
-                    b.HasIndex("project_id");
-
-                    b.ToTable("outgoing_payment", (string)null);
+                    b.ToTable("invoice");
                 });
 
-            modelBuilder.Entity("repairman.Models.PermGroup", b =>
+            modelBuilder.Entity("projectman.Models.InvoiceItem", b =>
                 {
                     b.Property<long>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
+
+                    b.Property<decimal>("amount")
+                        .HasColumnType("money");
+
+                    b.Property<long?>("incoming_payment_id")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("invoice_id")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("incoming_payment_id");
+
+                    b.HasIndex("invoice_id");
+
+                    b.ToTable("invoice_item");
+                });
+
+            modelBuilder.Entity("projectman.Models.PermGroup", b =>
+                {
+                    b.Property<long>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
                     b.Property<long?>("group_id")
                         .HasColumnType("bigint");
@@ -391,214 +381,65 @@ namespace projectman.Migrations
 
                     b.HasIndex("group_id");
 
-                    b.ToTable("perm_group", (string)null);
+                    b.ToTable("perm_group");
                 });
 
-            modelBuilder.Entity("repairman.Models.PersonaAddressModel", b =>
+            modelBuilder.Entity("projectman.Models.Product", b =>
                 {
                     b.Property<long>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
-                    b.Property<string>("addr")
-                        .IsRequired()
+                    b.Property<long>("brand_id")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("category")
+                        .HasColumnType("int");
+
+                    b.Property<string>("code")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("persona_id")
-                        .HasColumnType("bigint");
-
-                    b.Property<short>("type")
-                        .HasColumnType("smallint");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("persona_id");
-
-                    b.ToTable("persona_address", (string)null);
-                });
-
-            modelBuilder.Entity("repairman.Models.PersonaCompanyModel", b =>
-                {
-                    b.Property<long>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
-
-                    b.Property<long>("company_id")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("job_title")
+                    b.Property<string>("desc")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("persona_id")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("company_id");
-
-                    b.HasIndex("persona_id");
-
-                    b.ToTable("persona_company", (string)null);
-                });
-
-            modelBuilder.Entity("repairman.Models.PersonaEmailModel", b =>
-                {
-                    b.Property<long>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
-
-                    b.Property<string>("email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("persona_id")
-                        .HasColumnType("bigint");
-
-                    b.Property<short>("type")
-                        .HasColumnType("smallint");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("persona_id");
-
-                    b.ToTable("persona_email", (string)null);
-                });
-
-            modelBuilder.Entity("repairman.Models.PersonaModel", b =>
-                {
-                    b.Property<long>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
-
-                    b.Property<string>("department")
+                    b.Property<string>("model_name")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("remarks")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("ID");
 
-                    b.ToTable("persona", (string)null);
+                    b.HasIndex("brand_id");
+
+                    b.ToTable("product");
                 });
 
-            modelBuilder.Entity("repairman.Models.PersonaPhoneModel", b =>
+            modelBuilder.Entity("projectman.Models.ProductBrand", b =>
                 {
                     b.Property<long>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
-                    b.Property<bool>("default_number")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("number")
-                        .IsRequired()
+                    b.Property<string>("name")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("persona_id")
-                        .HasColumnType("bigint");
-
-                    b.Property<short>("type")
-                        .HasColumnType("smallint");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("persona_id");
-
-                    b.ToTable("persona_phone", (string)null);
+                    b.ToTable("product_brand");
                 });
 
-            modelBuilder.Entity("repairman.Models.ProductBrandModel", b =>
+            modelBuilder.Entity("projectman.Models.Project", b =>
                 {
                     b.Property<long>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
-
-                    b.Property<string>("brand_name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("category")
-                        .HasColumnType("int");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("product_brand", (string)null);
-                });
-
-            modelBuilder.Entity("repairman.Models.ProductModel", b =>
-                {
-                    b.Property<long>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
-
-                    b.Property<int>("category")
-                        .HasColumnType("int");
-
-                    b.Property<long?>("product_brand_id")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("product_model_id")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("project_id")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("serial_number")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("product_brand_id");
-
-                    b.HasIndex("product_model_id");
-
-                    b.HasIndex("project_id");
-
-                    b.ToTable("product_list", (string)null);
-                });
-
-            modelBuilder.Entity("repairman.Models.ProductModelModel", b =>
-                {
-                    b.Property<long>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
-
-                    b.Property<int>("category")
-                        .HasColumnType("int");
-
-                    b.Property<string>("model_name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("product_model", (string)null);
-                });
-
-            modelBuilder.Entity("repairman.Models.ProjectModel", b =>
-                {
-                    b.Property<long>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
                     b.Property<long?>("company_id")
                         .HasColumnType("bigint");
@@ -609,14 +450,17 @@ namespace projectman.Migrations
                     b.Property<string>("contact_address")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<long?>("contact_id")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("contact_phone")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("ending_datetime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("importance_id")
-                        .HasColumnType("int");
+                    b.Property<string>("importance_id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("name")
                         .IsRequired()
@@ -625,19 +469,16 @@ namespace projectman.Migrations
                     b.Property<string>("number")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("persona_id")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("remarks")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("service_type")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("starting_datetime")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("type")
                         .HasColumnType("int");
 
                     b.Property<long?>("user_id")
@@ -647,259 +488,123 @@ namespace projectman.Migrations
 
                     b.HasIndex("company_id");
 
-                    b.HasIndex("persona_id");
+                    b.HasIndex("contact_id");
+
+                    b.HasIndex("importance_id");
 
                     b.HasIndex("user_id");
 
-                    b.ToTable("project", (string)null);
+                    b.ToTable("project");
                 });
 
-            modelBuilder.Entity("repairman.Models.ServiceRequest", b =>
+            modelBuilder.Entity("projectman.Models.ProjectImportance", b =>
                 {
-                    b.Property<long>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
-
-                    b.Property<DateTime>("date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long>("dept_id")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("desc")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long?>("member_id")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("modify_date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("phone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("status")
-                        .HasColumnType("int");
-
-                    b.Property<long>("sub_cat_id")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("dept_id");
-
-                    b.HasIndex("member_id");
-
-                    b.HasIndex("sub_cat_id");
-
-                    b.ToTable("ServiceRequests", (string)null);
-                });
-
-            modelBuilder.Entity("repairman.Models.ServiceRequestCat", b =>
-                {
-                    b.Property<long>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
+                    b.Property<string>("code")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("desc")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ID");
+                    b.HasKey("code");
 
-                    b.ToTable("ServiceRequestCats", (string)null);
+                    b.ToTable("project_importance");
                 });
 
-            modelBuilder.Entity("repairman.Models.ServiceRequestFile", b =>
+            modelBuilder.Entity("projectman.Models.ProjectIncomingPayment", b =>
                 {
                     b.Property<long>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
-                    b.Property<string>("filename")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<decimal>("amount")
+                        .HasColumnType("money");
 
-                    b.Property<long>("request_id")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("source_file")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("request_id");
-
-                    b.ToTable("ServiceRequestFiles", (string)null);
-                });
-
-            modelBuilder.Entity("repairman.Models.ServiceRequestPic", b =>
-                {
-                    b.Property<long>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
-
-                    b.Property<string>("output_file")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("request_id")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("source_file")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("thumb_file")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("request_id");
-
-                    b.ToTable("ServiceRequestPics", (string)null);
-                });
-
-            modelBuilder.Entity("repairman.Models.ServiceRequestReply", b =>
-                {
-                    b.Property<long>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
-
-                    b.Property<DateTime>("date")
+                    b.Property<DateTime>("due_date")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("desc")
+                    b.Property<string>("invoice")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("modify_date")
+                    b.Property<string>("item")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("project_id")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("project_id");
+
+                    b.ToTable("project_incoming_payment");
+                });
+
+            modelBuilder.Entity("projectman.Models.ProjectOutgoingPayment", b =>
+                {
+                    b.Property<long>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
+
+                    b.Property<decimal>("amount")
+                        .HasColumnType("money");
+
+                    b.Property<long?>("company_id")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("due_date")
                         .HasColumnType("datetime2");
 
-                    b.Property<long>("request_id")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("status")
-                        .HasColumnType("int");
-
-                    b.Property<string>("title")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("user_id")
+                    b.Property<long>("project_id")
                         .HasColumnType("bigint");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("request_id");
+                    b.HasIndex("company_id");
 
-                    b.HasIndex("user_id");
+                    b.HasIndex("project_id");
 
-                    b.ToTable("ServiceRequestReplies", (string)null);
+                    b.ToTable("project_outgoing_payment");
                 });
 
-            modelBuilder.Entity("repairman.Models.ServiceRequestReplyFile", b =>
+            modelBuilder.Entity("projectman.Models.ProjectProduct", b =>
                 {
                     b.Property<long>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
-                    b.Property<string>("filename")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("reply_id")
+                    b.Property<long>("product_id")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("source_file")
+                    b.Property<long>("project_id")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("serial_number")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("reply_id");
+                    b.HasIndex("product_id");
 
-                    b.ToTable("ServiceRequestReplyFiles", (string)null);
+                    b.HasIndex("project_id");
+
+                    b.ToTable("project_product");
                 });
 
-            modelBuilder.Entity("repairman.Models.ServiceRequestReplyPic", b =>
+            modelBuilder.Entity("projectman.Models.User", b =>
                 {
                     b.Property<long>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
-
-                    b.Property<string>("output_file")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("reply_id")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("source_file")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("thumb_file")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("reply_id");
-
-                    b.ToTable("ServiceRequestReplyPics", (string)null);
-                });
-
-            modelBuilder.Entity("repairman.Models.ServiceRequestSubCat", b =>
-                {
-                    b.Property<long>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
-
-                    b.Property<long>("cat_id")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("desc")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("cat_id");
-
-                    b.ToTable("ServiceRequestSubCats", (string)null);
-                });
-
-            modelBuilder.Entity("repairman.Models.User", b =>
-                {
-                    b.Property<long>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
                     b.Property<int>("bad_password_count")
                         .HasColumnType("int");
@@ -938,16 +643,16 @@ namespace projectman.Migrations
                     b.HasIndex("username")
                         .IsUnique();
 
-                    b.ToTable("user", (string)null);
+                    b.ToTable("user");
                 });
 
-            modelBuilder.Entity("repairman.Models.UserGroup", b =>
+            modelBuilder.Entity("projectman.Models.UserGroup", b =>
                 {
                     b.Property<long>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
                     b.Property<long>("group_id")
                         .HasColumnType("bigint");
@@ -961,44 +666,22 @@ namespace projectman.Migrations
 
                     b.HasIndex("user_id");
 
-                    b.ToTable("user_group", (string)null);
+                    b.ToTable("user_group");
                 });
 
-            modelBuilder.Entity("repairman.Models.CompanyAddressModel", b =>
+            modelBuilder.Entity("projectman.Models.Company", b =>
                 {
-                    b.HasOne("repairman.Models.CompanyModel", "company")
-                        .WithMany("address")
-                        .HasForeignKey("company_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("company");
-                });
-
-            modelBuilder.Entity("repairman.Models.CompanyEmailModel", b =>
-                {
-                    b.HasOne("repairman.Models.CompanyModel", "company")
-                        .WithMany("email")
-                        .HasForeignKey("company_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("company");
-                });
-
-            modelBuilder.Entity("repairman.Models.CompanyModel", b =>
-                {
-                    b.HasOne("repairman.Models.CreditModel", "credit")
+                    b.HasOne("projectman.Models.CreditRating", "credit_rating")
                         .WithMany()
-                        .HasForeignKey("credit_id");
+                        .HasForeignKey("credit_rating_code");
 
-                    b.Navigation("credit");
+                    b.Navigation("credit_rating");
                 });
 
-            modelBuilder.Entity("repairman.Models.CompanyPhoneModel", b =>
+            modelBuilder.Entity("projectman.Models.CompanyAddress", b =>
                 {
-                    b.HasOne("repairman.Models.CompanyModel", "company")
-                        .WithMany("phone")
+                    b.HasOne("projectman.Models.Company", "company")
+                        .WithMany("addresses")
                         .HasForeignKey("company_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1006,24 +689,94 @@ namespace projectman.Migrations
                     b.Navigation("company");
                 });
 
-            modelBuilder.Entity("repairman.Models.IncomingPaymentModel", b =>
+            modelBuilder.Entity("projectman.Models.CompanyEmail", b =>
                 {
-                    b.HasOne("repairman.Models.ProjectModel", "project")
-                        .WithMany("incoming_payment")
-                        .HasForeignKey("project_id")
+                    b.HasOne("projectman.Models.Company", "company")
+                        .WithMany("emails")
+                        .HasForeignKey("company_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("company");
+                });
+
+            modelBuilder.Entity("projectman.Models.CompanyPhone", b =>
+                {
+                    b.HasOne("projectman.Models.Company", "company")
+                        .WithMany("phones")
+                        .HasForeignKey("company_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("company");
+                });
+
+            modelBuilder.Entity("projectman.Models.ContactAddress", b =>
+                {
+                    b.HasOne("projectman.Models.Contact", "contact")
+                        .WithMany("addresses")
+                        .HasForeignKey("persona_id")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.Navigation("project");
+                    b.Navigation("contact");
                 });
 
-            modelBuilder.Entity("repairman.Models.InvoiceItemModel", b =>
+            modelBuilder.Entity("projectman.Models.ContactCompany", b =>
                 {
-                    b.HasOne("repairman.Models.IncomingPaymentModel", "incoming_payment")
+                    b.HasOne("projectman.Models.Company", "company")
+                        .WithMany()
+                        .HasForeignKey("company_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("projectman.Models.Contact", "contact")
+                        .WithMany("companies")
+                        .HasForeignKey("contact_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("company");
+
+                    b.Navigation("contact");
+                });
+
+            modelBuilder.Entity("projectman.Models.ContactEmail", b =>
+                {
+                    b.HasOne("projectman.Models.Contact", "contact")
+                        .WithMany("emails")
+                        .HasForeignKey("persona_id")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("contact");
+                });
+
+            modelBuilder.Entity("projectman.Models.ContactPhone", b =>
+                {
+                    b.HasOne("projectman.Models.Contact", "contact")
+                        .WithMany("phones")
+                        .HasForeignKey("persona_id")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("contact");
+                });
+
+            modelBuilder.Entity("projectman.Models.Invoice", b =>
+                {
+                    b.HasOne("projectman.Models.Company", "company")
+                        .WithMany()
+                        .HasForeignKey("company_id");
+
+                    b.Navigation("company");
+                });
+
+            modelBuilder.Entity("projectman.Models.InvoiceItem", b =>
+                {
+                    b.HasOne("projectman.Models.ProjectIncomingPayment", "incoming_payment")
                         .WithMany()
                         .HasForeignKey("incoming_payment_id");
 
-                    b.HasOne("repairman.Models.InvoiceModel", "invoice")
-                        .WithMany("invoice_item")
+                    b.HasOne("projectman.Models.Invoice", "invoice")
+                        .WithMany("items")
                         .HasForeignKey("invoice_id")
                         .OnDelete(DeleteBehavior.Cascade);
 
@@ -1032,252 +785,109 @@ namespace projectman.Migrations
                     b.Navigation("invoice");
                 });
 
-            modelBuilder.Entity("repairman.Models.InvoiceModel", b =>
+            modelBuilder.Entity("projectman.Models.PermGroup", b =>
                 {
-                    b.HasOne("repairman.Models.CompanyModel", "company")
-                        .WithMany()
-                        .HasForeignKey("company_id");
-
-                    b.Navigation("company");
-                });
-
-            modelBuilder.Entity("repairman.Models.Member", b =>
-                {
-                    b.HasOne("repairman.Models.Dept", "dept")
-                        .WithMany()
-                        .HasForeignKey("dept_id");
-
-                    b.Navigation("dept");
-                });
-
-            modelBuilder.Entity("repairman.Models.OutgoingPaymentModel", b =>
-                {
-                    b.HasOne("repairman.Models.CompanyModel", "company")
-                        .WithMany()
-                        .HasForeignKey("company_id");
-
-                    b.HasOne("repairman.Models.ProjectModel", "project")
-                        .WithMany("outgoing_payment")
-                        .HasForeignKey("project_id")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("company");
-
-                    b.Navigation("project");
-                });
-
-            modelBuilder.Entity("repairman.Models.PermGroup", b =>
-                {
-                    b.HasOne("repairman.Models.Group", "group")
+                    b.HasOne("projectman.Models.Group", "group")
                         .WithMany()
                         .HasForeignKey("group_id");
 
                     b.Navigation("group");
                 });
 
-            modelBuilder.Entity("repairman.Models.PersonaAddressModel", b =>
+            modelBuilder.Entity("projectman.Models.Product", b =>
                 {
-                    b.HasOne("repairman.Models.PersonaModel", "persona")
-                        .WithMany("address")
-                        .HasForeignKey("persona_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("persona");
-                });
-
-            modelBuilder.Entity("repairman.Models.PersonaCompanyModel", b =>
-                {
-                    b.HasOne("repairman.Models.CompanyModel", "company")
+                    b.HasOne("projectman.Models.ProductBrand", "brand")
                         .WithMany()
-                        .HasForeignKey("company_id")
+                        .HasForeignKey("brand_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("repairman.Models.PersonaModel", "persona")
-                        .WithMany("personas_company")
-                        .HasForeignKey("persona_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("company");
-
-                    b.Navigation("persona");
-                });
-
-            modelBuilder.Entity("repairman.Models.PersonaEmailModel", b =>
-                {
-                    b.HasOne("repairman.Models.PersonaModel", "persona")
-                        .WithMany("email")
-                        .HasForeignKey("persona_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("persona");
-                });
-
-            modelBuilder.Entity("repairman.Models.PersonaPhoneModel", b =>
-                {
-                    b.HasOne("repairman.Models.PersonaModel", "persona")
-                        .WithMany("phone")
-                        .HasForeignKey("persona_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("persona");
-                });
-
-            modelBuilder.Entity("repairman.Models.ProductModel", b =>
-                {
-                    b.HasOne("repairman.Models.ProductBrandModel", "brand")
-                        .WithMany()
-                        .HasForeignKey("product_brand_id");
-
-                    b.HasOne("repairman.Models.ProductModelModel", "model")
-                        .WithMany()
-                        .HasForeignKey("product_model_id");
-
-                    b.HasOne("repairman.Models.ProjectModel", "project")
-                        .WithMany("product_list")
-                        .HasForeignKey("project_id")
-                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("brand");
-
-                    b.Navigation("model");
-
-                    b.Navigation("project");
                 });
 
-            modelBuilder.Entity("repairman.Models.ProjectModel", b =>
+            modelBuilder.Entity("projectman.Models.Project", b =>
                 {
-                    b.HasOne("repairman.Models.CompanyModel", "company")
+                    b.HasOne("projectman.Models.Company", "company")
                         .WithMany()
                         .HasForeignKey("company_id");
 
-                    b.HasOne("repairman.Models.PersonaModel", "persona")
+                    b.HasOne("projectman.Models.Contact", "contact")
                         .WithMany()
-                        .HasForeignKey("persona_id");
+                        .HasForeignKey("contact_id");
 
-                    b.HasOne("repairman.Models.User", "user")
+                    b.HasOne("projectman.Models.ProjectImportance", "importance")
+                        .WithMany()
+                        .HasForeignKey("importance_id");
+
+                    b.HasOne("projectman.Models.User", "user")
                         .WithMany()
                         .HasForeignKey("user_id");
 
                     b.Navigation("company");
 
-                    b.Navigation("persona");
+                    b.Navigation("contact");
+
+                    b.Navigation("importance");
 
                     b.Navigation("user");
                 });
 
-            modelBuilder.Entity("repairman.Models.ServiceRequest", b =>
+            modelBuilder.Entity("projectman.Models.ProjectIncomingPayment", b =>
                 {
-                    b.HasOne("repairman.Models.Dept", "dept")
-                        .WithMany("requests")
-                        .HasForeignKey("dept_id")
-                        .OnDelete(DeleteBehavior.Restrict)
+                    b.HasOne("projectman.Models.Project", "project")
+                        .WithMany("incoming_payments")
+                        .HasForeignKey("project_id")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("repairman.Models.Member", "member")
+                    b.Navigation("project");
+                });
+
+            modelBuilder.Entity("projectman.Models.ProjectOutgoingPayment", b =>
+                {
+                    b.HasOne("projectman.Models.Company", "company")
                         .WithMany()
-                        .HasForeignKey("member_id");
+                        .HasForeignKey("company_id");
 
-                    b.HasOne("repairman.Models.ServiceRequestSubCat", "sub_cat")
-                        .WithMany("requests")
-                        .HasForeignKey("sub_cat_id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("dept");
-
-                    b.Navigation("member");
-
-                    b.Navigation("sub_cat");
-                });
-
-            modelBuilder.Entity("repairman.Models.ServiceRequestFile", b =>
-                {
-                    b.HasOne("repairman.Models.ServiceRequest", "request")
-                        .WithMany("files")
-                        .HasForeignKey("request_id")
+                    b.HasOne("projectman.Models.Project", "project")
+                        .WithMany("outgoing_payments")
+                        .HasForeignKey("project_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("request");
+                    b.Navigation("company");
+
+                    b.Navigation("project");
                 });
 
-            modelBuilder.Entity("repairman.Models.ServiceRequestPic", b =>
+            modelBuilder.Entity("projectman.Models.ProjectProduct", b =>
                 {
-                    b.HasOne("repairman.Models.ServiceRequest", "request")
-                        .WithMany("pics")
-                        .HasForeignKey("request_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("request");
-                });
-
-            modelBuilder.Entity("repairman.Models.ServiceRequestReply", b =>
-                {
-                    b.HasOne("repairman.Models.ServiceRequest", "request")
-                        .WithMany("replies")
-                        .HasForeignKey("request_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("repairman.Models.User", "user")
+                    b.HasOne("projectman.Models.Product", "product")
                         .WithMany()
-                        .HasForeignKey("user_id")
+                        .HasForeignKey("product_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("request");
-
-                    b.Navigation("user");
-                });
-
-            modelBuilder.Entity("repairman.Models.ServiceRequestReplyFile", b =>
-                {
-                    b.HasOne("repairman.Models.ServiceRequestReply", "reply")
-                        .WithMany("files")
-                        .HasForeignKey("reply_id")
+                    b.HasOne("projectman.Models.Project", "project")
+                        .WithMany("products")
+                        .HasForeignKey("project_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("reply");
+                    b.Navigation("product");
+
+                    b.Navigation("project");
                 });
 
-            modelBuilder.Entity("repairman.Models.ServiceRequestReplyPic", b =>
+            modelBuilder.Entity("projectman.Models.UserGroup", b =>
                 {
-                    b.HasOne("repairman.Models.ServiceRequestReply", "reply")
-                        .WithMany("pics")
-                        .HasForeignKey("reply_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("reply");
-                });
-
-            modelBuilder.Entity("repairman.Models.ServiceRequestSubCat", b =>
-                {
-                    b.HasOne("repairman.Models.ServiceRequestCat", "cat")
-                        .WithMany("subcats")
-                        .HasForeignKey("cat_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("cat");
-                });
-
-            modelBuilder.Entity("repairman.Models.UserGroup", b =>
-                {
-                    b.HasOne("repairman.Models.Group", "group")
+                    b.HasOne("projectman.Models.Group", "group")
                         .WithMany()
                         .HasForeignKey("group_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("repairman.Models.User", "user")
+                    b.HasOne("projectman.Models.User", "user")
                         .WithMany("groups")
                         .HasForeignKey("user_id")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1288,72 +898,41 @@ namespace projectman.Migrations
                     b.Navigation("user");
                 });
 
-            modelBuilder.Entity("repairman.Models.CompanyModel", b =>
+            modelBuilder.Entity("projectman.Models.Company", b =>
                 {
-                    b.Navigation("address");
+                    b.Navigation("addresses");
 
-                    b.Navigation("email");
+                    b.Navigation("emails");
 
-                    b.Navigation("phone");
+                    b.Navigation("phones");
                 });
 
-            modelBuilder.Entity("repairman.Models.Dept", b =>
+            modelBuilder.Entity("projectman.Models.Contact", b =>
                 {
-                    b.Navigation("requests");
+                    b.Navigation("addresses");
+
+                    b.Navigation("companies");
+
+                    b.Navigation("emails");
+
+                    b.Navigation("phones");
                 });
 
-            modelBuilder.Entity("repairman.Models.InvoiceModel", b =>
+            modelBuilder.Entity("projectman.Models.Invoice", b =>
                 {
-                    b.Navigation("invoice_item");
+                    b.Navigation("items");
                 });
 
-            modelBuilder.Entity("repairman.Models.PersonaModel", b =>
+            modelBuilder.Entity("projectman.Models.Project", b =>
                 {
-                    b.Navigation("address");
+                    b.Navigation("incoming_payments");
 
-                    b.Navigation("email");
+                    b.Navigation("outgoing_payments");
 
-                    b.Navigation("personas_company");
-
-                    b.Navigation("phone");
+                    b.Navigation("products");
                 });
 
-            modelBuilder.Entity("repairman.Models.ProjectModel", b =>
-                {
-                    b.Navigation("incoming_payment");
-
-                    b.Navigation("outgoing_payment");
-
-                    b.Navigation("product_list");
-                });
-
-            modelBuilder.Entity("repairman.Models.ServiceRequest", b =>
-                {
-                    b.Navigation("files");
-
-                    b.Navigation("pics");
-
-                    b.Navigation("replies");
-                });
-
-            modelBuilder.Entity("repairman.Models.ServiceRequestCat", b =>
-                {
-                    b.Navigation("subcats");
-                });
-
-            modelBuilder.Entity("repairman.Models.ServiceRequestReply", b =>
-                {
-                    b.Navigation("files");
-
-                    b.Navigation("pics");
-                });
-
-            modelBuilder.Entity("repairman.Models.ServiceRequestSubCat", b =>
-                {
-                    b.Navigation("requests");
-                });
-
-            modelBuilder.Entity("repairman.Models.User", b =>
+            modelBuilder.Entity("projectman.Models.User", b =>
                 {
                     b.Navigation("groups");
                 });

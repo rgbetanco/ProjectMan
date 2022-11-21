@@ -1,7 +1,7 @@
-﻿using repairman.Models;
+﻿using projectman.Models;
 using System.Linq;
 
-namespace repairman.Repositories
+namespace projectman.Repositories
 {
     public interface ILookupRepository
     {

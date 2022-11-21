@@ -1,15 +1,16 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using CSHelper.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using repairman.Areas.Man.Controllers;
-using repairman.Models;
-using repairman.Repositories;
+using projectman.Areas.Man.Controllers;
+using projectman.Models;
+using projectman.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace repairman.Areas.man.Controllers
+namespace projectman.Areas.man.Controllers
 {
     [Area("man")]
     [Authorize(AuthenticationSchemes = ManDefaults.AuthenticationScheme)]
@@ -29,31 +30,31 @@ namespace repairman.Areas.man.Controllers
         [HttpGet]
         public async Task<IActionResult> View(long ID)
         {
-            InvoiceModel invoice = await _inv.GetInvoice(ID, "invoice_item.incoming_payment");
+            Invoice invoice = await _inv.GetInvoice(ID, "invoice_item.incoming_payment");
             return View(invoice);
         }
         [HttpPost]
         public async Task<IActionResult> Update(long ID)
         {
-            InvoiceModel invoice = await _inv.GetInvoice(ID, "invoice_item");
+            Invoice invoice = await _inv.GetInvoice(ID, "invoice_item");
             if (invoice == null)
             {
                 return NotFound();
             }
 
-            await TryUpdateModelListAsync(invoice, a => a.invoice_item, b => b.incoming_payment_id, b => b.amount);
+            await this.TryUpdateModelListAsync(invoice, a => a.items, b => b.incoming_payment_id, b => b.amount);
 
-            foreach(var item in invoice.invoice_item)
+            foreach(var item in invoice.items)
             {
                 UpdatePaymentItem((long)item.incoming_payment_id, (long)item.invoice_id);
             }
 
-            await TryUpdateModelAsync<InvoiceModel>(
+            await TryUpdateModelAsync<Invoice>(
                 invoice,
                 "",
                 a => a.issue_date,
                 a => a.number,
-                a => a.amount
+                a => a.total_amount
             );
 
             return await CommitModel(invoice);
@@ -68,7 +69,7 @@ namespace repairman.Areas.man.Controllers
         [HttpGet]
         public IActionResult New()
         {
-            var a = new InvoiceModel();
+            var a = new Invoice();
             a.issue_date = DateTime.UtcNow;
             
             return View(a);
@@ -77,15 +78,15 @@ namespace repairman.Areas.man.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create()
         {
-            var m = new InvoiceModel();
-            await TryUpdateModelAsync<InvoiceModel>(
+            var m = new Invoice();
+            await TryUpdateModelAsync<Invoice>(
                 m,
                 "",
                 a => a.issue_date,
                 a => a.number,
-                a => a.amount
+                a => a.total_amount
             );
-            await TryUpdateModelListAsync(m, a => a.invoice_item, b => b.incoming_payment_id, b => b.amount);
+            await this.TryUpdateModelListAsync(m, a => a.items, b => b.incoming_payment_id, b => b.amount);
             m = await _inv.CreateInvoice(m);
             var result = await CommitModel(m);
             return result;
@@ -114,7 +115,7 @@ namespace repairman.Areas.man.Controllers
                 id = r.ID,
                 number = r.number,
                 issue_date = r.issue_date,
-                amount = r.amount
+                amount = r.total_amount
             });
         }
         public IActionResult ConfirmDeleteInvoice(long ID)

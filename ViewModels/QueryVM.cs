@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CSHelper.Extensions;
 
-namespace repairman.Models
+namespace projectman.Models
 {
     [BindProperties]
     public class QueryVM
@@ -16,8 +16,8 @@ namespace repairman.Models
         public string search { get; set; }
         public string searchPhone { get; set; }
         public long? company_id { get; set; }
-        public ProjectStatusEnum? status { get; set; }
-        public ServiceTypeEnum? service_type { get; set; }
+        public ProjectStatus? status { get; set; }
+        public ProjectType? service_type { get; set; }
 
         public string sort { get; set; }
 

@@ -1,19 +1,19 @@
-﻿using repairman.Models;
+﻿using projectman.Models;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
-namespace repairman.Repositories
+namespace projectman.Repositories
 {
     public interface ICompanyRepository
     {
-        IQueryable<CompanyModel> GetCompanies();
+        IQueryable<Company> GetCompanies();
         IList<CompanyInPersonasViewModel> GetPersonsInCompanyByPersonID(long ID);
-        IQueryable<CompanyModel> FindCompanies(string keyword = null);
-        CreditModel GetCredits(long ID);
-        Task<CompanyModel> CreateCompany(CompanyModel u);
-        Task<CompanyModel> GetCompany(long ID, params string[] includeFields);
-        IQueryable<CreditModel> GetCredits();
-        public bool DelCompany(CompanyModel s);
+        IQueryable<Company> FindCompanies(string keyword = null);
+        CreditRating GetCreditRating(string ID);
+        Task<Company> CreateCompany(Company u);
+        Task<Company> GetCompany(long ID, params string[] includeFields);
+        IQueryable<CreditRating> GetCreditRatings();
+        public bool DelCompany(Company s);
     }
 }

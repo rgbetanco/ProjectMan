@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 
-namespace repairman.Models
+namespace projectman.Models
 {
     public class History
     {

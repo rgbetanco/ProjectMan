@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace repairman.Util
+namespace projectman.Util
 {
     public interface ILDAPClient
     {

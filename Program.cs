@@ -1,4 +1,4 @@
-using repairman.Data;
+using projectman.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 
-namespace repairman
+namespace projectman
 {
     public class Program
     {
@@ -49,6 +49,10 @@ namespace repairman
                       .Build();
 
                 DBInitializer.Initialize(context, config);
+                if( env=="Development" )
+                {
+                    DBInitializer.InitializeTestData(context, config);
+                }
             }
             catch (Exception e)
             {

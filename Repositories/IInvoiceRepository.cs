@@ -1,17 +1,17 @@
-﻿using repairman.Models;
+﻿using projectman.Models;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace repairman.Repositories
+namespace projectman.Repositories
 {
     public interface IInvoiceRepository
     {
-        IQueryable<IncomingPaymentModel> GetIncomingInvoiceListByProject(long ID);
-        Task<InvoiceModel> CreateInvoice(InvoiceModel u);
-        IQueryable<InvoiceModel> GetInvoices();
-        IQueryable<InvoiceModel> FindInvoices(string keyword = null);
-        Task<InvoiceModel> GetInvoice(long ID, params string[] includeFields);
-        bool DelInvoice(InvoiceModel s);
+        IQueryable<ProjectIncomingPayment> GetIncomingInvoiceListByProject(long ID);
+        Task<Invoice> CreateInvoice(Invoice u);
+        IQueryable<Invoice> GetInvoices();
+        IQueryable<Invoice> FindInvoices(string keyword = null);
+        Task<Invoice> GetInvoice(long ID, params string[] includeFields);
+        bool DelInvoice(Invoice s);
         bool UpdateIncomingPaymentItem(long incoming_payment_id, long invoice_id);
     }
 }

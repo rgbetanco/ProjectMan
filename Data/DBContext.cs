@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using repairman.Models;
+using projectman.Models;
 using Microsoft.AspNetCore.Http;
 using CSHelper.Extensions;
 
-namespace repairman.Data
+namespace projectman.Data
 {
     public class DBContext : DbContext
     {
@@ -23,103 +23,91 @@ namespace repairman.Data
         public DbSet<UserGroup> UserGroups { get; set; }
         public DbSet<PermGroup> PermGroups { get; set; }
 
-        // User-related
-        public DbSet<Member> Members { get; set; }
-
-        // department related
-        public DbSet<Dept> Depts { get; set; }
-
-        // service request related
-        public DbSet<ServiceRequestCat> ServiceRequestCats { get; set; }
-        public DbSet<ServiceRequestSubCat> ServiceRequestSubCats { get; set; }
-        public DbSet<ServiceRequest> ServiceRequests { get; set; }
-        public DbSet<ServiceRequestPic> ServiceRequestPics { get; set; }
-        public DbSet<ServiceRequestFile> ServiceRequestFiles { get; set; }
-        public DbSet<ServiceRequestReply> ServiceRequestReplies { get; set; }
-        public DbSet<ServiceRequestReplyFile> ServiceRequestReplyFiles { get; set; }
-        public DbSet<ServiceRequestReplyPic> ServiceRequestReplyPics { get; set; }
-
         // Project related
-        public DbSet<ProjectModel> Projects { get; set; }
-        public DbSet<ProductBrandModel> ProductBrands { get; set; }
-        public DbSet<ProductModelModel> ProductModels { get; set; }
+        public DbSet<ProjectImportance> ProjectImportances { get; set; }    
+        public DbSet<Project> Projects { get; set; }
+        public DbSet<ProductBrand> ProductBrands { get; set; }
+        public DbSet<Product> Products { get; set; }
+
         //COMPANIES
-        public DbSet<CompanyModel> Companies { get; set; }
-        public DbSet<CreditModel> Credits { get; set; }
-        public DbSet<CompanyPhoneModel> CompanyPhones { get; set; }
-        public DbSet<CompanyAddressModel> CompanyAddresses { get; set; }
-        public DbSet<CompanyEmailModel> CompanyEmails { get; set; }
-        public DbSet<PersonaPhoneModel> PersonaPhones { get; set; }
-        public DbSet<PersonaAddressModel> PersonaAddresses { get; set; }
-        public DbSet<PersonaEmailModel> PersonaEmails { get; set; }
-        public DbSet<PersonaModel> Personas { get; set; }
-        public DbSet<PersonaCompanyModel> PersonaCompanies { get; set; }
-        public DbSet<ContactModel> Contacts { get; set; }
-        public DbSet<ProductModel> Products { get; set; }
-        public DbSet<IncomingPaymentModel> IncomingPayments { get; set; }
-        public DbSet<OutgoingPaymentModel> OutgoingPayments { get; set; }
-        public DbSet<InvoiceModel> Invoices { get; set; }
-        public DbSet<InvoiceItemModel> InvoiceItems { get; set; }
+        public DbSet<Company> Companies { get; set; }
+        public DbSet<CreditRating> CreditRatings { get; set; }
+        public DbSet<CompanyPhone> CompanyPhones { get; set; }
+        public DbSet<CompanyAddress> CompanyAddresses { get; set; }
+        public DbSet<CompanyEmail> CompanyEmails { get; set; }
+
+        // Contacts
+        public DbSet<ContactPhone> ContactPhones { get; set; }
+        public DbSet<ContactAddress> ContactAddresses { get; set; }
+        public DbSet<ContactEmail> ContactEmails { get; set; }
+        public DbSet<Contact> Contacts { get; set; }
+        public DbSet<ContactCompany> ContactCompanies { get; set; }
+
+        public DbSet<ProjectProduct> ProjectProducts { get; set; }
+        public DbSet<ProjectIncomingPayment> IncomingPayments { get; set; }
+        public DbSet<ProjectOutgoingPayment> OutgoingPayments { get; set; }
+        public DbSet<Invoice> Invoices { get; set; }
+        public DbSet<InvoiceItem> InvoiceItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
             //Invoice
-            builder.Entity<InvoiceModel>()
-                .HasMany(e => e.invoice_item)
+            builder.Entity<Invoice>()
+                .HasMany(e => e.items)
                 .WithOne(e => e.invoice)
                 .OnDelete(DeleteBehavior.Cascade);
             // Project product list
-            builder.Entity<ProjectModel>()
-                .HasMany(e => e.product_list)
+            builder.Entity<Project>()
+                .HasMany(e => e.products)
                 .WithOne(e => e.project)
                 .OnDelete(DeleteBehavior.Cascade);
             // Project incoming payment
-            builder.Entity<ProjectModel>()
-                .HasMany(e => e.incoming_payment)
+            builder.Entity<Project>()
+                .HasMany(e => e.incoming_payments)
                 .WithOne(e => e.project)
                 .OnDelete(DeleteBehavior.Cascade);
             // Project outcoming payment
-            builder.Entity<ProjectModel>()
-                .HasMany(e => e.outgoing_payment)
+            builder.Entity<Project>()
+                .HasMany(e => e.outgoing_payments)
                 .WithOne(e => e.project)
                 .OnDelete(DeleteBehavior.Cascade);
             // Company phones
-            builder.Entity<CompanyModel>()
-                .HasMany(e => e.phone)
+            builder.Entity<Company>()
+                .HasMany(e => e.phones)
                 .WithOne(e => e.company)
                 .OnDelete(DeleteBehavior.Cascade);
             // Company adress
-            builder.Entity<CompanyModel>()
-                .HasMany(e => e.address)
+            builder.Entity<Company>()
+                .HasMany(e => e.addresses)
                 .WithOne(e => e.company)
                 .OnDelete(DeleteBehavior.Cascade);
             // Company email
-            builder.Entity<CompanyModel>()
-                .HasMany(e => e.email)
+            builder.Entity<Company>()
+                .HasMany(e => e.emails)
                 .WithOne(e => e.company)
                 .OnDelete(DeleteBehavior.Cascade);
             // Persona phones
-            builder.Entity<PersonaModel>()
-                .HasMany(e => e.phone)
-                .WithOne(e => e.persona)
+            builder.Entity<Contact>()
+                .HasMany(e => e.phones)
+                .WithOne(e => e.contact)
                 .OnDelete(DeleteBehavior.Cascade);
             // Persona adress
-            builder.Entity<PersonaModel>()
-                .HasMany(e => e.address)
-                .WithOne(e => e.persona)
+            builder.Entity<Contact>()
+                .HasMany(e => e.addresses)
+                .WithOne(e => e.contact)
                 .OnDelete(DeleteBehavior.Cascade);
             // Persona email
-            builder.Entity<PersonaModel>()
-                .HasMany(e => e.email)
-                .WithOne(e => e.persona)
+            builder.Entity<Contact>()
+                .HasMany(e => e.emails)
+                .WithOne(e => e.contact)
                 .OnDelete(DeleteBehavior.Cascade);
             // Company members
-            builder.Entity<PersonaModel>()
-                .HasMany(e => e.personas_company)
-                .WithOne(e => e.persona)
-                .HasForeignKey(e => e.persona_id)
+            builder.Entity<Contact>()
+                .HasMany(e => e.companies)
+                .WithOne(e => e.contact)
+                .HasForeignKey(e => e.contact_id)
                 .OnDelete(DeleteBehavior.Cascade);
             
 
@@ -130,16 +118,6 @@ namespace repairman.Data
                 .HasIndex(u => u.username)
                 .IsUnique();
 
-            // prevent delete of sub-cat, if it's in use
-            builder.Entity<ServiceRequest>()
-                .HasOne(e => e.sub_cat)
-                .WithMany(e => e.requests)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<ServiceRequest>()
-                .HasOne(e => e.dept)
-                .WithMany(e => e.requests)
-                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using CSHelper.Extensions;
-using repairman.Repositories;
-using repairman.Models;
+using projectman.Repositories;
+using projectman.Models;
 using System;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
@@ -10,11 +10,13 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
-using static repairman.Models.History;
+using static projectman.Models.History;
 using Microsoft.Identity.Client;
 using Azure.Core;
+using CSHelper.Authorization;
+using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
 
-namespace repairman.Areas.Man.Controllers
+namespace projectman.Areas.Man.Controllers
 {
     [Area("man")]
     [Authorize(AuthenticationSchemes = ManDefaults.AuthenticationScheme)]
@@ -23,8 +25,8 @@ namespace repairman.Areas.Man.Controllers
         private readonly IProjectRepository _proj;
         private readonly IUserRepository _user;
         private readonly ICompanyRepository _comp;
-        private readonly IPersonaRepository _persona;
-        public ProjectController(ITransaction tran, ILookupRepository lookup, IProjectRepository proj, IUserRepository user, ICompanyRepository comp, IPersonaRepository persona)
+        private readonly IContactRepository _persona;
+        public ProjectController(ITransaction tran, ILookupRepository lookup, IProjectRepository proj, IUserRepository user, ICompanyRepository comp, IContactRepository persona)
            : base(tran, lookup)
         {
             _proj = proj;
@@ -44,9 +46,9 @@ namespace repairman.Areas.Man.Controllers
 
         protected IEnumerable<SelectListItem> GetImportanceList()
         {
-            var r = _proj.GetImportances();
+            var r = _proj.GetImportances().AsNoTracking();
 
-            var result = r.Select(m => new SelectListItem { Value = ""+(int)m, Text = m.ToString() });
+            var result = r.Select(m => new SelectListItem { Value = m.code, Text = m.name });
 
             return result;
         }
@@ -60,18 +62,9 @@ namespace repairman.Areas.Man.Controllers
             return result;
         }
 
-        protected IEnumerable<SelectListItem> GetCategoryList()
+        protected IEnumerable<SelectListItem> GetCompanyContactList(long comp_id)
         {
-            var r = _proj.GetCategoryList();
-
-            var result = r.Select(m => new SelectListItem { Value = "" + (int)m, Text = m.ToString() });
-
-            return result;
-        }
-        
-        protected IEnumerable<SelectListItem> GetPersonasList(long comp_id)
-        {
-            var r = _persona.GetPersonaPerCompany(comp_id).Select(n => new SelectListItem { Value = n.ID.ToString(), Text = n.name });
+            var r = _persona.GetCompanyContacts(comp_id).Select(n => new SelectListItem { Value = n.ID.ToString(), Text = n.name });
             if (!r.Any())
             {
                 r.Append(new SelectListItem { Value = "所有", Text = "所有" });
@@ -81,9 +74,9 @@ namespace repairman.Areas.Man.Controllers
 
         public async Task<IActionResult> ProjectQuery(QueryVM request)
         {
-            var result = _proj.FindProjects((ProjectStatusEnum)request.status, (ServiceTypeEnum)request.service_type, request.search);
+            var result = _proj.FindProjects((ProjectStatus)request.status, (ProjectType)request.service_type, request.search);
             var _nextInvoices = _proj.GetNextDueIncomingPayment();
-            var _nextInvoice = _nextInvoices.Where(r => String.IsNullOrEmpty(r.invoice)).OrderByDescending(r => r.issueDate);
+            var _nextInvoice = _nextInvoices.Where(r => String.IsNullOrEmpty(r.invoice)).OrderByDescending(r => r.due_date);
 
             return await GetTableReplyAsync(result, request, null, r => new
             {
@@ -91,7 +84,7 @@ namespace repairman.Areas.Man.Controllers
                 number = r.number,
                 name = r.name,
                 remarks = r.remarks,
-                nextInvoice = String.IsNullOrEmpty(_nextInvoice.FirstOrDefault(a => a.project_id == r.ID).issueDate.ToString()) ? "沒有" : _nextInvoice.FirstOrDefault(a => a.project_id == r.ID).issueDate.ToShortDateString(),
+                nextInvoice = String.IsNullOrEmpty(_nextInvoice.FirstOrDefault(a => a.project_id == r.ID).due_date.ToString()) ? "沒有" : _nextInvoice.FirstOrDefault(a => a.project_id == r.ID).due_date.ToShortDateString(),
             });
         }
 
@@ -99,7 +92,7 @@ namespace repairman.Areas.Man.Controllers
         {
             var result = _proj.FindAllProject();
             var _nextInvoices = _proj.GetNextDueIncomingPayment();
-            var _nextInvoice = _nextInvoices.Where(r => String.IsNullOrEmpty(r.invoice)).OrderByDescending(r => r.issueDate);
+            var _nextInvoice = _nextInvoices.Where(r => String.IsNullOrEmpty(r.invoice)).OrderByDescending(r => r.due_date);
 
             return await GetTableReplyAsync(result, request, null, r => new
             {
@@ -107,7 +100,7 @@ namespace repairman.Areas.Man.Controllers
                 number = r.number,
                 name = r.name,
                 remarks = r.remarks,
-                nextInvoice = String.IsNullOrEmpty(_nextInvoice.FirstOrDefault(a => a.project_id == r.ID).issueDate.ToString()) ? "沒有" : _nextInvoice.FirstOrDefault(a => a.project_id == r.ID).issueDate.ToShortDateString(),
+                nextInvoice = String.IsNullOrEmpty(_nextInvoice.FirstOrDefault(a => a.project_id == r.ID).due_date.ToString()) ? "沒有" : _nextInvoice.FirstOrDefault(a => a.project_id == r.ID).due_date.ToShortDateString(),
                 item = String.IsNullOrEmpty(_nextInvoice.FirstOrDefault(a => a.project_id == r.ID).item) ? "沒有" : _nextInvoice.FirstOrDefault(a => a.project_id == r.ID).item
             });
         }
@@ -122,8 +115,8 @@ namespace repairman.Areas.Man.Controllers
                 name = r.name,
                 remarks = r.remarks,
                 starting_date = r.starting_datetime,
-                nextInvoice = r.incoming_payment.FirstOrDefault().issueDate,
-                item = r.incoming_payment.FirstOrDefault().item
+                nextInvoice = r.incoming_payments.FirstOrDefault().due_date,
+                item = r.incoming_payments.FirstOrDefault().item
             }); 
         }
 
@@ -133,17 +126,14 @@ namespace repairman.Areas.Man.Controllers
         }
 
         [HttpGet]
-        public IActionResult ProjectNew()
+        public IActionResult New()
         {
-            var a = new ProjectModel();
+            var a = new Project();
             ViewData["sales_person"] = GetSalePersonList();
             ViewData["importance"] = GetImportanceList();
             ViewData["service_type"] = GetServiceTypeList();
-            ViewData["categories"] = GetCategoryList();
             // generate list of modules for dropdown lists
-            ViewData["brands"] = _proj.GetBrands().Select(m => new SelectListItem { Value = m.ID.ToString(), Text = m.brand_name });
-            ViewData["models"] = _proj.GetModels().Select(m => new SelectListItem { Value = m.ID.ToString(), Text = m.model_name });
-            ViewData["personas"] = GetPersonasList(-1);
+            ViewData["personas"] = GetCompanyContactList(-1);
 
             a.starting_datetime = DateTime.UtcNow;
             a.ending_datetime = a.starting_datetime.AddMonths(3);
@@ -156,32 +146,32 @@ namespace repairman.Areas.Man.Controllers
         // new category - save
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [ActionName("ProjectNew")]
-        public async Task<IActionResult> ProjectNewPost()
+        [ActionName("New")]
+        public async Task<IActionResult> NewPost()
         {
-            var m = new ProjectModel();
+            var m = new Project();
 
-            await TryUpdateModelAsync<ProjectModel>(
+            await TryUpdateModelAsync<Project>(
                 m,
                 "",
                 a => a.name,
                 a => a.number,
-                a => a.service_type,
+                a => a.type,
                 a => a.status,
                 a => a.starting_datetime,
                 a => a.ending_datetime,
                 a => a.user_id,
                 a => a.importance_id,
                 a => a.company_id,
-                a => a.persona_id,
+                a => a.contact_id,
                 a => a.contact_address,
                 a => a.contact_phone,
                 a => a.remarks
             );
 
-            await TryUpdateModelListAsync(m, a => a.product_list, b => b.product_brand_id, b => b.product_model_id, b => b.serial_number);
-            await TryUpdateModelListAsync(m, a => a.incoming_payment, b => b.issueDate, b => b.item, b => b.amount, b => b.invoice);
-            await TryUpdateModelListAsync(m, a => a.outgoing_payment, b => b.issueDate, b => b.company_id, b => b.amount);
+            await this.TryUpdateModelListAsync(m, a => a.products, b => b.product_id, b => b.serial_number);
+            await this.TryUpdateModelListAsync(m, a => a.incoming_payments, b => b.due_date, b => b.item, b => b.amount, b => b.invoice);
+            await this.TryUpdateModelListAsync(m, a => a.outgoing_payments, b => b.due_date, b => b.company_id, b => b.amount);
             
             await _proj.CreateProject(m);
             var result = await CommitModel(m);
@@ -189,26 +179,23 @@ namespace repairman.Areas.Man.Controllers
             return result;
         }
 
-        [ActionName("ProjectEdit")]
-        public async Task<IActionResult> ProjectEdit(long ID)
+        public async Task<IActionResult> View(long ID)
         {
-            ProjectModel project = await _proj.GetProject(ID, "product_list", "incoming_payment", "outgoing_payment");
+            Project project = await _proj.GetProject(ID, "product_list", "incoming_payment", "outgoing_payment");
 
             ViewData["sales_person"] = GetSalePersonList();
             ViewData["importance"] = GetImportanceList();
             ViewData["service_type"] = GetServiceTypeList();
-            ViewData["categories"] = GetCategoryList();
+
             // generate list of modules for dropdown lists
-            ViewData["brands"] = _proj.GetBrands().Select(m => new SelectListItem { Value = m.ID.ToString(), Text = m.brand_name });
-            ViewData["models"] = _proj.GetModels().Select(m => new SelectListItem { Value = m.ID.ToString(), Text = m.model_name });
-            ViewData["personas"] = GetPersonasList(-1);
+            ViewData["personas"] = GetCompanyContactList(-1);
             if (project.company_id != null)
             {
-                ViewData["personas"] = GetPersonasList((long)project.company_id);
+                ViewData["personas"] = GetCompanyContactList((long)project.company_id);
                 project.company = await _comp.GetCompany((long)project.company_id);   
             }
 
-            foreach(OutgoingPaymentModel m in project.outgoing_payment)
+            foreach(ProjectOutgoingPayment m in project.outgoing_payments)
             {
                 m.company = await _comp.GetCompany((long)m.company_id);
             }
@@ -217,39 +204,39 @@ namespace repairman.Areas.Man.Controllers
             {
                 project.user = await _user.Get((long)project.user_id);
             }
-            if (project.persona_id != null)
+            if (project.contact_id != null)
             {
-                project.persona = await _persona.GetPersona((long)project.persona_id);
+                project.contact = await _persona.Get((long)project.contact_id);
             }
             return View(project);
         }
 
         [HttpPost]
-        public async Task<IActionResult> ProjectUpdate(long ID)
+        public async Task<IActionResult> Update(long ID)
         {
-            ProjectModel project = await _proj.GetProject(ID, "product_list", "incoming_payment", "outgoing_payment");
+            Project project = await _proj.GetProject(ID, "product_list", "incoming_payment", "outgoing_payment");
             if (project == null)
             {
                 return NotFound();
             }
 
-            await TryUpdateModelListAsync(project, a => a.product_list, b => b.category, b => b.product_brand_id, b => b.product_model_id, b => b.serial_number);
-            await TryUpdateModelListAsync(project, a => a.incoming_payment, b => b.issueDate, b => b.item, b => b.amount, b => b.invoice);
-            await TryUpdateModelListAsync(project, a => a.outgoing_payment, b => b.issueDate, b => b.company_id, b => b.amount);
+            await this.TryUpdateModelListAsync(project, a => a.products, b => b.product_id, b => b.serial_number);
+            await this.TryUpdateModelListAsync(project, a => a.incoming_payments, b => b.due_date, b => b.item, b => b.amount, b => b.invoice);
+            await this.TryUpdateModelListAsync(project, a => a.outgoing_payments, b => b.due_date, b => b.company_id, b => b.amount);
 
-            await TryUpdateModelAsync<ProjectModel>(
+            await TryUpdateModelAsync<Project>(
                 project,
                 "",
                 a => a.name,
                 a => a.number,
-                a => a.service_type,
+                a => a.type,
                 a => a.status,
                 a => a.starting_datetime,
                 a => a.ending_datetime,
                 a => a.user_id,
                 a => a.importance_id,
                 a => a.company_id,
-                a => a.persona_id,
+                a => a.contact_id,
                 a => a.contact_address,
                 a => a.contact_phone,
                 a => a.remarks
@@ -262,35 +249,9 @@ namespace repairman.Areas.Man.Controllers
         [AllowAnonymous]
         public IActionResult ListPersonaPerCompany(long ID)
         {
-            return Json(GetPersonasList(ID));
+            return Json(GetCompanyContactList(ID));
         }
-
-        [HttpPost]
-        [AllowAnonymous]
-        public IActionResult ListBrandForCategory(long ID)
-        {
-            foreach(ProductCategoryEnum i in Enum.GetValues(typeof(ProductCategoryEnum))){
-                if (((long)i) == ID) {
-                    return Json(_proj.GetCategoryBrandList(i));
-                }
-            }
-            return Json(_proj.GetCategoryBrandList(ProductCategoryEnum.CategoryA));
-        }
-
-        [HttpPost]
-        [AllowAnonymous]
-        public IActionResult ListModelForCategory(long ID)
-        {
-            foreach (ProductCategoryEnum i in Enum.GetValues(typeof(ProductCategoryEnum)))
-            {
-                if (((long)i) == ID)
-                {
-                    return Json(_proj.GetCategoryModelList(i));
-                }
-            }
-            return Json(_proj.GetCategoryModelList(ProductCategoryEnum.CategoryA));
-        }
-    
+            
         public IActionResult Dashboard()
         {
             return View();
@@ -326,6 +287,38 @@ namespace repairman.Areas.Man.Controllers
         {
             ViewData["ID"] = ID;
             return PartialView("_RenewContractPopUp");
+        }
+
+
+        public async Task<IActionResult> ImportanceSetting()
+        {
+            return View(await _proj.GetImportances().ToListAsync());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ActionName("ImportanceSetting")]
+        [AuthorizeRole(UserPermission.Edit | UserPermission.Add)]
+        public async Task<IActionResult> ImportanceSettingPost()
+        {
+            await this.TryUpdateTableModelAsync<ProjectImportance, string>(
+                "Importance",   // data-form-table-group name
+                async t =>
+                {
+                    await _proj.Create(t);
+                    return true;
+                },
+                t =>
+                {
+                    _proj.DelImportanceUnsafe(t);
+                    return Task.FromResult(true);
+                },
+                async t => await _proj.GetImportanceAsync(t)
+            );
+
+            var result = await CommitModel(null);
+
+            return result;
         }
 
         [HttpPost]

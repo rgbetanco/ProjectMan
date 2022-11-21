@@ -1,6 +1,6 @@
 using System;
 
-namespace repairman.Models
+namespace projectman.Models
 {
     public class ErrorVM
     {

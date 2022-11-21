@@ -1,11 +1,11 @@
-﻿using repairman.Data;
-using repairman.Models;
+﻿using projectman.Data;
+using projectman.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
-namespace repairman.Repositories
+namespace projectman.Repositories
 {
     public class CompanyRepository : ICompanyRepository
     {
@@ -17,22 +17,22 @@ namespace repairman.Repositories
         }
 
         //GET ALL CREDIT
-        public IQueryable<CreditModel> GetCredits()
+        public IQueryable<CreditRating> GetCreditRatings()
         {
-            return _context.Credits.AsQueryable();
+            return _context.CreditRatings.AsQueryable();
         }
-        public CreditModel GetCredits(long ID)
+        public CreditRating GetCreditRating(string ID)
         {
-            var q = _context.Credits.AsQueryable();
-            return q.FirstOrDefault(r => r.ID == ID);
+            var q = _context.CreditRatings.AsQueryable();
+            return q.FirstOrDefault(r => r.code == ID);
         }
 
-        public IQueryable<CompanyModel> GetCompanies()
+        public IQueryable<Company> GetCompanies()
         {
             return _context.Companies;
         }
 
-        public IQueryable<CompanyModel> FindCompanies(string keyword = null)
+        public IQueryable<Company> FindCompanies(string keyword = null)
         {
             var result = _context.Companies.AsQueryable();
 
@@ -44,20 +44,20 @@ namespace repairman.Repositories
             return result;
         }
 
-        public async Task<CompanyModel> CreateCompany(CompanyModel u)
+        public async Task<Company> CreateCompany(Company u)
         {
             await _context.Companies.AddAsync(u);
 
             return u;
         }
 
-        public bool DelCompany(CompanyModel s)
+        public bool DelCompany(Company s)
         {
             _context.Companies.Remove(s);
             return true;
         }
 
-        public async Task<CompanyModel> GetCompany(long ID, params string[] includeFields)
+        public async Task<Company> GetCompany(long ID, params string[] includeFields)
         {
             var q = _context.Companies.AsQueryable();
 
@@ -73,7 +73,7 @@ namespace repairman.Repositories
 
         public IList<CompanyInPersonasViewModel> GetPersonsInCompanyByPersonID(long ID)
         {
-            var q = (from pc in _context.PersonaCompanies join c in _context.Companies on pc.company_id equals c.ID where pc.persona_id == ID select new CompanyInPersonasViewModel { company_name = c.name, job_title = pc.job_title, company_id = c.ID }).AsNoTracking().ToList();
+            var q = (from pc in _context.ContactCompanies join c in _context.Companies on pc.company_id equals c.ID where pc.contact_id == ID select new CompanyInPersonasViewModel { company_name = c.name, job_title = pc.job_title, company_id = c.ID }).AsNoTracking().ToList();
             return q;
         }
     }

@@ -10,7 +10,7 @@
         <h5>@ViewData["Title"]</h5>
     </div>
     <div class="col text-end align-self-end">
-        <a class="btn btn-primary" role="button" asp-action="ProjectNew">新增...</a>
+        <a class="btn btn-primary" role="button" asp-action="New">新增...</a>
     </div>
 </div>
 
@@ -22,11 +22,11 @@
     </div>
     <div class="col-auto">
         <label for="service_type" class="form-label">品項</label>
-        @Html.DropDownList("service_type", CSHelper.Extensions.RenderingExtension.GetSelectList<ServiceTypeEnum>(), new { @class = "form-select" })
+        @Html.DropDownList("service_type", CSHelper.Extensions.RenderingExtension.GetSelectList<ProjectType>(), new { @class = "form-select" })
     </div>
     <div class="col-auto">
         <label for="status" class="form-label">狀態</label>
-        @Html.DropDownList("status", CSHelper.Extensions.RenderingExtension.GetSelectList<ProjectStatusEnum>(), new { @class = "form-select" })
+        @Html.DropDownList("status", CSHelper.Extensions.RenderingExtension.GetSelectList<ProjectStatus>(), new { @class = "form-select" })
     </div>
     <div class="col text-end">
         <button id="query_start" class="btn btn-primary" role="button">搜尋</button>
@@ -79,7 +79,7 @@
 
             table.addEventListener('clickcell', evt => {
                 if (evt.detail.fieldname != 'action') {
-                    window.location.href = '@Url.Action("ProjectEdit")?id=' + evt.detail.data.id;
+                    window.location.href = '@Url.Action("View")?id=' + evt.detail.data.id;
                 }
             });
 

@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NuGet.Packaging.Signing;
-using repairman.Data;
-using repairman.Models;
+using projectman.Data;
+using projectman.Models;
 using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace repairman.Repositories
+namespace projectman.Repositories
 {
     public class InvoiceRepository : IInvoiceRepository
     {
@@ -16,20 +16,20 @@ namespace repairman.Repositories
         {
             _context = context;
         }
-        public IQueryable<IncomingPaymentModel> GetIncomingInvoiceListByProject(long ID)
+        public IQueryable<ProjectIncomingPayment> GetIncomingInvoiceListByProject(long ID)
         {
             return _context.IncomingPayments.AsQueryable().Where(m => m.project_id == ID);
         }
-        public async Task<InvoiceModel> CreateInvoice(InvoiceModel u)
+        public async Task<Invoice> CreateInvoice(Invoice u)
         {
             await _context.Invoices.AddAsync(u);
             return u;
         }
-        public IQueryable<InvoiceModel> GetInvoices()
+        public IQueryable<Invoice> GetInvoices()
         {
             return _context.Invoices;
         }
-        public IQueryable<InvoiceModel> FindInvoices(string keyword = null)
+        public IQueryable<Invoice> FindInvoices(string keyword = null)
         {
             var result = _context.Invoices.AsQueryable();
             if (!string.IsNullOrWhiteSpace(keyword))
@@ -38,7 +38,7 @@ namespace repairman.Repositories
             }
             return result;
         }
-        public async Task<InvoiceModel> GetInvoice(long ID, params string[] includeFields)
+        public async Task<Invoice> GetInvoice(long ID, params string[] includeFields)
         {
             var q = _context.Invoices.AsQueryable();
             
@@ -51,7 +51,7 @@ namespace repairman.Repositories
             var a = await q.FirstOrDefaultAsync(u => u.ID == ID);
             return a;
         }
-        public bool DelInvoice(InvoiceModel s)
+        public bool DelInvoice(Invoice s)
         {
             _context.Invoices.Remove(s);
             return true;

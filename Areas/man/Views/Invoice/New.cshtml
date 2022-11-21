@@ -1,4 +1,4 @@
-﻿@model repairman.Models.InvoiceModel
+﻿@model projectman.Models.Invoice
 @using CSHelper.Extensions
 @{
     ViewBag.company_id = -1;
@@ -41,16 +41,16 @@
                     @Html.LocalDateTimeInputFor(m => m.issue_date, new { @class = "form-control", @step = "1" })
                 </div>
                 <div class="col text-start">
-                    @Html.LabelFor(m => m.amount, new { @class = "form-label form-view-hide" })
-                    @Html.TextBoxFor(m => m.amount, new { @class = "form-control form-text" })
+                    @Html.LabelFor(m => m.total_amount, new { @class = "form-label form-view-hide" })
+                    @Html.TextBoxFor(m => m.total_amount, new { @class = "form-control form-text" })
                 </div>
             </div>
         
             <table class="table mt-4">
                 <thead>
                     <tr>
-                        <th scope="col">@Html.LabelFor(m => m.invoice_item.FirstOrDefault().incoming_payment.item, new { @class = "form-label" })</th>
-                        <th scope="col">@Html.LabelFor(m => m.amount, new { @class="form-label"})</th>
+                        <th scope="col">@Html.LabelFor(m => m.items.FirstOrDefault().incoming_payment.item, new { @class = "form-label" })</th>
+                        <th scope="col">@Html.LabelFor(m => m.total_amount, new { @class="form-label"})</th>
                         <th scope="col">功能</th>
                     </tr>
                 </thead>

@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.Configuration;
-using repairman.Models;
+using projectman.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace repairman.Data
+namespace projectman.Data
 {
     public class DBInitializer
     {
@@ -34,154 +34,146 @@ namespace repairman.Data
                     date_created = DateTime.UtcNow
                 },
             };
+
             foreach (User u in users)
             {
                 context.Users.Add(u);
             }
-            context.SaveChanges();
 
+            context.SaveChanges();
+        }
+
+
+        public static void InitializeTestData(DBContext context, IConfiguration config)
+        {
             //Add credit if none
-            if (context.Credits.Any())
+            if (!context.CreditRatings.Any())
             {
-                return;   // DB has been seeded
+                var credits = new CreditRating[]
+                {
+                    new CreditRating{
+                        name="性用 A",
+                        code="A"
+                    },
+                    new CreditRating{
+                        name="性用 B",
+                        code="B"
+                    },
+                    new CreditRating{
+                        name="性用 C",
+                        code="C"
+                    },
+                };
+                foreach (CreditRating c in credits)
+                {
+                    context.CreditRatings.Add(c);
+                }
+                context.SaveChanges();
             }
-
-            var credits = new CreditModel[]
-            {
-                new CreditModel{
-                    name="狀態 A"
-                },
-                new CreditModel{
-                    name="狀態 B"
-                },
-                new CreditModel{
-                    name="狀態 C"
-                },
-            };
-            foreach (CreditModel c in credits)
-            {
-                context.Credits.Add(c);
-            }
-            context.SaveChanges();
-
-            // Add brands if none
-            if (context.ProductBrands.Any())
-            {
-                return;   // DB has been seeded
-            }
-
-            var brands = new ProductBrandModel[]
-            {
-                new ProductBrandModel{
-                    category = ProductCategoryEnum.CategoryA,
-                    brand_name="商牌 A"
-                },
-                new ProductBrandModel{
-                    category = ProductCategoryEnum.CategoryA,
-                    brand_name="商牌 A-1"
-                },
-                new ProductBrandModel{
-                    category = ProductCategoryEnum.CategoryB,
-                    brand_name="商牌 B"
-                },
-                new ProductBrandModel{
-                    category = ProductCategoryEnum.CategoryB,
-                    brand_name="商牌 B-1"
-                },
-
-            };
-            foreach (ProductBrandModel b in brands)
-            {
-                context.ProductBrands.Add(b);
-            }
-            context.SaveChanges();
 
             // Add models if none
-            if (context.ProductModels.Any())
+            if (!context.Products.Any())
             {
-                return;   // DB has been seeded
-            }
+                var brands = new ProductBrand[] {
+                    new ProductBrand{
+                        name="HP"
+                    },
+                    new ProductBrand{
+                        name="Google"
+                    },
+                    new ProductBrand{
+                        name="Microsoft"
+                    }
+                };
 
-            var models = new ProductModelModel[]
-            {
-                new ProductModelModel{
-                    category = ProductCategoryEnum.CategoryA,
-                    model_name="型號 A"
-                },
-                new ProductModelModel{
-                    category = ProductCategoryEnum.CategoryA,
-                    model_name="型號 A-1"
-                },
-                new ProductModelModel{
-                    category = ProductCategoryEnum.CategoryB,
-                    model_name="型號 B"
-                },
-                new ProductModelModel{
-                    category = ProductCategoryEnum.CategoryB,
-                    model_name="型號 B-1"
-                },
+                foreach (ProductBrand b in brands)
+                {
+                    context.ProductBrands.Add(b);
+                }
 
-            };
-            foreach (ProductModelModel m in models)
-            {
-                context.ProductModels.Add(m);
+                var models = new Product[]
+                {
+                    new Product{
+                        category = ProductCategory.Software,
+                        brand = brands[2],
+                        name="MS Office 2010",
+                        model_name="OFFICE10"
+                    },
+                    new Product{
+                        category = ProductCategory.Hardware,
+                        name="Laserjet 5",
+                        brand = brands[0],
+                        model_name="LJ200X"
+                    },
+                    new Product{
+                        category = ProductCategory.Service,
+                        brand = brands[1],
+                        name="Google Cloud Platform (1 yr)",
+                        model_name="GCP1YR"
+                    },
+                    new Product{
+                        category = ProductCategory.Accessory,
+                        brand = brands[0],
+                        name = "Mighty Mouse",
+                        model_name="MOUSE1"
+                    }
+                };
+
+                foreach (var m in models)
+                {
+                    context.Products.Add(m);
+                }
+                context.SaveChanges();
             }
-            context.SaveChanges();
 
             // Add Companies if none
-            if (context.Companies.Any())
+            if (!context.Companies.Any())
             {
-                return;   // DB has been seeded
-            }
-
-            var companies = new CompanyModel[]
-            {
-                new CompanyModel{
+                var companies = new Company[]
+                {
+                new Company{
                     name = "CompA",
-                    credit_id = 0,
-                    nationalID = "123",
+                    credit_rating_code = "A",
+                    vatid = "123",
                     remarks = "Remarks for company A"
                 },
-                new CompanyModel{
+                new Company{
                     name = "CompB",
-                    credit_id = 0,
-                    nationalID = "456",
+                    credit_rating_code = "B",
+                    vatid = "456",
                     remarks = "Remarks for company B"
                 }
 
-            };
-            foreach (CompanyModel c in companies)
-            {
-                context.Companies.Add(c);
-            }
-            context.SaveChanges();
-            // Add Persona if none
-            if (context.Personas.Any())
-            {
-                return;   // DB has been seeded
-            }
-
-            var persons = new PersonaModel[]
-            {
-                new PersonaModel
+                };
+                foreach (Company c in companies)
                 {
-                    name = "Persona A",
-                    department = "Marketing",
-                    remarks = "Remarks for pesona A"
-                },
-                new PersonaModel
-                {
-                    name = "Persona B",
-                    department = "IT",
-                    remarks = "Remarks for pesona B"
+                    context.Companies.Add(c);
                 }
+                context.SaveChanges();
 
-            };
-            foreach (PersonaModel p in persons)
-            {
-                context.Personas.Add(p);
+                var persons = new Contact[] {
+                    new Contact
+                    {
+                        name = "Person A",
+                        department = "Marketing",
+                        remarks = "Remarks for person A"
+                    },
+                    new Contact
+                    {
+                        name = "Person B",
+                        department = "IT",
+                        remarks = "Remarks for person B"
+                    }
+
+                };
+
+                foreach (Contact p in persons)
+                {
+                    context.Contacts.Add(p);
+                }
+                context.SaveChanges();
             }
-            context.SaveChanges();
         }
+
     }
 }

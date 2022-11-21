@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace repairman.ModelOptions
+namespace projectman.ModelOptions
 {
 
     class PicFileModelOptions : FileModelOptions<PicFileModel>

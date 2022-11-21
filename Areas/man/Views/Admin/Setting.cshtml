@@ -6,7 +6,6 @@
 <div class="container-fluid h-100 d-flex flex-column">
     <div class="row py-3">
         <div class="col">
-            <h5>本功能等待更新中，故暫無資料。</h5>
         </div>
         <div class="col text-end">
         </div>
@@ -16,10 +15,27 @@
     </div>
 
     <div class="row flex-grow-1">
-        <div class="col table-parent">
+        <div class="col">
+            <h2>
+                案件設定
+            </h2>
 
+            <a class="btn btn-primary" asp-controller="Project" asp-action="ImportanceSetting">重要性清單</a>
         </div>
+        <div class="col">
+            <h2>
+                單位設定
+            </h2>
 
+            <a class="btn btn-primary" asp-controller="Company" asp-action="CreditRatingSetting">性用清單</a>
+        </div>
+        <div class="col">
+            <h2>
+                商品設定
+            </h2>
+
+            <a class="btn btn-primary" asp-controller="Product" asp-action="BrandSetting">品牌清單</a>
+        </div>
     </div>
 </div>
 

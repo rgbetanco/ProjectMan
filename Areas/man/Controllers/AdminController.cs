@@ -4,18 +4,18 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using repairman.Models;
+using projectman.Models;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using CSHelper.Extensions;
-using repairman.Repositories;
+using projectman.Repositories;
 using CSHelper.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq;
 
-namespace repairman.Areas.Man.Controllers
+namespace projectman.Areas.Man.Controllers
 {
 
     [Area("man")]
@@ -41,7 +41,6 @@ namespace repairman.Areas.Man.Controllers
         [AuthorizeRole(UserPermission.ManageUser)]
         public IActionResult New()
         {
-            ViewData["groups"] = GetGroupList();
             return View(new User());
         }
 
@@ -50,7 +49,7 @@ namespace repairman.Areas.Man.Controllers
         [ValidateAntiForgeryToken]
         [ActionName("New")]
         [AuthorizeRole(UserPermission.ManageUser)]
-        public async Task<IActionResult> NewPost(List<long> groups)
+        public async Task<IActionResult> NewPost()
         {
             User user = new User();
 
@@ -66,11 +65,6 @@ namespace repairman.Areas.Man.Controllers
                 a => a.perm
             ))
             {
-                if (groups != null)
-                {
-                    user.groups = new List<UserGroup>();
-                    groups.ForEach(m => user.groups.Add(new UserGroup { group_id = m }));
-                }
 
                 user = await _user.Create(user);
             }
@@ -82,14 +76,12 @@ namespace repairman.Areas.Man.Controllers
         [AuthorizeRole(UserPermission.ManageUser)]
         public async Task<IActionResult> View(long ID)
         {
-            User user = await _user.Get(ID, "groups");
+            User user = await _user.Get(ID);
 
             if( user==null )
             {
                 return NotFound();
             }
-
-            ViewData["groups"] = GetGroupList(user.groups.Select(m => m.group_id).ToList());
 
             return View(user);
         }
@@ -99,11 +91,11 @@ namespace repairman.Areas.Man.Controllers
         [ActionName("View")]
         [ValidateAntiForgeryToken]
         [AuthorizeRole(UserPermission.ManageUser)]
-        public async Task<IActionResult> Edit(long ID, [FromForm] List<long> groups )
+        public async Task<IActionResult> Edit(long ID )
         {
             bool isCurrUser = IsIDOfCurrentUser(ID);
 
-            User user = await _user.Get(ID, "groups");
+            User user = await _user.Get(ID);
 
             if (user == null)
             {
@@ -135,60 +127,9 @@ namespace repairman.Areas.Man.Controllers
                     user.bad_password_count = 0;
                 }
 
-                if (groups != null)
-                {
-                    var toDelete = user.groups.Where(m => !groups.Contains(m.group_id)).ToList();
-                    var toAdd = groups.Where(m => !user.groups.Select(m => m.group_id).Contains(m)).ToList();
-
-                    foreach (var t in toDelete)
-                    {
-                        user.groups.Remove(t);
-                    }
-
-                    foreach (var u in toAdd)
-                    {
-                        user.groups.Add(new UserGroup { group_id = u });
-                    }
-
-                    groups.ForEach(m => user.groups.Add(new UserGroup { group_id = m }));
-                }
-                else
-                {
-                    user.groups = new List<UserGroup>();
-                }
-
             }
 
             return await CommitModel(user);
-        }
-
-        // groups
-
-        public async Task<IActionResult> Group()
-        {
-            return View(await _user.GetGroups().ToListAsync());
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [ActionName("Group")]
-        [AuthorizeRole(UserPermission.ManageUser)]
-        public async Task<IActionResult> GroupPost()
-        {
-            await this.TryUpdateTableModelAsync<Group, long>("Group",
-                async t => await _user.Create(t) != null,
-                t => Task.FromResult(_user.DelGroupUnsafe(t)),
-                async t => await _user.GetGroup(t)
-            );
-
-            var result = await CommitModel(null);
-
-            return result;
-        }
-
-        protected MultiSelectList GetGroupList(IEnumerable<long> selectedValues = null)
-        {
-            return new MultiSelectList(_user.GetGroups().Select(m => new SelectListItem { Value = m.ID.ToString(), Text = m.name }), "Value", "Text", selectedValues);
         }
 
         // setting page

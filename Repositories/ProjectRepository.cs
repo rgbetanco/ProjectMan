@@ -1,5 +1,5 @@
-﻿using repairman.Data;
-using repairman.Models;
+﻿using projectman.Data;
+using projectman.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,8 +8,9 @@ using System;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Runtime.InteropServices;
 using Microsoft.IdentityModel.Tokens;
+using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
 
-namespace repairman.Repositories
+namespace projectman.Repositories
 {
     public class ProjectRepository : IProjectRepository
     {
@@ -19,88 +20,21 @@ namespace repairman.Repositories
         {
             _context = context;
         }
-        //GET A LIST OF BRANDS
-        public IEnumerable<SelectListItem> GetCategoryBrandList(ProductCategoryEnum category_id)
-        {
-            return _context.ProductBrands
-                .AsNoTracking()
-                .Where(m => m.category == category_id)
-                .ToList()
-                .Select(m => new SelectListItem { Value = m.ID.ToString(), Text = m.brand_name });
-        }
-        //GET A LIST OF MODELS
-        public IEnumerable<SelectListItem> GetCategoryModelList(ProductCategoryEnum category_id)
-        {
-            return _context.ProductModels
-                .AsNoTracking()
-                .Where(m => m.category == category_id)
-                .ToList()
-                .Select(m => new SelectListItem { Value = m.ID.ToString(), Text = m.model_name });
-        }
 
-        //GET BRAND 
-        public IQueryable<ProductBrandModel> GetBrands(int category_id = -1)
-        {
-            if(category_id > -1)
-            {
-                ProductCategoryEnum cat = (ProductCategoryEnum)category_id;
-                return _context.ProductBrands.AsQueryable().Where(m => m.category == cat);
-            } else
-            {
-                return _context.ProductBrands.AsQueryable().Where(m => m.category == ProductCategoryEnum.CategoryA);
-            }
-        }
-        //GET MODELS 
-        public IQueryable<ProductModelModel> GetModels(int category_id = -1)
-        {
-            if (category_id > -1)
-            {
-                ProductCategoryEnum cat = (ProductCategoryEnum)category_id;
-                return _context.ProductModels.AsQueryable().Where(m => m.category == cat);
-            }
-            else
-            {
-                return _context.ProductModels.AsQueryable().Where(m => m.category == ProductCategoryEnum.CategoryA);
-            }
-        }
-        //GET ALL CREDIT
-        public IQueryable<CreditModel> GetCredits()
-        {
-            return _context.Credits.AsQueryable();
-        }
-        public CreditModel GetCredits(long ID)
-        {
-            var q = _context.Credits.AsQueryable();
-            return q.FirstOrDefault(r => r.ID == ID);
-        }
-        // GET ALL IMPORTANCES
-        public IEnumerable<ImportanceEnum> GetImportances()
-        {
-            return Enum.GetValues(typeof(ImportanceEnum)).Cast<ImportanceEnum>(); ;
-        }
         // GET ALL SERVICES
-        public IEnumerable<ServiceTypeEnum> GetServiceType()
+        public IEnumerable<ProjectType> GetServiceType()
         {
-            return Enum.GetValues(typeof(ServiceTypeEnum)).Cast<ServiceTypeEnum>();
-        }
-        // GET ALL CATEGORIES
-        public IEnumerable<ProductCategoryEnum> GetCategoryList()
-        {
-            return Enum.GetValues(typeof(ProductCategoryEnum)).Cast<ProductCategoryEnum>();
-        }
-        public IQueryable<CompanyModel> GetCompanies()
-        {
-            return _context.Companies;
+            return Enum.GetValues(typeof(ProjectType)).Cast<ProjectType>();
         }
 
-        public IQueryable<IncomingPaymentModel> GetNextDueIncomingPayment()
+        public IQueryable<ProjectIncomingPayment> GetNextDueIncomingPayment()
         {
             return _context.IncomingPayments.AsQueryable();
             //var r =_context.IncomingPayments.AsQueryable().Where(r => r.project_id == ID).Where(r => String.IsNullOrEmpty(r.invoice)).OrderByDescending(m => m.issueDate).FirstOrDefaultAsync();
             //return r.issueDate.ToShortDateString();
         }
 
-        public IQueryable<ProjectModel> FindProjects(ProjectStatusEnum status, ServiceTypeEnum service_type, string keyword = null)
+        public IQueryable<Project> FindProjects(ProjectStatus status, ProjectType service_type, string keyword = null)
         {
             var result = _context.Projects.AsQueryable();
 
@@ -108,19 +42,19 @@ namespace repairman.Repositories
             {
                 result = result.Where(u => u.name.Contains(keyword) || u.remarks.Contains(keyword));
             }
-            if (status != ProjectStatusEnum.Undefined)
+            if (status != ProjectStatus.Undefined)
             {
                 result = result.Where(u => u.status == status);
             }
-            if (service_type != ServiceTypeEnum.Undefined)
+            if (service_type != ProjectType.Undefined)
             {
-                result = result.Where(u => u.service_type == service_type);
+                result = result.Where(u => u.type == service_type);
             }
 
             return result;
         }
 
-        public IQueryable<IncomingPaymentModel> FindIncomingPaymentByCompanyId(long company_id)
+        public IQueryable<ProjectIncomingPayment> FindIncomingPaymentByCompanyId(long company_id)
         {
             var result = _context.IncomingPayments.AsQueryable();
 
@@ -132,37 +66,37 @@ namespace repairman.Repositories
             return result;
         }
 
-        public IQueryable<ProjectModel> FindAllProject()
+        public IQueryable<Project> FindAllProject()
         {
             return _context.Projects.AsQueryable();
         }
 
-        public IQueryable<ProjectModel> GetAllProject()
+        public IQueryable<Project> GetAllProject()
         {
-            return _context.Projects.Include(m => m.incoming_payment.Where(m => m.invoice != null).OrderByDescending(m => m.issueDate)).OrderBy(m => m.starting_datetime);
+            return _context.Projects.Include(m => m.incoming_payments.Where(m => m.invoice != null).OrderByDescending(m => m.due_date)).OrderBy(m => m.starting_datetime);
         }
 
-        public async Task<ProjectModel> CreateProject(ProjectModel u)
+        public async Task<Project> CreateProject(Project u)
         {
             await _context.Projects.AddAsync(u);
 
             return u;
         }
 
-        public async Task<ProjectModel> DupProject(ProjectModel u)
+        public async Task<Project> DupProject(Project u)
         {
-            ProjectModel n = new ProjectModel();
+            Project n = new Project();
             n.name = u.name;
             n.number = u.number;
             n.remarks = u.remarks;
-            n.service_type = u.service_type;
+            n.type = u.type;
             n.status = u.status;
             n.starting_datetime = u.starting_datetime;
             n.ending_datetime = u.ending_datetime;
-            n.user_id  = u.user_id;
+            n.user_id = u.user_id;
             n.importance_id = u.importance_id;
             n.company_id = u.company_id;
-            n.persona_id = u.persona_id;
+            n.contact_id = u.contact_id;
             n.contact_address = u.contact_address;
             n.contact_phone = u.contact_phone;
             n.connected_project_id = u.ID;
@@ -173,47 +107,45 @@ namespace repairman.Repositories
             var proj = await _context.Projects.FindAsync(n.ID);
             if (proj != null)
             {
-                IList<ProductModel> product_list = new List<ProductModel>();
-                foreach(var i in u.product_list)
+                var product_list = new List<ProjectProduct>();
+                foreach (var i in u.products)
                 {
-                    product_list.Add( new ProductModel 
-                    { 
+                    product_list.Add(new ProjectProduct
+                    {
                         project_id = proj.ID,
-                        product_brand_id = i.product_brand_id,
-                        product_model_id = i.product_model_id,
-                        category = i.category,
+                        product_id = i.product_id,
                         serial_number = i.serial_number
                     });
                 }
 
-                IList<IncomingPaymentModel> incoming_payment_list = new List<IncomingPaymentModel>();
-                foreach (var i in u.incoming_payment)
+                var incoming_payment_list = new List<ProjectIncomingPayment>();
+                foreach (var i in u.incoming_payments)
                 {
-                    incoming_payment_list.Add(new IncomingPaymentModel 
+                    incoming_payment_list.Add(new ProjectIncomingPayment
                     {
                         project_id = proj.ID,
-                        issueDate = i.issueDate,
+                        due_date = i.due_date,
                         item = i.item,
                         amount = i.amount,
                         invoice = i.invoice
                     });
                 }
 
-                IList<OutgoingPaymentModel> outgoing_payment_list = new List<OutgoingPaymentModel>();
-                foreach (var i in u.outgoing_payment)
+                var outgoing_payment_list = new List<ProjectOutgoingPayment>();
+                foreach (var i in u.outgoing_payments)
                 {
-                    outgoing_payment_list.Add(new OutgoingPaymentModel 
+                    outgoing_payment_list.Add(new ProjectOutgoingPayment
                     {
                         project_id = proj.ID,
-                        issueDate = i.issueDate,
+                        due_date = i.due_date,
                         company_id = i.company_id,
                         amount = i.amount
                     });
                 }
 
-                proj.product_list = product_list;
-                proj.incoming_payment = incoming_payment_list;
-                proj.outgoing_payment = outgoing_payment_list;
+                proj.products = product_list;
+                proj.incoming_payments = incoming_payment_list;
+                proj.outgoing_payments = outgoing_payment_list;
 
                 await _context.SaveChangesAsync();
             }
@@ -221,13 +153,13 @@ namespace repairman.Repositories
             return n;
         }
 
-        public bool DelCompany(CompanyModel s)
+        public bool DelCompany(Company s)
         {
             _context.Companies.Remove(s);
             return true;
         }
 
-        public async Task<ProjectModel> GetProject(long ID, params string[] includeFields)
+        public async Task<Project> GetProject(long ID, params string[] includeFields)
         {
             var q = _context.Projects.AsQueryable();
 
@@ -241,13 +173,13 @@ namespace repairman.Repositories
             return a;
         }
 
-        public bool DelProject(ProjectModel s)
+        public bool DelProject(Project s)
         {
             _context.Projects.Remove(s);
             return true;
         }
 
-        public IQueryable<ProjectModel> FindProjects(string keyword = null)
+        public IQueryable<Project> FindProjects(string keyword = null)
         {
             var result = _context.Projects.AsQueryable();
 
@@ -257,6 +189,33 @@ namespace repairman.Repositories
             }
 
             return result;
+        }
+
+        // GET ALL IMPORTANCES
+        public IQueryable<ProjectImportance> GetImportances()
+        {
+            return _context.ProjectImportances.AsQueryable();
+        }
+
+        public async Task<ProjectImportance> Create(ProjectImportance t)
+        {
+            await _context.ProjectImportances.AddAsync(t);
+            return t;
+        }
+
+        public async Task<ProjectImportance> GetImportanceAsync(string t)
+        {
+            var q = GetImportances();
+            var s = await q.FirstOrDefaultAsync(u => u.code == t);
+            return s;
+        }
+
+        public void DelImportanceUnsafe(string t)
+        {
+            var s = new ProjectImportance { code = t };
+
+            _context.ProjectImportances.Attach(s);
+            _context.ProjectImportances.Remove(s);
         }
     }
 }

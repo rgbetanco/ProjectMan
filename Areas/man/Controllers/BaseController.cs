@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using repairman.Models;
-using repairman.Repositories;
+using projectman.Models;
+using projectman.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +16,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Reflection;
 using System.Diagnostics;
 
-namespace repairman.Areas.Man.Controllers
+namespace projectman.Areas.Man.Controllers
 {
     public static class ManDefaults {
         public const string AuthenticationScheme = "backstage"; // CookieAuthenticationDefaults.AuthenticationScheme;
@@ -147,125 +147,6 @@ namespace repairman.Areas.Man.Controllers
             });
 
             return Json(reply);
-        }
-
-        protected async Task<bool> TryUpdateModelListAsync<TModel, TProp>(TModel dest, Expression<Func<TModel, IList<TProp>>> fieldExp) where TProp : UsesID, new()
-        {
-            return await TryUpdateModelListAsync(dest, fieldExp, null);
-        }
-
-        protected async Task<bool> TryUpdateModelListAsync<TModel, TProp>(TModel dest, Expression<Func<TModel, IList<TProp>>> fieldExp, params Expression<Func<TProp, object>>[] includeExpressions) where TProp : UsesID, new()
-        {
-            var expr = (MemberExpression)fieldExp.Body;
-            var prop = (PropertyInfo)expr.Member;
-            var target = (IList<TProp>)prop.GetValue(dest);
-            var name = prop.Name;
-            
-
-            if (target == null)
-            {
-                target = new List<TProp>();
-                prop.SetValue(dest, target);
-            }
-
-            var listIDs = new List<UsesIDVM>();
-            var listData = new List<TProp>();
-
-            // 1. load list of .ID and .Delete to process from the value provider
-            // 2. load list of properties from the value provider
-            if (await TryUpdateModelAsync(listIDs, name))
-            {
-                await TryUpdateModelAsync(listData, name);
-
-                int count = listIDs.Count;
-
-                int targetLen = target.Count();
-                Dictionary<long, int> mapIDtoIndex = new Dictionary<long, int>(targetLen);
-
-                // create lookup table so we can quickly delete
-                for (int i = 0; i < targetLen; i++)
-                {
-                    mapIDtoIndex[target[i].ID] = i;
-                }
-
-                List<PropertyInfo> propToCopy = null;
-
-                if (includeExpressions != null)
-                    // if a property is an object (e.g. string), then it is treated as a member expression;
-                    // if it's a simple type like int, then it is an unary expression.
-                    propToCopy = includeExpressions.Select(
-                        p => (PropertyInfo)(
-                            (p.Body is MemberExpression) ?
-                                ((MemberExpression)p.Body) :
-                                ((MemberExpression)((UnaryExpression)p.Body).Operand)
-                           ).Member
-                        ).ToList();
-                else
-                {
-                    propToCopy = prop.GetType().GetProperties().Where(p => p.CanWrite && p.CanRead).ToList();
-                }
-
-                List<int> dstToRemove = new List<int>();
-
-                for (int i = 0; i < count; i++)
-                {
-                    if (listIDs[i] != null)
-                    {
-                        // existing entry; see if we're deleting
-                        if (listIDs[i].Deleted)
-                        {
-                            dstToRemove.Add(mapIDtoIndex[listIDs[i].ID.Value]);
-
-                            // mark attributes in ModelState as valid
-                            propToCopy.ForEach(p => {
-                                string key = name + "[" + i + "]." + p.Name;
-                                if (ModelState.ContainsKey(key))
-                                {
-                                    ModelState[key].ValidationState = ModelValidationState.Valid;
-                                    ModelState[key].Errors.Clear();
-                                }
-                            });
-                        }
-                        else
-                        {
-                            // existing entry; see if we're deleting
-                            if (!listIDs[i].Deleted)
-                            {
-                                var src = listData[i];
-                                var dst = target[mapIDtoIndex[listIDs[i].ID.Value]];
-
-                                propToCopy.ForEach(p => p.SetValue(dst, p.GetValue(src, null), null));
-                            }
-                        }
-                    }
-                    else
-                    {
-                        var src = listData[i];
-                        var dst = src;
-
-                        // new entry
-                        if (includeExpressions != null)
-                        {
-                            dst = new TProp();
-
-                            propToCopy.ForEach(p => p.SetValue(dst, p.GetValue(src, null), null));
-                        }
-
-                        target.Add(dst);
-                    }
-                }
-
-                dstToRemove.Sort();
-
-                for (int i = dstToRemove.Count() - 1; i >= 0; i--)
-                {
-                    target.RemoveAt(dstToRemove[i]);
-                }
-
-                return true;
-            }
-
-            return false;
         }
 
 

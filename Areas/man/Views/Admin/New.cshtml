@@ -1,4 +1,4 @@
-﻿@model repairman.Models.User
+﻿@model projectman.Models.User
 @using CSHelper.Extensions
 @{
     ViewData["Title"] = "新增使用者";
@@ -42,13 +42,6 @@
                     @Html.LabelFor(m => m.perm, new { @class = "form-label" })
                     <div>
                         @Html.CheckBoxesFor(m => m.perm, new { @class = "form-check" }, new { @class = "form-check-input" }, new { @class = "form-check-label" })
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    @Html.LabelFor(m => m.groups, new { @class = "form-label" })
-                    <div>
-                        @Html.CheckBoxesFor(m => m.groups, (MultiSelectList)ViewData["groups"], new { @class = "form-check" }, new { @class = "form-check-input" }, new { @class = "form-check-label" })
                     </div>
                 </div>
 

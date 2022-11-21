@@ -1,4 +1,4 @@
-﻿@using repairman.Models
+﻿@using projectman.Models
 @using CSHelper.Authorization
 @{
     Layout = "_Layout";
@@ -13,33 +13,44 @@
 <nav id="sidebar-container" class="sidebar d-md-block collapse nav">
     @{
         var is_active_admin = activeController == "Admin";
-        var is_active_message = activeController == "ServiceRequest";
+
+        var is_active_project = activeController == "Project";
+        var is_active_company = activeController == "Company";
+        var is_active_contact = activeController == "Contact";
+        var is_active_invoice = activeController == "Invoice";
+        var is_active_product = activeController == "Product";
+
+        var is_active_service = is_active_project || is_active_company || is_active_contact || is_active_invoice || is_active_product;
     }
-    <div class="nav-item" data-bs-toggle="collapse" data-bs-target="#message_menu" @if (!is_active_message) { <text> aria-expanded="false" </text> }>
+    <div class="nav-item" data-bs-toggle="collapse" data-bs-target="#project_menu" @if (!is_active_service) { <text> aria-expanded="false" </text> }>
         <span class="collapsible">服務管理</span>
     </div>
 
-    <div class="sidebar-submenu collapse @if (is_active_message) {<text>show</text> }" id="message_menu">
-        <a class="nav-item @((activeController=="Project" && activeAction=="Dashboard") ? "active" : "" )" asp-controller="Project" asp-action="Dashboard">
+    <div class="sidebar-submenu collapse @if (is_active_service) {<text>show</text> }" id="project_menu">
+        <a class="nav-item @((is_active_project && activeAction=="Dashboard") ? "active" : "" )" asp-controller="Project" asp-action="Dashboard">
             <span class="fa fa-gauge fa-fw me-3"></span>
             <span class="collapsible">儀表板</span>
         </a>
-        <a class="nav-item @((activeController=="Project" && activeAction=="Index") ? "active" : "" )" asp-controller="Project" asp-action="Index">
-            <span class="fa fa-tools fa-fw me-3"></span>
+        <a class="nav-item @((is_active_project && activeAction=="Index") ? "active" : "" )" asp-controller="Project" asp-action="Index">
+            <span class="fa-solid fa-file fa-fw me-3"></span>
             <span class="collapsible">案件管理</span>
         </a>
 
-        <a class="nav-item @((activeController=="Company" && activeAction=="Index") ? "active" : "" )" asp-controller="Company" asp-action="Index">
-            <span class="fa fa-tags fa-fw me-3"></span>
+        <a class="nav-item @((is_active_company && activeAction=="Index") ? "active" : "" )" asp-controller="Company" asp-action="Index">
+            <span class="fa-solid fa-building fa-fw me-3"></span>
             <span class="collapsible">單位管理</span>
         </a>
-        <a class="nav-item  @((activeController=="Persona" && activeAction=="Index") ? "active" : "" )" asp-controller="Persona" asp-action="Index">
-            <span class="fa fa-building fa-fw me-3"></span>
+        <a class="nav-item  @((is_active_contact && activeAction=="Index") ? "active" : "" )" asp-controller="Contact" asp-action="Index">
+            <span class="fa-solid fa-address-card fa-fw me-3"></span>
             <span class="collapsible">個⼈管理</span>
         </a>
-        <a class="nav-item  @((activeController=="Invoice" && activeAction=="Index") ? "active" : "" )" asp-controller="Invoice" asp-action="Index">
-            <span class="fa fa-book-open fa-fw me-3"></span>
+        <a class="nav-item  @((is_active_invoice && activeAction=="Index") ? "active" : "" )" asp-controller="Invoice" asp-action="Index">
+            <span class="fa-solid fa-receipt fa-fw me-3"></span>
             <span class="collapsible">發票</span>
+        </a>
+        <a class="nav-item  @((is_active_product && activeAction=="Index") ? "active" : "" )" asp-controller="Product" asp-action="Index">
+            <span class="fa-solid fa-box fa-fw me-3"></span>
+            <span class="collapsible">商品</span>
         </a>
     </div>
 
@@ -57,12 +68,12 @@
                 <span class="fa fa-user fa-fw me-3"></span>
                 <span class="collapsible">帳號管理</span>
             </a>
-            <a class="nav-item  @((activeController=="Admin" && activeAction=="Group") ? "active" : "" )" asp-controller="Admin" asp-action="Group">
-                <span class="fa fa-users fa-fw me-3"></span>
-                <span class="collapsible">服務品項</span>
-            </a>
         }
 
+        <a class="nav-item  @((activeController=="Admin" && activeAction=="Setting") ? "active" : "" )" asp-controller="Admin" asp-action="Setting">
+            <span class="fa fa-gears fa-fw me-3"></span>
+            <span class="collapsible">平台設定</span>
+        </a>
     </div>
 
     <!-- Separator without title -->

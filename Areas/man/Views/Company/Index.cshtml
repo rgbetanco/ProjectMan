@@ -1,8 +1,13 @@
 ﻿@using CSHelper.Extensions
+@using Microsoft.AspNetCore.Antiforgery
+@inject IAntiforgery antiforgery
 @{
     ViewData["Title"] = "單位";
     ViewData["AutoReload"] = true;
     Layout = "_MenuLayout";
+}
+@{
+    var antiforgery_token = antiforgery.GetAndStoreTokens(Context).RequestToken;
 }
 
 <div class="row">
@@ -10,7 +15,7 @@
         <h5>@ViewData["Title"]</h5>
     </div>
     <div class="col text-end align-self-end">
-        <a class="btn btn-primary" role="button" asp-action="CompanyNew">新增...</a>
+        <a class="btn btn-primary" role="button" asp-action="New">新增...</a>
     </div>
 </div>
 
@@ -68,7 +73,7 @@
 
             table.addEventListener('clickcell', evt => {
                  if ( evt.detail.fieldname != 'action') {
-                    window.location.href = '@Url.Action("CompanyEdit")?id=' + evt.detail.data.id;
+                    window.location.href = '@Url.Action("Edit")?id=' + evt.detail.data.id;
                 }
             });
 
@@ -79,13 +84,23 @@
                 var btn = $(e.currentTarget);
                 var rowID = btn.data('index');
 
-                var url = '@Url.ActionLink("ConfirmDeleteCompany")' + '?id=' + rowID;
-                var target = $('#modal-confirm-delete-popup');
-
-                $.get(url).done(function (data) {
-                    target.find(".modal-dialog").html(data);
-                    target.modal("show");
-                });
+                $.ajax({
+                    url: '@Url.Action("Delete")',
+                    data: { 
+                        id: rowID,
+                        __RequestVerificationToken: '@antiforgery_token'
+                    },
+                    type: 'post',
+                    beforeSend: function () {
+                        return confirm('確認刪除?');
+                    },
+                    success: function () {
+                        reloadNow();
+                    },
+                    error: function () {
+                        alert('無法刪除')
+                    }
+                })
             });
 
             $('#query_start').on('click', evt => {

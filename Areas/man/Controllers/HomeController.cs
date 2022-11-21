@@ -1,18 +1,18 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using repairman.Models;
+using projectman.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using repairman.Repositories;
+using projectman.Repositories;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
-using repairman.Util;
+using projectman.Util;
 using CSHelper.Extensions;
 
-namespace repairman.Areas.Man.Controllers
+namespace projectman.Areas.Man.Controllers
 {
     [Area("man")]
     [Authorize( AuthenticationSchemes = ManDefaults.AuthenticationScheme)]

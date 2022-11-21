@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using repairman.Data;
-using repairman.Models;
+using projectman.Data;
+using projectman.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace repairman.Repositories
+namespace projectman.Repositories
 {
     public class LookupRepository : ILookupRepository
     {

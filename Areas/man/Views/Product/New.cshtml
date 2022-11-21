@@ -1,0 +1,85 @@
+﻿@model projectman.Models.Product
+@using CSHelper.Extensions
+@{
+    ViewData["Title"] = "新增商品";
+    Layout = "_Layout";
+}
+
+<div class="container h-100 d-flex flex-column">
+    <div class="row mb-3 mt-4">
+        <div class="col">
+            <button type="button" class="btn btn-light btn-back"><i class="fas fa-caret-left"></i></button>
+            <h2>@ViewData["Title"]</h2>
+        </div>
+    </div>
+    <form id="update" asp-action="New">
+        @Html.AntiForgeryToken()
+        <div class="row mb-3">
+            <div class="col">
+                @Html.LabelFor(m => m.name, new { @class = "form-label" })
+                @Html.TextBoxFor(m => m.name, new { @class = "form-control form-text" })
+            </div>
+            <div class="col-4">
+                @Html.LabelFor(m => m.category, new { @class = "form-label" })
+                @Html.DropDownListFor(m => m.category, new { @class = "form-select" })
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-3">
+                @Html.LabelFor(m => m.brand, new { @class = "form-label" })
+                @Html.DropDownListFor(m => m.brand_id, (IEnumerable<SelectListItem>)ViewData["brands"], new { @class = "form-select" })
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-4">
+                @Html.LabelFor(m => m.model_name, new { @class = "form-label" })
+                @Html.TextBoxFor(m => m.model_name, new { @class = "form-control form-text" })
+            </div>
+            <div class="col-4">
+                @Html.LabelFor(m => m.code, new { @class = "form-label" })
+                @Html.TextBoxFor(m => m.code, new { @class = "form-control form-text" })
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col">
+                @Html.LabelFor(m => m.desc, new { @class = "form-label" })
+                @Html.TextAreaFor(m => m.desc, new { @class = "form-control form-text" })
+            </div>
+        </div>
+
+        <div class="alert alert-danger d-none" role="alert">
+        </div>
+        <button type="submit" class="btn btn-primary mb-4 mt-4">新增</button>
+    </form>
+</div>
+@section Scripts {
+
+    <script>
+
+        $(function () {
+
+            var form = $('#update');
+            form.initAsAjaxForm({
+                success: function (data) {
+                    var result = createErrorList(data);
+                    if (result == null) {
+                        window.history.back();
+                    } else {
+                        var alert = form.find(".alert");
+                        alert.html(result);
+                        alert.removeClass('d-none');
+                    }
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    var alert = form.find(".alert");
+                    alert.text(AjaxErrorToString(xhr, textStatus, errorThrown));
+                    alert.removeClass('d-none');
+                },
+                validate: function () {
+                    return null
+                }
+            });
+        });
+
+    </script>
+} 

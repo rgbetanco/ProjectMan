@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace repairman.Models
+namespace projectman.Models
 {
     public class TableReplyVM<ListType>
     {
