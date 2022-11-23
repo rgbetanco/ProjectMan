@@ -42,7 +42,7 @@
                 </div>
                 @for (var i = 0; i < Model.phones.Count(); i++)
                 {
-                    <div class="row mb-1" data-form-group="phone">
+                    <div class="row mb-1" data-form-group="phones">
                         <div class="col-auto">
                             @Html.DropDownListFor(m => m.phones[i].type, CSHelper.Extensions.RenderingExtension.GetSelectList<PhoneType>(), new { @class = "form-select form-control", @data_form_group_subname = "type" })
                         </div>
@@ -57,16 +57,16 @@
                         </div>
                         <div class="col-auto">
                             @Html.HiddenFor(m => m.phones[i].ID)
-                            @Html.Hidden("phone.Index", i)
+                            @Html.Hidden("phones.Index", i)
                             <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
                                 <i class="fa fa-trash" aria-hidden="true"></i>
                             </button>
                         </div>
                     </div>
                 }
-                <div class="row mb-1" data-form-group-start="phone">
+                <div class="row mb-1" data-form-group-start="phones">
                     <div class="col-auto">
-                        <div class="row mb-1 d-none" data-form-group="phone">
+                        <div class="row mb-1 d-none" data-form-group="phones">
                             <div class="col-auto">
                                 @Html.DropDownList("temp", CSHelper.Extensions.RenderingExtension.GetSelectList<PhoneType>(), new { @class = "form-select", @data_form_group_subname = "type" })
                             </div>
@@ -100,7 +100,7 @@
 
                 @for (var i = 0; i < Model.addresses.Count(); i++)
                 {
-                    <div class="row mb-1" data-form-group="address">
+                    <div class="row mb-1" data-form-group="addresses">
                         <div class="col-auto">
                             @Html.DropDownListFor(m => m.addresses[i].type, CSHelper.Extensions.RenderingExtension.GetSelectList<ContactAddressType>(), new { @class = "form-select form-control", @data_form_group_subname = "type" })
                         </div>
@@ -109,16 +109,16 @@
                         </div>
                         <div class="col-auto">
                             @Html.HiddenFor(m => m.addresses[i].ID)
-                            @Html.Hidden("address.Index", i)
+                            @Html.Hidden("addresses.Index", i)
                             <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
                                 <i class="fa fa-trash" aria-hidden="true"></i>
                             </button>
                         </div>
                     </div>
                 }
-                <div class="row mb-1" data-form-group-start="address">
+                <div class="row mb-1" data-form-group-start="addresses">
                     <div class="col-auto">
-                        <div class="row mb-1 d-none" data-form-group="address">
+                        <div class="row mb-1 d-none" data-form-group="addresses">
                             <div class="col-auto">
                                 @Html.DropDownList("temp", CSHelper.Extensions.RenderingExtension.GetSelectList<ContactAddressType>(), new { @class = "form-select", @data_form_group_subname = "type" })
                             </div>
@@ -148,7 +148,7 @@
 
                 @for (var i = 0; i < Model.emails.Count(); i++)
                 {
-                    <div class="row mb-1" data-form-group="email">
+                    <div class="row mb-1" data-form-group="emails">
                         <div class="col-auto">
                             @Html.DropDownListFor(m => m.emails[i].type, CSHelper.Extensions.RenderingExtension.GetSelectList<ContactAddressType>(), new { @class = "form-select form-control", @data_form_group_subname = "type" })
                         </div>
@@ -157,16 +157,16 @@
                         </div>
                         <div class="col-auto">
                             @Html.HiddenFor(m => m.emails[i].ID)
-                            @Html.Hidden("email.Index", i)
+                            @Html.Hidden("emails.Index", i)
                             <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
                                 <i class="fa fa-trash" aria-hidden="true"></i>
                             </button>
                         </div>
                     </div>
                 }
-                <div class="row mb-1" data-form-group-start="email">
+                <div class="row mb-1" data-form-group-start="emails">
                     <div class="col-auto">
-                        <div class="row mb-1 d-none" data-form-group="email">
+                        <div class="row mb-1 d-none" data-form-group="emails">
                             <div class="col-auto">
                                 @Html.DropDownList("temp", CSHelper.Extensions.RenderingExtension.GetSelectList<ContactAddressType>(), new { @class = "form-select", @data_form_group_subname = "type" })
                             </div>
@@ -196,16 +196,16 @@
                 <tbody>
                     
                     @for (var i = 0; i < Model.companies.Count(); i++){
-                        <tr data-form-group="personas_company">
+                        <tr data-form-group="companies">
                         <td scope="row">
                             <div class="input-group">
                                 @Html.HiddenFor(m => m.companies[i].company_id, new { @data_form_group_subname = "company_id" } )
                                 @Html.HiddenFor(m => m.companies[i].ID)
-                                @Html.Hidden("personas_company.Index", i)
+                                @Html.Hidden("companies.Index", i)
                                 <div class="input-group flex-nowrap">
                                     @Html.TextBoxFor(m => m.companies[i].company.name, "", new { @class = "form-control",  @readonly = "readonly", @data_form_group_subname = "company.name" })
                                     <button type="button" class="btn btn-secondary btn-modal"
-                                        data-form-group-target="personas_company"
+                                        data-form-group-target="companies"
                                         data-url="@Url.Action("Picker", "Company")"
                                         data-toggle="modal"
                                         data-target="#modal-popup">
@@ -223,13 +223,13 @@
                     </tr>
                     }
            
-                    <tr class="d-none" data-form-group-start="personas_company" data-form-group="personas_company">
+                    <tr class="d-none" data-form-group-start="companies" data-form-group="companies">
                         <td scope="row">
                             <div class="input-group">
                                 @Html.Hidden("temp", "", new { @data_form_group_subname = "company_id" } )
                                 @Html.TextBox("temp", "", new { @class = "form-control",  @readonly = "readonly", @data_form_group_subname = "company.name" })
                                 <button type="button" class="btn btn-secondary btn-modal"
-                                        data-form-group-target="personas_company"
+                                        data-form-group-target="companies"
                                         data-url="@Url.Action("Picker", "Company")"
                                         data-toggle="modal"
                                         data-target="#modal-popup">
@@ -247,7 +247,7 @@
 
                 </tbody>
             </table>
-            <button class="btn btn-secondary" type="button" data-form-group-target="personas_company">新增成員</button>
+            <button class="btn btn-secondary" type="button" data-form-group-target="companies">新增成員</button>
 
             <div class="alert alert-danger d-none" role="alert">
             </div>
@@ -261,13 +261,13 @@
 
     <script>
         // Handle phone checkboxes - make them work like radio buttons
-        $(document).on('click', '[data-form-group=phone] .form-check-input', function ($this) {
+        $(document).on('click', '[data-form-group=phones] .form-check-input', function ($this) {
             deselectAll($this);
         });
 
         function deselectAll($t) {
             let $default_selected = $t.target.name
-            $('[data-form-group=phone] .form-check-input').each(function () {
+            $('[data-form-group=phones] .form-check-input').each(function () {
                 let $me = $(this);
                 if ($me[0].name != $default_selected && $me[0].name != "temp") {
                     console.log($me[0]);

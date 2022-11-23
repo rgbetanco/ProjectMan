@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using CSHelper.Extensions;
+using CSHelper.Authorization;
 
 namespace projectman.Areas.man.Controllers
 {
@@ -90,8 +91,7 @@ namespace projectman.Areas.man.Controllers
 
         public async Task<IActionResult> Edit(long ID)
         {
-            Debug.WriteLine("Hello world from the controller");
-            Company company = await _comp.GetCompany(ID, "phone", "address", "email");
+            Company company = await _comp.GetCompany(ID, "phones", "addresses", "emails");
             ViewData["credit"] = GetCreditRatingList(company.credit_rating_code);
             ViewData["personas"] = _contact.GetCompanyContacts(ID);
             return View(company);
@@ -100,7 +100,7 @@ namespace projectman.Areas.man.Controllers
         [HttpPost]
         public async Task<IActionResult> Update(long ID)
         {
-            Company company = await _comp.GetCompany(ID, "phone", "address", "email");
+            Company company = await _comp.GetCompany(ID, "phones", "addresses", "emails");
             if (company == null)
             {
                 return NotFound();
@@ -160,10 +160,34 @@ namespace projectman.Areas.man.Controllers
                 vatid = r.vatid
             }, true);
         }
-        public IActionResult CreditRatingSetting()
+        public async Task<IActionResult> CreditRatingSetting()
         {
-            // TODO: table form to edit credit rating list
-            throw new NotImplementedException();
+            return View(await _comp.GetCreditRating().ToListAsync());
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ActionName("CreditRatingSetting")]
+        [AuthorizeRole(UserPermission.Edit | UserPermission.Add)]
+        public async Task<IActionResult> CreditRatingSettingPost()
+        {
+            await this.TryUpdateTableModelAsync<CreditRating, string>(
+                "CreditRating",   // data-form-table-group name
+                async t =>
+                {
+                    await _comp.Create(t);
+                    return true;
+                },
+                t =>
+                {
+                    _comp.DelCreditRatingUnsafe(t);
+                    return Task.FromResult(true);
+                },
+                async t => await _comp.GetCreditRatingAsync(t)
+            );
+
+            var result = await CommitModel(null);
+
+            return result;
         }
 
     }

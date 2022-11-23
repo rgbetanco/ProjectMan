@@ -72,10 +72,11 @@ $(function () {
 
     $('#picker_list_ok').initDismissModalButton( true, dialog => {
         let [idx] = table.selections;
+     
         return {
             "product_id" : table.data[idx]["id"],
-            "brand.name" : table.data[idx]["brand_name"],
-            "model_name": table.data[idx]["model_name"],
+            "product.brand.name" : table.data[idx]["brand_name"],
+            "product.model_name": table.data[idx]["model_name"],
             "category": table.data[idx]["category"]
         }
     });

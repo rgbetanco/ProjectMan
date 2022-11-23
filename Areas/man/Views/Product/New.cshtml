@@ -21,12 +21,12 @@
             </div>
             <div class="col-4">
                 @Html.LabelFor(m => m.category, new { @class = "form-label" })
-                @Html.DropDownListFor(m => m.category, new { @class = "form-select" })
+                @Html.DropDownListFor(m => m.category, CSHelper.Extensions.RenderingExtension.GetSelectList<ProductCategory>() ,new { @class = "form-select" })
             </div>
         </div>
         <div class="row mb-3">
             <div class="col-3">
-                @Html.LabelFor(m => m.brand, new { @class = "form-label" })
+                @Html.LabelFor(m => m.brand_id, new { @class = "form-label" })
                 @Html.DropDownListFor(m => m.brand_id, (IEnumerable<SelectListItem>)ViewData["brands"], new { @class = "form-select" })
             </div>
         </div>

@@ -36,9 +36,9 @@
             <div class="col">
                 @Html.LabelFor(m => m.phones, new { @class = "form-label" })
 
-                <div class="row mb-1" data-form-group-start="Phone">
+                <div class="row mb-1" data-form-group-start="phones">
                     <div class="col-auto">
-                        <div class="row mb-1 d-none" data-form-group="Phone">
+                        <div class="row mb-1 d-none" data-form-group="phones">
                             <div class="col-auto">
                                 @Html.DropDownList("temp", CSHelper.Extensions.RenderingExtension.GetSelectList<PhoneType>(), new { @class = "form-select", @data_form_group_subname = "type" })
                             </div>
@@ -71,9 +71,9 @@
             <div class="col">
                 @Html.LabelFor(m => m.addresses, new { @class = "form-label" })
 
-                <div class="row mb-1" data-form-group-start="Address">
+                <div class="row mb-1" data-form-group-start="addresses">
                     <div class="col-auto">
-                        <div class="row mb-1 d-none" data-form-group="Address">
+                        <div class="row mb-1 d-none" data-form-group="addresses">
                             <div class="col-auto">
                                 @Html.DropDownList("temp", CSHelper.Extensions.RenderingExtension.GetSelectList<ContactAddressType>(), new { @class = "form-select", @data_form_group_subname = "type" })
                             </div>
@@ -96,9 +96,9 @@
             <div class="col">
                 @Html.LabelFor(m => m.emails, new { @class = "form-label" })
 
-                <div class="row mb-1" data-form-group-start="Email">
+                <div class="row mb-1" data-form-group-start="emails">
                     <div class="col-auto">
-                        <div class="row mb-1 d-none" data-form-group="Email">
+                        <div class="row mb-1 d-none" data-form-group="emails">
                             <div class="col-auto">
                                 @Html.DropDownList("temp", CSHelper.Extensions.RenderingExtension.GetSelectList<ContactAddressType>(), new { @class = "form-select", @data_form_group_subname = "type" })
                             </div>
@@ -127,13 +127,13 @@
                 </tr>
             </thead>
             <tbody>
-                <tr class="d-none" data-form-group-start="Personas_Company" data-form-group="Personas_Company">
+                <tr class="d-none" data-form-group-start="companies" data-form-group="companies">
                     <td scope="row">
                         <div class="input-group">
                             @Html.Hidden("temp", "", new {  @class = "form-control",  @readonly = "readonly", @data_form_group_subname = "company_id" } )
                             @Html.TextBox("temp", "", new { @class = "form-control",  @readonly = "readonly", @data_form_group_subname = "company.name" })
                             <button type="button" class="btn btn-secondary btn-modal"
-                                    data-form-group-target="Personas_Company"
+                                    data-form-group-target="companies"
                                     data-url="@Url.Action("Picker", "Company")"
                                     data-toggle="modal"
                                     data-target="#modal-popup">
@@ -150,7 +150,7 @@
                 </tr>
             </tbody>
         </table>
-        <button class="btn btn-secondary mb-4" type="button" data-form-group-target="Personas_Company">新增單位</button>
+        <button class="btn btn-secondary mb-4" type="button" data-form-group-target="companies">新增單位</button>
 
         <div class="alert alert-danger d-none" role="alert">
         </div>
@@ -166,13 +166,13 @@
 
     <script>
 // Handle phone checkboxes - make them work like radio buttons
-        $(document).on('click', '[data-form-group=Phone] .form-check-input', function ($this) {
+        $(document).on('click', '[data-form-group=phones] .form-check-input', function ($this) {
             deselectAll($this);
         });
 
         function deselectAll($t) {
             let $default_selected = $t.target.name
-            $('[data-form-group=Phone] .form-check-input').each(function(){
+            $('[data-form-group=phones] .form-check-input').each(function(){
                 let $me = $(this);
                 if ($me[0].name != $default_selected && $me[0].name != "temp"){
                     console.log($me[0]);

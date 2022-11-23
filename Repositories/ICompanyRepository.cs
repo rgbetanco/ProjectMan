@@ -15,5 +15,9 @@ namespace projectman.Repositories
         Task<Company> GetCompany(long ID, params string[] includeFields);
         IQueryable<CreditRating> GetCreditRatings();
         public bool DelCompany(Company s);
+        IQueryable<CreditRating> GetCreditRating();
+        Task<CreditRating> Create(CreditRating t);
+        void DelCreditRatingUnsafe(string t);
+        Task<CreditRating> GetCreditRatingAsync(string t);
     }
 }

@@ -19,6 +19,7 @@ namespace projectman.Repositories
         public IQueryable<Product> Find(string keyword = null)
         {
             var result = _context.Products.AsQueryable();
+            result = result.Include("brand");
 
             if (!string.IsNullOrWhiteSpace(keyword))
             {
@@ -61,5 +62,26 @@ namespace projectman.Repositories
 
             return q;
         }
+        public async Task<ProductBrand> Create(ProductBrand t)
+        {
+            await _context.ProductBrands.AddAsync(t);
+            return t;
+        }
+
+        public async Task<ProductBrand> GetProductBrandAsync(string t)
+        {
+            var q = GetProductBrands();
+            var s = await q.FirstOrDefaultAsync(u => u.ID == long.Parse(t));
+            return s;
+        }
+
+        public void DelProductBrandUnsafe(string t)
+        {
+            var s = new ProductBrand { ID = long.Parse(t) };
+
+            _context.ProductBrands.Attach(s);
+            _context.ProductBrands.Remove(s);
+        }
+
     }
 }

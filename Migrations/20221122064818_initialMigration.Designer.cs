@@ -12,8 +12,8 @@ using projectman.Data;
 namespace projectman.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20221121183452_Initial")]
-    partial class Initial
+    [Migration("20221122064818_initialMigration")]
+    partial class initialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

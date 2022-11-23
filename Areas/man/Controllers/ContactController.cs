@@ -94,7 +94,7 @@ namespace projectman.Areas.man.Controllers
 
         public async Task<IActionResult> Edit(long ID)
         {
-            Contact m = await _persona.Get(ID, "phone", "address", "email", "personas_company");
+            Contact m = await _persona.Get(ID, "phones", "addresses", "emails", "companies");
             
             if (m.companies.Any())
             {
@@ -109,7 +109,7 @@ namespace projectman.Areas.man.Controllers
         [HttpPost]
         public async Task<IActionResult> Update(long ID)
         {
-            Contact m = await _persona.Get(ID, "phone", "address", "email", "personas_company");
+            Contact m = await _persona.Get(ID, "phones", "addresses", "emails", "companies");
             if (m == null)
             {
                 return NotFound();

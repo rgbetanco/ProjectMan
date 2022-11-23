@@ -9,6 +9,9 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using CSHelper.Extensions;
+using System.Collections;
+using System.Collections.Generic;
+using CSHelper.Authorization;
 
 namespace projectman.Areas.man.Controllers
 {
@@ -46,17 +49,17 @@ namespace projectman.Areas.man.Controllers
         [HttpGet]
         public IActionResult New()
         {
-            ViewData["brands"] = GetProductBrandList();
+            ViewData["brands"] = GetProductBrandList(0);
             return View();
         }
 
-        private object GetProductBrandList(long? ID = null)
+        private IEnumerable<SelectListItem> GetProductBrandList(long? ID = null)
         {
             var r = _prod.GetProductBrands().AsNoTracking();
-            
-            var result = r.Select(m => new SelectListItem { Value = m.ID.ToString(), Text = m.name, Selected = ID == m.ID});
+            var result = r.Select(m => new SelectListItem { Value = m.ID.ToString(), Text = m.name, Selected = ID == m.ID });
 
             return result;
+            
         }
 
         // new category - save
@@ -97,7 +100,7 @@ namespace projectman.Areas.man.Controllers
         [ActionName("View")]
         public async Task<IActionResult> ViewPost(long ID)
         {
-            var r = await _prod.Get(ID, "brand");
+            var r = await _prod.Get(ID, "brands");
             if (r == null)
             {
                 return NotFound();
@@ -158,10 +161,35 @@ namespace projectman.Areas.man.Controllers
             }, true);
         }
 
-        public IActionResult BrandSetting()
+        public async Task<IActionResult> BrandSetting()
         {
-            // TODO: table form to edit brand list
-            throw new NotImplementedException();
+            return View(await _prod.GetProductBrands().ToListAsync());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ActionName("BrandSetting")]
+        [AuthorizeRole(UserPermission.Edit | UserPermission.Add)]
+        public async Task<IActionResult> BrandSettingPost()
+        {
+            await this.TryUpdateTableModelAsync<ProductBrand, string>(
+                "Brand",   // data-form-table-group name
+                async t =>
+                {
+                    await _prod.Create(t);
+                    return true;
+                },
+                t =>
+                {
+                    _prod.DelProductBrandUnsafe(t);
+                    return Task.FromResult(true);
+                },
+                async t => await _prod.GetProductBrandAsync(t)
+            );
+
+            var result = await CommitModel(null);
+
+            return result;
         }
 
     }

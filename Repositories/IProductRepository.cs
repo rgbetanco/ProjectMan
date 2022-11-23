@@ -12,5 +12,8 @@ namespace projectman.Repositories
         IQueryable<Product> Find(string keyword = null);
         Task<Product> Get(long ID, params string[] includeFields);
         IQueryable<ProductBrand> GetProductBrands();
+        Task<ProductBrand> Create(ProductBrand t);
+        Task<ProductBrand> GetProductBrandAsync(string t);
+        void DelProductBrandUnsafe(string t);
     }
 }

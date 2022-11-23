@@ -76,5 +76,32 @@ namespace projectman.Repositories
             var q = (from pc in _context.ContactCompanies join c in _context.Companies on pc.company_id equals c.ID where pc.contact_id == ID select new CompanyInPersonasViewModel { company_name = c.name, job_title = pc.job_title, company_id = c.ID }).AsNoTracking().ToList();
             return q;
         }
+
+        //Credit rating list
+        public IQueryable<CreditRating> GetCreditRating()
+        {
+            return _context.CreditRatings.AsQueryable();
+        }
+
+        public async Task<CreditRating> Create(CreditRating t)
+        {
+            await _context.CreditRatings.AddAsync(t);
+            return t;
+        }
+
+        public void DelCreditRatingUnsafe(string t)
+        {
+            var s = new CreditRating { code = t };
+
+            _context.CreditRatings.Attach(s);
+            _context.CreditRatings.Remove(s);
+        }
+
+        public async Task<CreditRating> GetCreditRatingAsync(string t)
+        {
+            var q = GetCreditRating();
+            var s = await q.FirstOrDefaultAsync(u => u.code == t);
+            return s;
+        }
     }
 }

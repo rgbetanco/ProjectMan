@@ -181,7 +181,7 @@ namespace projectman.Areas.Man.Controllers
 
         public async Task<IActionResult> View(long ID)
         {
-            Project project = await _proj.GetProject(ID, "product_list", "incoming_payment", "outgoing_payment");
+            Project project = await _proj.GetProject(ID, "products", "products.product", "products.product.brand","incoming_payments", "outgoing_payments");
 
             ViewData["sales_person"] = GetSalePersonList();
             ViewData["importance"] = GetImportanceList();
@@ -214,7 +214,7 @@ namespace projectman.Areas.Man.Controllers
         [HttpPost]
         public async Task<IActionResult> Update(long ID)
         {
-            Project project = await _proj.GetProject(ID, "product_list", "incoming_payment", "outgoing_payment");
+            Project project = await _proj.GetProject(ID, "products", "products.product", "products.product.brand", "incoming_payments", "outgoing_payments");
             if (project == null)
             {
                 return NotFound();
@@ -325,7 +325,7 @@ namespace projectman.Areas.Man.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RenewContract([FromForm]long ID)
         {
-            var c = await _proj.GetProject(ID, "product_list", "incoming_payment", "outgoing_payment");
+            var c = await _proj.GetProject(ID, "products", "incoming_payments", "outgoing_payments");
 
             if (c == null)
             {

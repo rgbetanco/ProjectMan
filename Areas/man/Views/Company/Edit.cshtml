@@ -1,7 +1,7 @@
 ﻿@model projectman.Models.Company
 @using CSHelper.Extensions
 @{
-    ViewData["Title"] = "更新分類";
+    ViewData["Title"] = "單位管理";
     Layout = "_Layout";
 }
 
@@ -54,7 +54,7 @@
 
                 @for (var i = 0; i < Model.phones.Count(); i++)
                 {
-                    <div class="row mb-1" data-form-group="phone">
+                    <div class="row mb-1" data-form-group="phones">
                         <div class="col-auto">
                             @Html.DropDownListFor(m => m.phones[i].type, CSHelper.Extensions.RenderingExtension.GetSelectList<PhoneType>(), new { @class = "form-control", @data_form_group_subname = "type" })
                         </div>
@@ -63,7 +63,7 @@
                         </div>
                         <div class="col-auto">
                             @Html.HiddenFor(m => m.phones[i].ID)
-                            @Html.Hidden("phone.Index", i)
+                            @Html.Hidden("phones.Index", i)
                             <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
                                 <i class="fa fa-trash" aria-hidden="true"></i>
                             </button>
@@ -76,10 +76,10 @@
 <!-- PHONE -->
             <div class="row mt-4">
                 <div class="col text-start">
-                    @Html.LabelFor(m => m.phones, new { @class = "form-label" })
-                    <div class="row mb-1" data-form-group-start="phone">
+                    @*@Html.LabelFor(m => m.phones, new { @class = "form-label" })*@
+                    <div class="row mb-1" data-form-group-start="phones">
                         <div class="col-auto">
-                            <div class="row mb-1 d-none" data-form-group="phone">
+                            <div class="row mb-1 d-none" data-form-group="phones">
                                 <div class="col-auto">
                                     @Html.DropDownList("temp", CSHelper.Extensions.RenderingExtension.GetSelectList<PhoneType>(), new { @class = "form-select", @data_form_group_subname = "type" })
                                 </div>
@@ -109,7 +109,7 @@
 
                 @for (var i = 0; i < Model.addresses.Count(); i++)
                 {
-                    <div class="row mb-1" data-form-group="address">
+                    <div class="row mb-1" data-form-group="addresses">
                         <div class="col-auto">
                             @Html.DropDownListFor(m => m.addresses[i].type, CSHelper.Extensions.RenderingExtension.GetSelectList<ContactAddressType>(), new { @class = "form-control", @data_form_group_subname = "type" })
                         </div>
@@ -118,7 +118,7 @@
                         </div>
                         <div class="col-auto">
                             @Html.HiddenFor(m => m.addresses[i].ID)
-                            @Html.Hidden("address.Index", i)
+                            @Html.Hidden("addresses.Index", i)
                             <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
                                 <i class="fa fa-trash" aria-hidden="true"></i>
                             </button>
@@ -130,11 +130,11 @@
 <!-- ADDRESS -->
             <div class="row mt-4">
                 <div class="col text-start">
-                    @Html.LabelFor(m => m.addresses, new { @class = "form-label" })
+                    @*@Html.LabelFor(m => m.addresses, new { @class = "form-label" })*@
 
-                    <div class="row mb-1" data-form-group-start="address">
+                    <div class="row mb-1" data-form-group-start="addresses">
                         <div class="col-auto">
-                            <div class="row mb-1 d-none" data-form-group="address">
+                            <div class="row mb-1 d-none" data-form-group="addresses">
                                 <div class="col-auto">
                                     @Html.DropDownList("temp", CSHelper.Extensions.RenderingExtension.GetSelectList<ContactAddressType>(), new { @class = "form-select", @data_form_group_subname = "type" })
                                 </div>
@@ -165,7 +165,7 @@
 
                 @for (var i = 0; i < Model.emails.Count(); i++)
                 {
-                    <div class="row mb-1" data-form-group="email">
+                    <div class="row mb-1" data-form-group="emails">
                         <div class="col-auto">
                             @Html.DropDownListFor(m => m.emails[i].type, CSHelper.Extensions.RenderingExtension.GetSelectList<ContactAddressType>(), new { @class = "form-control", @data_form_group_subname = "type" })
                         </div>
@@ -174,7 +174,7 @@
                         </div>
                         <div class="col-auto">
                             @Html.HiddenFor(m => m.emails[i].ID)
-                            @Html.Hidden("email.Index", i)
+                            @Html.Hidden("emails.Index", i)
                             <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
                                 <i class="fa fa-trash" aria-hidden="true"></i>
                             </button>
@@ -186,11 +186,11 @@
 <!--EMAIL-->
             <div class="row mt-4">
                 <div class="col text-start">
-                    @Html.LabelFor(m => m.emails, new { @class = "form-label" })
+                    @*@Html.LabelFor(m => m.emails, new { @class = "form-label" })*@
 
-                    <div class="row mb-1" data-form-group-start="email">
+                    <div class="row mb-1" data-form-group-start="emails">
                         <div class="col-auto">
-                            <div class="row mb-1 d-none" data-form-group="email">
+                            <div class="row mb-1 d-none" data-form-group="emails">
                                 <div class="col-auto">
                                     @Html.DropDownList("temp", CSHelper.Extensions.RenderingExtension.GetSelectList<ContactAddressType>(), new { @class = "form-select", @data_form_group_subname = "type" })
                                 </div>

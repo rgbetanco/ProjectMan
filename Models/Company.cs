@@ -31,13 +31,13 @@ namespace projectman.Models
         public string website { get; set; }
         //PHONE NUMBER
         [Display(Name = "電話")]
-        public IList<CompanyPhone> phones { get; set; }
+        public virtual List<CompanyPhone> phones { get; set; }
         //ADDRESS
         [Display(Name = "地址")]
-        public IList<CompanyAddress> addresses { get; set; }
+        public virtual List<CompanyAddress> addresses { get; set; }
         //EMAIL
         [Display(Name = "電⼦信箱")]
-        public IList<CompanyEmail> emails { get; set; }
+        public virtual List<CompanyEmail> emails { get; set; }
     }
 
     [Table("credit_rating")]

@@ -70,7 +70,9 @@
 
     <div class="row text-start mt-4">
         <div class="col-6">
+                @Html.LabelFor(m => m.company.name, new { @class = "form-label" })
                 <div class="input-group">
+                    
                     @Html.HiddenFor(m => m.company_id, new { @class = "form-control",  @readonly = "readonly" } )
                     @Html.TextBoxFor(m => m.company.name, new { @class = "form-control",  @readonly = "readonly" })
                     <button type="button" class="btn btn-secondary btn-modal"
@@ -84,7 +86,9 @@
                 </div>
         </div>
         <div class="col-6">
+                @Html.LabelFor(m => m.contact, new { @class = "form-label" })
                 <div class="input-group">
+                    
                     @Html.DropDownListFor(m => m.contact.name, (IEnumerable<SelectListItem>)ViewData["personas"], new { @class = "form-select" })
                 </div>
         </div>
@@ -121,19 +125,19 @@
                 </tr>
             </thead>
             <tbody>
-                <tr class="d-none" data-form-group-start="Product_List" data-form-group="Product_List">
+                <tr class="d-none" data-form-group-start="products" data-form-group="products">
                     <td scope="row">
-                        @Html.Hidden("temp", "", new { @data_form_group_subname = "product_id" } )
                         @Html.TextBox("temp", "", new { @class = "form-control", @readonly="readonly", @data_form_group_subname = "category" })
                     </td>
                     <td scope="row">
-                        @Html.TextBox("temp", "", new { @class = "form-control", @readonly="readonly", @data_form_group_subname = "brand.name" })
+                        @Html.TextBox("temp", "", new { @class = "form-control", @readonly="readonly", @data_form_group_subname = "product.brand.name" })
                     </td>
                     <td scope="row">
                         <div class="input-group">
-                            @Html.TextBox("temp", "", new { @class = "form-control", @readonly="readonly", @data_form_group_subname = "model_name" })
+                            @Html.Hidden("temp", "", new { @data_form_group_subname = "product_id" } )
+                            @Html.TextBox("temp","", new { @class = "form-control", @readonly="readonly", @data_form_group_subname = "product.model_name" })
                             <button type="button" class="btn btn-secondary btn-modal"
-                                    data-form-group-target="Product_list"
+                                    data-form-group-target="products"
                                 data-url="@Url.Action("Picker", "Product")"
                                 data-toggle="modal"
                                 data-target="#modal-popup">
@@ -152,7 +156,7 @@
                 </tr>
             </tbody>
         </table>
-        <button class="btn btn-secondary" type="button" data-form-group-target="Product_List">+新增</button>
+        <button class="btn btn-secondary" type="button" data-form-group-target="products">+新增</button>
         <!-- Incoming payment -->
         <table class="table mt-4">
             <thead>
@@ -165,7 +169,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr class="d-none" data-form-group-start="incoming_payment" data-form-group="incoming_payment">
+                <tr class="d-none" data-form-group-start="incoming_payments" data-form-group="incoming_payments">
                     <td scope="row">
                         @Html.TextBox("temp", DateTime.Now.ToString("yyyy-MM-dd"), new { @type="date", @class = "form-control", @data_form_group_subname = "issueDate" })
                     </td>
@@ -186,7 +190,7 @@
                 </tr>
             </tbody>
         </table>
-        <button class="btn btn-secondary" type="button" data-form-group-target="incoming_payment">+新增</button>
+        <button class="btn btn-secondary" type="button" data-form-group-target="incoming_payments">+新增</button>
         <!-- Outgoing payment -->
         <table class="table mt-4">
             <thead>
@@ -198,7 +202,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr class="d-none" data-form-group-start="outgoing_payment" data-form-group="outgoing_payment">
+                <tr class="d-none" data-form-group-start="outgoing_payments" data-form-group="outgoing_payments">
                     <td scope="row">
                         @Html.TextBox("temp", DateTime.Now.ToString("yyyy-MM-dd"), new { @type="date", @class = "form-control", @data_form_group_subname = "issueDate" })
                     </td>
@@ -207,7 +211,7 @@
                             @Html.Hidden("temp", "", new { @class = "form-control",  @readonly = "readonly", @data_form_group_subname = "company_id" } )
                             @Html.TextBox("temp", "", new { @class = "form-control", @readonly = "readonly", @data_form_group_subname = "company.name" })
                             <button type="button" class="btn btn-secondary btn-modal"
-                                    data-form-group-target="outgoing_payment"
+                                    data-form-group-target="outgoing_payments"
                                     data-url="@Url.Action("Picker", "Company")"
                                     data-toggle="modal"
                                     data-target="#modal-popup">
@@ -226,7 +230,7 @@
                 </tr>
             </tbody>
         </table>
-        <button class="btn btn-secondary mb-4" type="button" data-form-group-target="outgoing_payment">+新增</button>
+        <button class="btn btn-secondary mb-4" type="button" data-form-group-target="outgoing_payments">+新增</button>
     </form>
         
 </div>

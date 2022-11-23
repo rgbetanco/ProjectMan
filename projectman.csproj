@@ -349,7 +349,6 @@
 
   <ItemGroup>
     <Folder Include="Controllers\" />
-    <Folder Include="Migrations\" />
     <Folder Include="Views\" />
   </ItemGroup>
 </Project>

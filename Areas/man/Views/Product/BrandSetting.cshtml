@@ -1,0 +1,92 @@
+﻿@model IList<projectman.Models.ProductBrand>
+@{
+    ViewData["Title"] = "商品設定管理";
+    ViewData["AutoReload"] = true;
+    Layout = "_Layout";
+}
+
+<div class="container h-100 d-flex flex-column">
+    <div class="row mb-3 mt-4">
+        <div class="col">
+            <button type="button" class="btn btn-light btn-back"><i class="fas fa-caret-left"></i></button>
+            <h2>@ViewData["Title"]</h2>
+        </div>
+    </div>
+    <form id="update" asp-action="BrandSetting" class="form-table">
+        <div>
+            <button type="submit" class="btn btn-primary my-1">儲存</button>
+            @Html.AntiForgeryToken()
+
+            <div class="alert alert-danger d-none" role="alert">
+            </div>
+        </div>
+        <div class="table-parent">
+
+            <table id="table"
+                   class="table table-hover"
+                   data-form-table-group="Brand">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th data-cs-field="name">名稱</th>
+                        <th>功能</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var e in Model)
+                    {
+                        <tr data-cs-key="@e.ID">
+                            <th></th>
+                            <td contenteditable="true" data-cs-orig-value="@e.name">@e.name</td>
+                            <td>
+                                <button type="button" class="btn-delete btn"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    }
+                    <tr class="d-none" data-form-table-row="Keyword">
+                        <th><i class="fas fa-magic"></i></th>
+                        <td contenteditable="true"></td>
+                        <td>
+                            <button type="button" class="d-none btn-delete btn"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+
+    <script>
+
+        $(function () {
+            let $form = $('#update');
+            $form.initAsAjaxForm({
+                success: function (data) {
+                    var result = createErrorList(data);
+                    if (result == null) {
+                        location.reload();
+                    } else {
+                        var alert = $form.find(".alert");
+                        alert.html(result);
+                        alert.removeClass('d-none');
+                    }
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    var alert = $form.find(".alert");
+                    alert.text(AjaxErrorToString(xhr, textStatus, errorThrown));
+                    alert.removeClass('d-none');
+                },
+                validate: function () {
+                    return null;
+                }
+            });
+
+        });
+
+    </script>
+} 
