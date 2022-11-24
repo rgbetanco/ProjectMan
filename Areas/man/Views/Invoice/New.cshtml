@@ -55,13 +55,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="d-none" data-form-group-start="invoice_item" data-form-group="invoice_item">
+                    <tr class="d-none" data-form-group-start="items" data-form-group="items">
                         <td scope="row">
                             <div class="input-group">
                                 @Html.Hidden("temp", "", new { @readonly = "readonly", @data_form_group_subname = "incoming_payment_id"})
                                 @Html.TextBox("temp","", new { @class = "form-control",  @readonly = "readonly", @data_form_group_subname = "item" })
                                 <button type="button" class="btn btn-secondary btn-modal change-item"
-                                        data-form-group-target="invoice_item"
+                                        data-form-group-target="items"
                                         id="change-item"
                                         data-url='@Url.Action("Picker", "Project")'
                                         data-toggle="modal"
@@ -87,7 +87,7 @@
                     </tr>
                 </tfoot>
             </table>
-            <button class="btn btn-secondary" type="button" data-form-group-target="invoice_item">+ 增加</button>
+            <button class="btn btn-secondary" type="button" data-form-group-target="items">+ 增加</button>
 
             <br />
             <br />
@@ -155,7 +155,7 @@
             var $form = $('#update');
             $("#total").val(0)
             
-            $form.find(':visible[data-form-group="invoice_item"]').each(function () {
+            $form.find(':visible[data-form-group="items"]').each(function () {
                 $this = $(this);
                 let $subtotalRaw = $this.find('input[data-form-group-subname="amount"]')
                 let subtotal = parseFloat($subtotalRaw.val())

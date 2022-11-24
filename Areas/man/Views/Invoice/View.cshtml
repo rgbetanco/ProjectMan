@@ -63,13 +63,13 @@
                 <tbody>
                     @for (var i = 0; i < Model.items.Count(); i++)
                     {
-                        <tr data-form-group="invoice_item">
+                        <tr data-form-group="items">
                             <td scope="row">
                                 <div class="input-group">
                                     @Html.HiddenFor(m => m.items[i].incoming_payment_id, new { @data_form_group_subname = "incoming_payment_id"})
                                     @Html.TextBoxFor(m => m.items[i].incoming_payment.item, new { @class = "form-control",  @readonly = "readonly", @data_form_group_subname = "item" })
                                     <button type="button" class="btn btn-secondary btn-modal change-item"
-                                        data-form-group-target="invoice_item"
+                                        data-form-group-target="items"
                                         id="change-item"
                                         data-url='@Url.Action("Picker", "Project")'
                                         data-toggle="modal"
@@ -90,13 +90,13 @@
                             </td>
                         </tr>
                     }
-                    <tr class="d-none" data-form-group-start="invoice_item" data-form-group="invoice_item">
+                    <tr class="d-none" data-form-group-start="items" data-form-group="items">
                         <td scope="row">
                             <div class="input-group">
                                 @Html.Hidden("temp", "", new { @data_form_group_subname = "incoming_payment_id"})
                                 @Html.TextBox("temp","", new { @class = "form-control",  @readonly = "readonly", @data_form_group_subname = "item" })
                                 <button type="button" class="btn btn-secondary btn-modal change-item"
-                                        data-form-group-target="invoice_item"
+                                        data-form-group-target="items"
                                         id="change-item"
                                         data-url='@Url.Action("Picker", "Project")'
                                         data-toggle="modal"

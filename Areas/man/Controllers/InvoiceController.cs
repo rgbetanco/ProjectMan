@@ -30,13 +30,13 @@ namespace projectman.Areas.man.Controllers
         [HttpGet]
         public async Task<IActionResult> View(long ID)
         {
-            Invoice invoice = await _inv.GetInvoice(ID, "invoice_item.incoming_payment");
+            Invoice invoice = await _inv.GetInvoice(ID, "items","items.incoming_payment");
             return View(invoice);
         }
         [HttpPost]
         public async Task<IActionResult> Update(long ID)
         {
-            Invoice invoice = await _inv.GetInvoice(ID, "invoice_item");
+            Invoice invoice = await _inv.GetInvoice(ID, "items");
             if (invoice == null)
             {
                 return NotFound();
