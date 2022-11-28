@@ -9,13 +9,16 @@
 <div class="container h-100 d-flex flex-column">
     <div class="row mb-3 mt-4">
         <div class="col">
-            <button type="button" class="btn btn-light btn-back mb-2"><i class="fas fa-caret-left"></i></button>
+            <button type="button" class="btn btn-light btn-back"><i class="fas fa-caret-left"></i></button>
+            <button class="btn btn-primary" type="button" id="update-enable-button">編輯</button>
             <h2>@ViewData["Title"]</h2>
         </div>
     </div>
-    <form id="update" asp-action="Update" asp-route-id="@Model.ID">
+    <form id="update" data-enable-button="#update-enable-button" asp-action="Update" asp-route-id="@Model.ID">
         @Html.AntiForgeryToken()
-        <div class="container text-center">
+        <button type="reset" class="btn btn-secondary">取消</button>
+        <button type="submit" class="btn btn-primary">更新</button>
+        <div class="container">
             <div class="row mt-4">
                 <div class="col text-start">
                     @Html.LabelFor(m => m.company, new { @class = "form-label form-view-hide" })
@@ -124,16 +127,16 @@
             </table>
             <button class="btn btn-secondary" type="button" data-form-group-target="invoice_item">+ 增加</button>
 
-            <br />
-            <br />
-            <button type="submit" class="btn btn-primary mb-4 mt-4">新增</button>
-
         </div>
     </form>
 </div>
 @section Scripts {
 
     <script>
+
+        $(function () {
+            $('#update').initAsToggleForm(false);
+        });
 
         $(window).on("load",function(){
             UpdatePrice()

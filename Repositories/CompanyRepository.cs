@@ -38,7 +38,7 @@ namespace projectman.Repositories
 
             if (!string.IsNullOrWhiteSpace(keyword))
             {
-                result = result.Where(u => u.name.Contains(keyword) || u.remarks.Contains(keyword));
+                result = result.Where(u => u.name.Contains(keyword) || u.remarks.Contains(keyword) || u.vatid.Contains(keyword));
             }
 
             return result;

@@ -12,7 +12,7 @@ namespace projectman.Repositories
         bool DelProject(Project s);
         Task<Project> DupProject(Project u);
         IQueryable<Project> FindAllProject();
-        IQueryable<ProjectIncomingPayment> FindIncomingPaymentByCompanyId(long company_id);
+        IQueryable<ProjectIncomingPayment> FindIncomingPaymentByCompanyId(long company_id, string keyword);
         IQueryable<Project> FindProjects(string keyword = null);
         IQueryable<Project> FindProjects(ProjectStatus status, ProjectType service_type, string keyword = null);
         IQueryable<Project> GetAllProject();

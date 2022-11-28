@@ -53,12 +53,28 @@ namespace projectman.Areas.man.Controllers
             return View();
         }
 
+        private IEnumerable<SelectListItem> GetCategoryList()
+        {
+            var toReturn = new List<SelectListItem> { new SelectListItem { Value = "-1", Text = "全部", Selected = true } };
+            var r = CSHelper.Extensions.RenderingExtension.GetSelectList<ProductCategory>();
+            foreach(var item in r)
+            {
+                toReturn.Add(item);
+            }
+            return toReturn;
+        }
+
         private IEnumerable<SelectListItem> GetProductBrandList(long? ID = null)
         {
+            var toReturn = new List<SelectListItem> { new SelectListItem { Value = "-1", Text = "全部", Selected = ID == null } };
+            
             var r = _prod.GetProductBrands().AsNoTracking();
             var result = r.Select(m => new SelectListItem { Value = m.ID.ToString(), Text = m.name, Selected = ID == m.ID });
-
-            return result;
+            foreach(var item in result)
+            {
+                toReturn.Add(item);
+            }
+            return toReturn;
             
         }
 
@@ -143,12 +159,15 @@ namespace projectman.Areas.man.Controllers
         // picker
         public IActionResult Picker()
         {
+            ViewData["brands"] = GetProductBrandList(0);
+            ViewData["categories"] = GetCategoryList();
+
             return PartialView("_PickerPopup");
         }
 
         public async Task<IActionResult> PickerQuery(QueryVM request)
         {
-            var result = _prod.Find(request.search);
+            var result = _prod.Find(request.search, (int)request.brand, request.category);
 
             return await GetTableReplyAsync(result, request, null, r => new
             {

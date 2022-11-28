@@ -9,11 +9,14 @@
     <div class="row mb-3 mt-4">
         <div class="col">
             <button type="button" class="btn btn-light btn-back"><i class="fas fa-caret-left"></i></button>
+            <button class="btn btn-primary" type="button" id="update-enable-button">編輯</button>
             <h2>@ViewData["Title"]</h2>
         </div>
     </div>
-    <form id="update" asp-action="Update" asp-route-id="@Model.ID">
+    <form id="update" data-enable-button="#update-enable-button" asp-action="Update" asp-route-id="@Model.ID">
         @Html.AntiForgeryToken()
+        <button type="reset" class="btn btn-secondary">取消</button>
+        <button type="submit" class="btn btn-primary">更新</button>
         <div class="container text-center">
             <div class="row mt-4">
                 <div class="col text-start">
@@ -260,6 +263,11 @@
 @section Scripts {
 
     <script>
+
+        $(function () {
+            $('#update').initAsToggleForm(false);
+        });
+
         // Handle phone checkboxes - make them work like radio buttons
         $(document).on('click', '[data-form-group=phones] .form-check-input', function ($this) {
             deselectAll($this);

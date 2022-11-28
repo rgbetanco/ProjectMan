@@ -7,13 +7,20 @@
 
 }
 
-<div class="container text-center">
-    <form id="update" asp-action="Update" asp-route-id="@Model.ID">
+<div class="container h-100 d-flex flex-column">
+    <div class="row mb-3 mt-4">
+        <div class="col">
+            <button type="button" class="btn btn-light btn-back"><i class="fas fa-caret-left"></i></button>
+
+            <button class="btn btn-primary" type="button" id="update-enable-button">編輯</button>
+        </div>
+    </div>
+    <form id="update" data-enable-button="#update-enable-button" asp-action="Update" asp-route-id="@Model.ID">
     <!-- Store/History buttons -->
     <div class="row">
         <div class="col text-start">
-            <button type="button" class="btn btn-ligh btn-back"><span class="fa fa-caret-left fa-fw me-1"></span></button>
-            <button type="submit" class="btn btn-primary">儲存</button>
+                <button type="reset" class="btn btn-secondary">取消</button>
+                <button type="submit" class="btn btn-primary">更新</button>
         </div>
         <div class="col-6">
 
@@ -337,6 +344,10 @@
 
 @section Scripts {
         <script>
+
+        $(function () {
+            $('#update').initAsToggleForm(false);
+        });
 
         $(function () {
 

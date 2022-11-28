@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System;
 
 namespace projectman.Repositories
 {
@@ -16,14 +17,25 @@ namespace projectman.Repositories
             _context = context;
         }
 
-        public IQueryable<Product> Find(string keyword = null)
+        public IQueryable<Product> Find(string keyword = null, int brand = -1, string category = null)
         {
             var result = _context.Products.AsQueryable();
             result = result.Include("brand");
 
             if (!string.IsNullOrWhiteSpace(keyword))
             {
-                result = result.Where(u => u.name.Contains(keyword) || u.desc.Contains(keyword));
+                result = result.Where(u => u.name.Contains(keyword) || u.desc.Contains(keyword) || u.model_name.Contains(keyword));
+            }
+
+            if (brand > -1)
+            {
+                result = result.Where(u => u.brand_id == brand);
+            }
+
+            if (category != "-1")
+            {
+                //result = result.Where(u => u.category == (ProductCategory)Enum.Parse(typeof(ProductCategory), category));
+                result = result.Where(u => u.category == (ProductCategory)Enum.Parse(typeof(ProductCategory), category));
             }
 
             return result;

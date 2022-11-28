@@ -18,6 +18,8 @@ namespace projectman.Models
         public long? company_id { get; set; }
         public ProjectStatus? status { get; set; }
         public ProjectType? service_type { get; set; }
+        public int? brand { get; set; }
+        public string category { get; set; }
 
         public string sort { get; set; }
 

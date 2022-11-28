@@ -349,7 +349,7 @@ namespace projectman.Areas.Man.Controllers
 
         public async Task<IActionResult> PickerQuery(QueryVM request)
         {
-            var result = _proj.FindIncomingPaymentByCompanyId((long)request.company_id);
+            var result = _proj.FindIncomingPaymentByCompanyId((long)request.company_id, request.search);
 
             return await GetTableReplyAsync(result, request, null, r => new
             {

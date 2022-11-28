@@ -17,6 +17,14 @@
                 <label for="query_keyword" class="form-label">品名</label>
                 <input type="text" class="form-control" id="picker_list_keyword" name="search">
             </div>
+            <div class="col-3">
+                @Html.Label("Brand","商牌", new { @class = "form-label" })
+                @Html.DropDownList("brand", (IEnumerable<SelectListItem>)ViewData["brands"], new { @class = "form-control form-select", @id = "product_brand" })
+            </div>
+            <div class="col-3">
+                @Html.Label("category","商品類別", new { @class = "form-label" })
+                @Html.DropDownList("category", (IEnumerable<SelectListItem>)ViewData["categories"] ,new { @class = "form-select", @id = "product_category" })
+            </div>
 
             <div class="col text-end align-self-end">
                 <button id="picker_list_query" class="btn btn-primary" role="button">搜尋</button>
@@ -52,6 +60,8 @@
 
 function updatePickerList(params, options, table) {
     params.append('search', $('#picker_list_keyword').val());
+    params.append('brand', $('#product_brand').val());
+    params.append('category', $('#product_category').val());
 }
 
 

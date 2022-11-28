@@ -3,7 +3,7 @@
 
     <!--Modal Header Start-->
     <div class="modal-header">
-        <h4 class="modal-title">選擇商品</h4>
+        <h4 class="modal-title">選擇項⽬</h4>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="關閉" />
     </div>
     <!--Modal Header End-->
@@ -14,12 +14,12 @@
 
             <div class="col-auto">
                 @Html.AntiForgeryToken()
-                @*<label for="query_keyword" class="form-label">品名</label>
-                <input type="text" class="form-control" id="picker_list_keyword" name="search">*@
+                <label for="query_keyword" class="form-label">名稱</label>
+                <input type="text" class="form-control" id="picker_list_keyword" name="search">
             </div>
 
             <div class="col text-end align-self-end">
-                @*<button id="picker_list_query" class="btn btn-primary" role="button">搜尋</button>*@
+                <button id="picker_list_query" class="btn btn-primary" role="button">搜尋</button>
             </div>
         </div>
 
@@ -48,7 +48,7 @@
 <script>
 
 function updatePickerList(params, options, table) {
-    //params.append('search', $('#picker_list_keyword').val());
+    params.append('search', $('#picker_list_keyword').val());
 }
 
 

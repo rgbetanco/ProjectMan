@@ -54,13 +54,18 @@ namespace projectman.Repositories
             return result;
         }
 
-        public IQueryable<ProjectIncomingPayment> FindIncomingPaymentByCompanyId(long company_id)
+        public IQueryable<ProjectIncomingPayment> FindIncomingPaymentByCompanyId(long company_id, string keyword)
         {
-            var result = _context.IncomingPayments.AsQueryable();
+            var result = _context.IncomingPayments.Include("project").AsQueryable();
 
             if (company_id > -1)
             {
                 result = result.Where(u => u.project.company_id == company_id);
+            }
+
+            if (!String.IsNullOrWhiteSpace(keyword))
+            {
+                result = result.Where(u => u.item == keyword);
             }
 
             return result;
