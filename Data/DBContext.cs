@@ -46,8 +46,8 @@ namespace projectman.Data
         public DbSet<ProjectProduct> ProjectProducts { get; set; }
         public DbSet<ProjectIncomingPayment> IncomingPayments { get; set; }
         public DbSet<ProjectOutgoingPayment> OutgoingPayments { get; set; }
-        public DbSet<Invoice> Invoices { get; set; }
-        public DbSet<InvoiceItem> InvoiceItems { get; set; }
+
+        public DbSet<ProjectSubtypeEntry> ProjectSubtypeEntries { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -71,6 +71,10 @@ namespace projectman.Data
             // Project outcoming payment
             builder.Entity<Project>()
                 .HasMany(e => e.outgoing_payments)
+                .WithOne(e => e.project)
+                .OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<Project>()
+                .HasMany(e => e.subtypes)
                 .WithOne(e => e.project)
                 .OnDelete(DeleteBehavior.Cascade);
             // Company phones

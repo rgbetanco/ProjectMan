@@ -70,7 +70,7 @@
 
     <div class="row text-start mt-4">
         <div class="col-6">
-                @Html.LabelFor(m => m.company.name, new { @class = "form-label"})
+                @Html.LabelFor(m => m.company_id, new { @class = "form-label"})
                 <div class="input-group">
                     @Html.HiddenFor(m => m.company_id, new { @class = "form-control",  @readonly = "readonly" } )
                     @Html.TextBoxFor(m => m.company.name, new { @class = "form-control",  @readonly = "readonly" })

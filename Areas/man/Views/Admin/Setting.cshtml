@@ -16,11 +16,18 @@
 
     <div class="row flex-grow-1">
         <div class="col">
+            <h2>公司內部設定</h2>
+
+            <a class="btn btn-primary" asp-controller="Admin" asp-action="GroupSetting">部門清單</a>
+
+        </div>
+        <div class="col">
             <h2>
                 案件設定
             </h2>
 
             <a class="btn btn-primary" asp-controller="Project" asp-action="ImportanceSetting">重要性清單</a>
+            <a class="btn btn-primary" asp-controller="Project" asp-action="SubtypeSetting">細項清單</a>
         </div>
         <div class="col">
             <h2>

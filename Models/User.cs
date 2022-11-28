@@ -64,8 +64,9 @@ namespace projectman.Models
         [Display(Name = "密碼錯誤數")]
         public int bad_password_count { get; set; }
 
-        [Display(Name = "群組")]
+        [Display(Name = "部門")]
         public virtual List<UserGroup> groups { get; set; }
+
         [Display(Name = "業務")]
         public bool isSalePerson { get; set; } = false;
     }

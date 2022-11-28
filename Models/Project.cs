@@ -13,13 +13,13 @@ namespace projectman.Models
         [Display(Name = "未定")]
         Undefined = 0,
 
-        [Display(Name = "開發案")]
+        [Display(Name = "專案")]
         DevelopmentContract = 1,
 
-        [Display(Name = "採購案")]
-        ProductProcurement = 2,
+        [Display(Name = "租賃")]
+        LeaseContract = 2,
 
-        [Display(Name = "服務案")]
+        [Display(Name = "維護")]
         ServiceContract = 3
     }
 
@@ -69,6 +69,16 @@ namespace projectman.Models
 
         [DisplayName("說明")]
         public string desc { get; set; }
+    }
+
+    public class ProjectSubtype : UsesID
+    {
+
+        [Display(Name = "品項")]
+        public ProjectType type { get; set; }
+
+        [Display(Name = "名稱")]
+        public string name { get; set; }
     }
 
     #region Project
@@ -144,6 +154,9 @@ namespace projectman.Models
         [Display(Name = "付款期程")]
         public virtual List<ProjectOutgoingPayment> outgoing_payments { get; set; }
 
+        [Display(Name = "細項")]
+        public virtual List<ProjectSubtypeEntry> subtypes { get; set; }
+
         public long? connected_project_id { get; set; }
     }
 
@@ -172,7 +185,34 @@ namespace projectman.Models
         public string serial_number { get; set; }
     }
 
+    [Table("project_subtype_entry")]
+    public class ProjectSubtypeEntry : UsesProjectID
+    {
+        [Display(Name = "細項")]
+        public ProjectSubtype subtype { get; set; }
 
+        [Display(Name = "細項ID")]
+        public long subtype_id { get;set; }
+    }
+
+    [Table("project_timeline_entry")]
+    public class ProjectTimelineEntry : UsesProjectID
+    {
+        [Display(Name = "到期⽇期")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "yyyy-MM-dd")]
+        public DateTime due_date { get; set; } = DateTime.UtcNow;
+
+        [Display(Name = "說明")]
+        public string desc { get; set; }
+
+        // set to UtcNow, when order slip number is set for the first time
+        [Display(Name = "完成日期")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "yyyy-MM-dd, HH:mm:ss.FFF")]
+        public DateTime? complete_date { get; set; }
+
+    }
 
     [Table("project_incoming_payment")]
     public class ProjectIncomingPayment : UsesProjectID
@@ -191,8 +231,23 @@ namespace projectman.Models
         [DisplayFormat(DataFormatString = "{0:C0}", ApplyFormatInEditMode = false)]
         public decimal amount { get; set; }
 
+        [Display(Name = "銷貨單號")]
+        public string orderslip_number { get; set; }
+
+        // set to UtcNow, when order slip number is set for the first time
+        [Display(Name = "銷貨單建檔日期")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "yyyy-MM-dd, HH:mm:ss.FFF")]
+        public DateTime? orderslip_date { get; set; }
+
         [Display(Name = "發票")]
-        public string invoice { get; set; }
+        public string invoice_number { get; set; }
+
+        // set to UtcNow, when invoice number is set for the first time
+        [Display(Name = "發票建檔日期")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "yyyy-MM-dd, HH:mm:ss.FFF")]
+        public DateTime? invoice_date { get; set; }
     }
 
     [Table("project_outgoing_payment")]
