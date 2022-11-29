@@ -5,6 +5,7 @@
     <CopyRefAssembliesToPublishDirectory>false</CopyRefAssembliesToPublishDirectory>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'repairman' " />
   <ItemGroup>
     <None Include="wwwroot\dl\f\p\20220118200500_1_林庭菲 人資.pdf" />
     <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map" />
