@@ -1,5 +1,5 @@
 ﻿Projectman Readme
-rgbetanco
+
 This webapp is used to let users submit repair requests, and a service engineer 
 will use it to report on the status of the repairs.  There are two portals,
 one for regular users, and one for admin/service engineers.. each with its own
