@@ -23,9 +23,19 @@ namespace projectman.Data
         public DbSet<UserGroup> UserGroups { get; set; }
         public DbSet<PermGroup> PermGroups { get; set; }
 
+        public DbSet<InternalCompany> InternalCompanies { get; set; }
+
         // Project related
-        public DbSet<ProjectImportance> ProjectImportances { get; set; }    
+        public DbSet<ProjectImportance> ProjectImportances { get; set; }
+        public DbSet<ProjectSubtype> ProjectSubtypes { get; set; }
         public DbSet<Project> Projects { get; set; }
+
+        public DbSet<ProjectProduct> ProjectProducts { get; set; }
+        public DbSet<ProjectIncomingPayment> IncomingPayments { get; set; }
+        public DbSet<ProjectOutgoingPayment> OutgoingPayments { get; set; }
+        public DbSet<ProjectSubtypeEntry> ProjectSubtypeEntries { get; set; }
+
+        // Products
         public DbSet<ProductBrand> ProductBrands { get; set; }
         public DbSet<Product> Products { get; set; }
 
@@ -43,21 +53,10 @@ namespace projectman.Data
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<ContactCompany> ContactCompanies { get; set; }
 
-        public DbSet<ProjectProduct> ProjectProducts { get; set; }
-        public DbSet<ProjectIncomingPayment> IncomingPayments { get; set; }
-        public DbSet<ProjectOutgoingPayment> OutgoingPayments { get; set; }
-
-        public DbSet<ProjectSubtypeEntry> ProjectSubtypeEntries { get; set; }
-
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            //Invoice
-            builder.Entity<Invoice>()
-                .HasMany(e => e.items)
-                .WithOne(e => e.invoice)
-                .OnDelete(DeleteBehavior.Cascade);
             // Project product list
             builder.Entity<Project>()
                 .HasMany(e => e.products)

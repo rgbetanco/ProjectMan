@@ -17,10 +17,9 @@
         var is_active_project = activeController == "Project";
         var is_active_company = activeController == "Company";
         var is_active_contact = activeController == "Contact";
-        var is_active_invoice = activeController == "Invoice";
         var is_active_product = activeController == "Product";
 
-        var is_active_service = is_active_project || is_active_company || is_active_contact || is_active_invoice || is_active_product;
+        var is_active_service = is_active_project || is_active_company || is_active_contact || is_active_product;
     }
     <div class="nav-item" data-bs-toggle="collapse" data-bs-target="#project_menu" @if (!is_active_service) { <text> aria-expanded="false" </text> }>
         <span class="collapsible">服務管理</span>
@@ -28,7 +27,7 @@
 
     <div class="sidebar-submenu collapse @if (is_active_service) {<text>show</text> }" id="project_menu">
         <a class="nav-item @((is_active_project && activeAction=="Dashboard") ? "active" : "" )" asp-controller="Project" asp-action="Dashboard">
-            <span class="fa fa-gauge fa-fw me-3"></span>
+            <span class="fa-solid fa-gauge fa-fw me-3"></span>
             <span class="collapsible">儀表板</span>
         </a>
         <a class="nav-item @((is_active_project && activeAction=="Index") ? "active" : "" )" asp-controller="Project" asp-action="Index">
@@ -43,10 +42,6 @@
         <a class="nav-item  @((is_active_contact && activeAction=="Index") ? "active" : "" )" asp-controller="Contact" asp-action="Index">
             <span class="fa-solid fa-address-card fa-fw me-3"></span>
             <span class="collapsible">個⼈管理</span>
-        </a>
-        <a class="nav-item  @((is_active_invoice && activeAction=="Index") ? "active" : "" )" asp-controller="Invoice" asp-action="Index">
-            <span class="fa-solid fa-receipt fa-fw me-3"></span>
-            <span class="collapsible">發票</span>
         </a>
         <a class="nav-item  @((is_active_product && activeAction=="Index") ? "active" : "" )" asp-controller="Product" asp-action="Index">
             <span class="fa-solid fa-box fa-fw me-3"></span>

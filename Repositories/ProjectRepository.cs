@@ -78,7 +78,7 @@ namespace projectman.Repositories
 
         public IQueryable<Project> GetAllProject()
         {
-            return _context.Projects.Include(m => m.incoming_payments.Where(m => m.invoice != null).OrderByDescending(m => m.due_date)).OrderBy(m => m.starting_datetime);
+            return _context.Projects.Include(m => m.incoming_payments.OrderByDescending(m => m.due_date)).OrderBy(m => m.starting_datetime);
         }
 
         public async Task<Project> CreateProject(Project u)
@@ -132,7 +132,10 @@ namespace projectman.Repositories
                         due_date = i.due_date,
                         item = i.item,
                         amount = i.amount,
-                        invoice = i.invoice
+                        invoice_date = i.invoice_date,
+                        orderslip_date = i.orderslip_date,
+                        invoice_number = i.invoice_number,
+                        orderslip_number = i.orderslip_number
                     });
                 }
 
@@ -194,6 +197,18 @@ namespace projectman.Repositories
             }
 
             return result;
+        }
+
+        // GET PROJECT SUBTYPES
+        public IQueryable<ProjectSubtype> GetSubtypes(ProjectType ?type)
+        {
+            var q = _context.ProjectSubtypes.AsQueryable();
+            if( type!=null )
+            {
+                q = q.Where(t => t.type == type);
+            }
+
+            return q;
         }
 
         // GET ALL IMPORTANCES

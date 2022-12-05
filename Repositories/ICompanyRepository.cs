@@ -19,5 +19,6 @@ namespace projectman.Repositories
         Task<CreditRating> Create(CreditRating t);
         void DelCreditRatingUnsafe(string t);
         Task<CreditRating> GetCreditRatingAsync(string t);
+        IQueryable<InternalCompany> GetInternalCompanies();
     }
 }

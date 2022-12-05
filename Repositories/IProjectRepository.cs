@@ -22,6 +22,8 @@ namespace projectman.Repositories
         IQueryable<ProjectImportance> GetImportances();
         void DelImportanceUnsafe(string t);
 
+        IQueryable<ProjectSubtype> GetSubtypes(ProjectType? type);
+
         IQueryable<ProjectIncomingPayment> GetNextDueIncomingPayment();
         Task<Project> GetProject(long ID, params string[] includeFields);
         IEnumerable<ProjectType> GetServiceType();

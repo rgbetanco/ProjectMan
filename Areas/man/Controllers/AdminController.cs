@@ -254,5 +254,15 @@ namespace projectman.Areas.Man.Controllers
             });
         }
 
+        public IActionResult GroupSetting()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IActionResult InternalCompanySetting()
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }

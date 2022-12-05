@@ -25,5 +25,6 @@ namespace projectman.Repositories
 
         bool DelGroupUnsafe(long ID);
         IQueryable<Group> GetGroups();
+
     }
 }

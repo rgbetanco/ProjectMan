@@ -117,4 +117,22 @@ namespace projectman.Models
         public ContactAddressType type { get; set; }
     }
     #endregion
+
+    // "our company" can have multiple registered companies.. each
+    // project may be bid under a different company
+    [Table("internal_company")]
+    public class InternalCompany : UsesID
+    {
+        //NAME
+        [Display(Name = "名稱")]
+        public string name { get; set; }
+
+        //NATIONAL ID
+        [Display(Name = "統⼀編號")]
+        public string vatid { get; set; }
+
+        //REMARKS
+        [Display(Name = "備註")]
+        public string remarks { get; set; }
+    }
 }

@@ -37,7 +37,6 @@ namespace projectman
             services.AddScoped<IProjectRepository, ProjectRepository>();
             services.AddScoped<ICompanyRepository, CompanyRepository>();
             services.AddScoped<IContactRepository, ContactRepository>();
-            services.AddScoped<IInvoiceRepository, InvoiceRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
 
             services.AddScoped<ILDAPClient, LDAPClient>();

@@ -35,6 +35,24 @@ namespace projectman.Areas.Man.Controllers
             _persona = persona;
         }
 
+        protected IEnumerable<SelectListItem> GetGroupList()
+        {
+            var r = _user.GetGroups().AsNoTracking();
+
+            var result = r.Select(m => new SelectListItem { Value = m.ID.ToString(), Text = m.name });
+
+            return result;
+        }
+
+        protected IEnumerable<SelectListItem> GetInternalCompanyList()
+        {
+            var r = _comp.GetInternalCompanies().AsNoTracking();
+
+            var result = r.Select(m => new SelectListItem { Value = m.ID.ToString(), Text = m.name });
+
+            return result;
+        }
+
         protected IEnumerable<SelectListItem> GetSalePersonList()
         {
             var r = _user.GetSalesPersons().AsNoTracking();
@@ -61,6 +79,12 @@ namespace projectman.Areas.Man.Controllers
 
             return result;
         }
+        protected MultiSelectList GetProjectSubtypeList(ProjectType type, IEnumerable<long> selectedValues = null)
+        {
+            var r = _proj.GetSubtypes(type).Select(n => new SelectListItem { Value = n.ID.ToString(), Text = n.name });
+
+            return new MultiSelectList(r, "Value", "Text", selectedValues);
+        }
 
         protected IEnumerable<SelectListItem> GetCompanyContactList(long comp_id)
         {
@@ -76,7 +100,7 @@ namespace projectman.Areas.Man.Controllers
         {
             var result = _proj.FindProjects((ProjectStatus)request.status, (ProjectType)request.service_type, request.search);
             var _nextInvoices = _proj.GetNextDueIncomingPayment();
-            var _nextInvoice = _nextInvoices.Where(r => String.IsNullOrEmpty(r.invoice)).OrderByDescending(r => r.due_date);
+            var _nextInvoice = _nextInvoices.Where(r => String.IsNullOrEmpty(r.invoice_number)).OrderByDescending(r => r.due_date);
 
             return await GetTableReplyAsync(result, request, null, r => new
             {
@@ -92,7 +116,7 @@ namespace projectman.Areas.Man.Controllers
         {
             var result = _proj.FindAllProject();
             var _nextInvoices = _proj.GetNextDueIncomingPayment();
-            var _nextInvoice = _nextInvoices.Where(r => String.IsNullOrEmpty(r.invoice)).OrderByDescending(r => r.due_date);
+            var _nextInvoice = _nextInvoices.Where(r => String.IsNullOrEmpty(r.invoice_number)).OrderByDescending(r => r.due_date);
 
             return await GetTableReplyAsync(result, request, null, r => new
             {
@@ -129,10 +153,13 @@ namespace projectman.Areas.Man.Controllers
         public IActionResult New()
         {
             var a = new Project();
+            ViewData["group"] = GetGroupList();
+            ViewData["internal_company"] = GetInternalCompanyList();
             ViewData["sales_person"] = GetSalePersonList();
             ViewData["importance"] = GetImportanceList();
             ViewData["service_type"] = GetServiceTypeList();
             // generate list of modules for dropdown lists
+            ViewData["subtypes"] = GetProjectSubtypeList(a.type);
             ViewData["personas"] = GetCompanyContactList(-1);
 
             a.starting_datetime = DateTime.UtcNow;
@@ -170,7 +197,7 @@ namespace projectman.Areas.Man.Controllers
             );
 
             await this.TryUpdateModelListAsync(m, a => a.products, b => b.product_id, b => b.serial_number);
-            await this.TryUpdateModelListAsync(m, a => a.incoming_payments, b => b.due_date, b => b.item, b => b.amount, b => b.invoice);
+            await this.TryUpdateModelListAsync(m, a => a.incoming_payments, b => b.due_date, b => b.item, b => b.amount, b => b.invoice_number, b => b.orderslip_number, b => b.invoice_date, b => b.orderslip_date);
             await this.TryUpdateModelListAsync(m, a => a.outgoing_payments, b => b.due_date, b => b.company_id, b => b.amount);
             
             await _proj.CreateProject(m);
@@ -221,7 +248,7 @@ namespace projectman.Areas.Man.Controllers
             }
 
             await this.TryUpdateModelListAsync(project, a => a.products, b => b.product_id, b => b.serial_number);
-            await this.TryUpdateModelListAsync(project, a => a.incoming_payments, b => b.due_date, b => b.item, b => b.amount, b => b.invoice);
+            await this.TryUpdateModelListAsync(project, a => a.incoming_payments, b => b.due_date, b => b.item, b => b.amount, b => b.invoice_number, b => b.orderslip_number, b => b.invoice_date, b => b.orderslip_date);
             await this.TryUpdateModelListAsync(project, a => a.outgoing_payments, b => b.due_date, b => b.company_id, b => b.amount);
 
             await TryUpdateModelAsync<Project>(
@@ -289,6 +316,10 @@ namespace projectman.Areas.Man.Controllers
             return PartialView("_RenewContractPopUp");
         }
 
+        public IActionResult SubtypeSetting()
+        {
+            throw new NotImplementedException();
+        }
 
         public async Task<IActionResult> ImportanceSetting()
         {

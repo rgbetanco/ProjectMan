@@ -103,5 +103,10 @@ namespace projectman.Repositories
             var s = await q.FirstOrDefaultAsync(u => u.code == t);
             return s;
         }
+
+        public IQueryable<InternalCompany> GetInternalCompanies()
+        {
+            return _context.InternalCompanies.AsQueryable();
+        }
     }
 }

@@ -206,7 +206,7 @@
                         <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().due_date, new { @class = "form-label form-view-hide" })</th>
                         <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().item, new { @class = "form-label" })</th>
                         <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().amount, new { @class = "form-label" })</th>
-                        <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().invoice, new { @class = "form-label" })</th>
+                        <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().invoice_number, new { @class = "form-label" })</th>
                         <th scope="col">功能</th>
                     </tr>
                 </thead>
@@ -225,7 +225,7 @@
                         @Html.TextBoxFor(m => m.incoming_payments[i].amount, new { @class = "form-control", @data_form_group_subname = "amount" })
                     </td>
                     <td scope="row">
-                        @Html.TextBoxFor(m => m.incoming_payments[i].invoice, new { @class = "form-control", @readonly = "readonly", @data_form_group_subname = "invoice" })
+                        @Html.TextBoxFor(m => m.incoming_payments[i].invoice_number, new { @class = "form-control", @readonly = "readonly", @data_form_group_subname = "invoice" })
                     </td>
                     <td scope="row">
                             @Html.HiddenFor(m => m.incoming_payments[i].ID)
@@ -247,7 +247,7 @@
                         @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "amount" })
                     </td>
                     <td scope="row">
-                        @Html.TextBox("temp", "", new { @class = "form-control", @readonly = "readonly", @data_form_group_subname = "invoice" })
+                        @Html.TextBox("temp", "", new { @class = "form-control", @readonly = "readonly", @data_form_group_subname = "invoice_number" })
                     </td>
                     <td scope="row">
                         <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">

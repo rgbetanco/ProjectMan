@@ -108,6 +108,25 @@ namespace projectman.Models
         [DisplayFormat(DataFormatString = "yyyy-MM-dd, HH:mm:ss.FFF")]
         public DateTime ending_datetime { get; set; }
 
+
+        [Display(Name = "承辦公司")]
+        [ForeignKey("internal_company_id")]
+        public virtual InternalCompany internal_company { get; set; }
+
+        [Display(Name = "承辦公司")]
+        public long internal_company_id { get; set; }
+
+
+        [Display(Name = "負責部門")]
+        [ForeignKey("group_id")]
+        public virtual Group group { get; set; }
+
+        [Display(Name = "負責部門")]
+        public long group_id { get; set; }
+
+
+
+
         [Display(Name = "業務")]
         [ForeignKey("user_id")]
         public virtual User user { get; set; }
@@ -156,6 +175,9 @@ namespace projectman.Models
 
         [Display(Name = "細項")]
         public virtual List<ProjectSubtypeEntry> subtypes { get; set; }
+
+        [Display(Name = "截止日期表")]
+        public virtual List<ProjectTimelineEntry> timelines { get; set; }
 
         public long? connected_project_id { get; set; }
     }
@@ -209,7 +231,7 @@ namespace projectman.Models
         // set to UtcNow, when order slip number is set for the first time
         [Display(Name = "完成日期")]
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "yyyy-MM-dd, HH:mm:ss.FFF")]
+        [DisplayFormat(DataFormatString = "yyyy-MM-dd")]
         public DateTime? complete_date { get; set; }
 
     }
@@ -231,8 +253,21 @@ namespace projectman.Models
         [DisplayFormat(DataFormatString = "{0:C0}", ApplyFormatInEditMode = false)]
         public decimal amount { get; set; }
 
+        private string _orderslip_number;
+        private string _invoice_number;
+
         [Display(Name = "銷貨單號")]
-        public string orderslip_number { get; set; }
+        public string orderslip_number
+        {
+            get => _orderslip_number; 
+            
+            set
+            {
+                _orderslip_number= value;
+                if(!string.IsNullOrWhiteSpace(value) && orderslip_date == null )
+                    orderslip_date = DateTime.UtcNow;
+            }
+        }
 
         // set to UtcNow, when order slip number is set for the first time
         [Display(Name = "銷貨單建檔日期")]
@@ -241,7 +276,13 @@ namespace projectman.Models
         public DateTime? orderslip_date { get; set; }
 
         [Display(Name = "發票")]
-        public string invoice_number { get; set; }
+        public string invoice_number { get => _invoice_number; set
+            {
+                _invoice_number= value;
+                if( !string.IsNullOrWhiteSpace(value) && invoice_date==null )
+                    invoice_date = DateTime.UtcNow;
+            }
+        }
 
         // set to UtcNow, when invoice number is set for the first time
         [Display(Name = "發票建檔日期")]
