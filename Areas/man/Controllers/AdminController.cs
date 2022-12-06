@@ -254,15 +254,60 @@ namespace projectman.Areas.Man.Controllers
             });
         }
 
-        public IActionResult GroupSetting()
+        public async Task<IActionResult> GroupSetting()
         {
-            throw new NotImplementedException();
+            return View(await _user.GetGroups().ToListAsync());
+        }
+        [HttpPost]
+        [AuthorizeRole(UserPermission.ManageUser)]
+        public async Task<IActionResult> Group()
+        {
+            await this.TryUpdateTableModelAsync<Group, string>(
+                "Group",   // data-form-table-group name
+                async t =>
+                {
+                    await _user.Create(t);
+                    return true;
+                },
+                t =>
+                {
+                    _user.DelGroupUnsafe(long.Parse(t));
+                    return Task.FromResult(true);
+                },
+                async t => await _user.GetGroup(long.Parse(t))
+            );
+
+            var result = await CommitModel(null);
+
+            return result;
+        }
+        public async Task<IActionResult> InternalCompanySetting()
+        {
+            return View(await _user.GetInternalCompanySettings().ToListAsync());
         }
 
-        public IActionResult InternalCompanySetting()
+        [HttpPost]
+        [AuthorizeRole(UserPermission.ManageUser)]
+        public async Task<IActionResult> InternalCompany()
         {
-            throw new NotImplementedException();
-        }
+            await this.TryUpdateTableModelAsync<InternalCompany, string>(
+                "InternalCompany",   // data-form-table-group name
+                async t =>
+                {
+                    await _user.CreateInternalCompanySettings(t);
+                    return true;
+                },
+                t =>
+                {
+                    _user.DelInternalCompanySettingUnsafe(long.Parse(t));
+                    return Task.FromResult(true);
+                },
+                async t => await _user.GetInternalCompanySetting(long.Parse(t))
+            );
 
+            var result = await CommitModel(null);
+
+            return result;
+        }
     }
 }

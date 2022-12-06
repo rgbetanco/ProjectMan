@@ -12,8 +12,8 @@ using projectman.Data;
 namespace projectman.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20221122064818_initialMigration")]
-    partial class initialMigration
+    [Migration("20221206070738_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -307,7 +307,7 @@ namespace projectman.Migrations
                     b.ToTable("group");
                 });
 
-            modelBuilder.Entity("projectman.Models.Invoice", b =>
+            modelBuilder.Entity("projectman.Models.InternalCompany", b =>
                 {
                     b.Property<long>("ID")
                         .ValueGeneratedOnAdd()
@@ -315,52 +315,18 @@ namespace projectman.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
-                    b.Property<long?>("company_id")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("issue_date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("number")
+                    b.Property<string>("name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("total_amount")
-                        .HasColumnType("money");
+                    b.Property<string>("remarks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("vatid")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("company_id");
-
-                    b.ToTable("invoice");
-                });
-
-            modelBuilder.Entity("projectman.Models.InvoiceItem", b =>
-                {
-                    b.Property<long>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
-
-                    b.Property<decimal>("amount")
-                        .HasColumnType("money");
-
-                    b.Property<long?>("incoming_payment_id")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("invoice_id")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("incoming_payment_id");
-
-                    b.HasIndex("invoice_id");
-
-                    b.ToTable("invoice_item");
+                    b.ToTable("internal_company");
                 });
 
             modelBuilder.Entity("projectman.Models.PermGroup", b =>
@@ -462,8 +428,14 @@ namespace projectman.Migrations
                     b.Property<DateTime>("ending_datetime")
                         .HasColumnType("datetime2");
 
+                    b.Property<long>("group_id")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("importance_id")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<long>("internal_company_id")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("name")
                         .IsRequired()
@@ -493,7 +465,11 @@ namespace projectman.Migrations
 
                     b.HasIndex("contact_id");
 
+                    b.HasIndex("group_id");
+
                     b.HasIndex("importance_id");
+
+                    b.HasIndex("internal_company_id");
 
                     b.HasIndex("user_id");
 
@@ -530,10 +506,19 @@ namespace projectman.Migrations
                     b.Property<DateTime>("due_date")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("invoice")
+                    b.Property<DateTime?>("invoice_date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("invoice_number")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("item")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("orderslip_date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("orderslip_number")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("project_id")
@@ -599,6 +584,78 @@ namespace projectman.Migrations
                     b.HasIndex("project_id");
 
                     b.ToTable("project_product");
+                });
+
+            modelBuilder.Entity("projectman.Models.ProjectSubtype", b =>
+                {
+                    b.Property<long>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
+
+                    b.Property<string>("name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("type")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("ProjectSubtypes");
+                });
+
+            modelBuilder.Entity("projectman.Models.ProjectSubtypeEntry", b =>
+                {
+                    b.Property<long>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
+
+                    b.Property<long>("project_id")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("subtypeID")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("subtype_id")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("project_id");
+
+                    b.HasIndex("subtypeID");
+
+                    b.ToTable("project_subtype_entry");
+                });
+
+            modelBuilder.Entity("projectman.Models.ProjectTimelineEntry", b =>
+                {
+                    b.Property<long>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
+
+                    b.Property<DateTime?>("complete_date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("desc")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("due_date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("project_id")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("project_id");
+
+                    b.ToTable("project_timeline_entry");
                 });
 
             modelBuilder.Entity("projectman.Models.User", b =>
@@ -763,31 +820,6 @@ namespace projectman.Migrations
                     b.Navigation("contact");
                 });
 
-            modelBuilder.Entity("projectman.Models.Invoice", b =>
-                {
-                    b.HasOne("projectman.Models.Company", "company")
-                        .WithMany()
-                        .HasForeignKey("company_id");
-
-                    b.Navigation("company");
-                });
-
-            modelBuilder.Entity("projectman.Models.InvoiceItem", b =>
-                {
-                    b.HasOne("projectman.Models.ProjectIncomingPayment", "incoming_payment")
-                        .WithMany()
-                        .HasForeignKey("incoming_payment_id");
-
-                    b.HasOne("projectman.Models.Invoice", "invoice")
-                        .WithMany("items")
-                        .HasForeignKey("invoice_id")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("incoming_payment");
-
-                    b.Navigation("invoice");
-                });
-
             modelBuilder.Entity("projectman.Models.PermGroup", b =>
                 {
                     b.HasOne("projectman.Models.Group", "group")
@@ -818,9 +850,21 @@ namespace projectman.Migrations
                         .WithMany()
                         .HasForeignKey("contact_id");
 
+                    b.HasOne("projectman.Models.Group", "group")
+                        .WithMany()
+                        .HasForeignKey("group_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("projectman.Models.ProjectImportance", "importance")
                         .WithMany()
                         .HasForeignKey("importance_id");
+
+                    b.HasOne("projectman.Models.InternalCompany", "internal_company")
+                        .WithMany()
+                        .HasForeignKey("internal_company_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("projectman.Models.User", "user")
                         .WithMany()
@@ -830,7 +874,11 @@ namespace projectman.Migrations
 
                     b.Navigation("contact");
 
+                    b.Navigation("group");
+
                     b.Navigation("importance");
+
+                    b.Navigation("internal_company");
 
                     b.Navigation("user");
                 });
@@ -882,6 +930,34 @@ namespace projectman.Migrations
                     b.Navigation("project");
                 });
 
+            modelBuilder.Entity("projectman.Models.ProjectSubtypeEntry", b =>
+                {
+                    b.HasOne("projectman.Models.Project", "project")
+                        .WithMany("subtypes")
+                        .HasForeignKey("project_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("projectman.Models.ProjectSubtype", "subtype")
+                        .WithMany()
+                        .HasForeignKey("subtypeID");
+
+                    b.Navigation("project");
+
+                    b.Navigation("subtype");
+                });
+
+            modelBuilder.Entity("projectman.Models.ProjectTimelineEntry", b =>
+                {
+                    b.HasOne("projectman.Models.Project", "project")
+                        .WithMany("timelines")
+                        .HasForeignKey("project_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("project");
+                });
+
             modelBuilder.Entity("projectman.Models.UserGroup", b =>
                 {
                     b.HasOne("projectman.Models.Group", "group")
@@ -921,11 +997,6 @@ namespace projectman.Migrations
                     b.Navigation("phones");
                 });
 
-            modelBuilder.Entity("projectman.Models.Invoice", b =>
-                {
-                    b.Navigation("items");
-                });
-
             modelBuilder.Entity("projectman.Models.Project", b =>
                 {
                     b.Navigation("incoming_payments");
@@ -933,6 +1004,10 @@ namespace projectman.Migrations
                     b.Navigation("outgoing_payments");
 
                     b.Navigation("products");
+
+                    b.Navigation("subtypes");
+
+                    b.Navigation("timelines");
                 });
 
             modelBuilder.Entity("projectman.Models.User", b =>

@@ -25,6 +25,10 @@ namespace projectman.Repositories
 
         bool DelGroupUnsafe(long ID);
         IQueryable<Group> GetGroups();
+        Task<InternalCompany> GetInternalCompanySetting(long ID);
+        IQueryable<InternalCompany> GetInternalCompanySettings();
+        Task<InternalCompany> CreateInternalCompanySettings(InternalCompany t);
+        bool DelInternalCompanySettingUnsafe(long ID);
 
     }
 }

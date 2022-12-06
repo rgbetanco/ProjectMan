@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace projectman.Migrations
 {
     /// <inheritdoc />
-    public partial class initialMigration : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -55,6 +55,21 @@ namespace projectman.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "internal_company",
+                columns: table => new
+                {
+                    ID = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    vatid = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    remarks = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_internal_company", x => x.ID);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "product_brand",
                 columns: table => new
                 {
@@ -78,6 +93,20 @@ namespace projectman.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_project_importance", x => x.code);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProjectSubtypes",
+                columns: table => new
+                {
+                    ID = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    type = table.Column<int>(type: "int", nullable: false),
+                    name = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProjectSubtypes", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
@@ -353,28 +382,6 @@ namespace projectman.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "invoice",
-                columns: table => new
-                {
-                    ID = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    companyid = table.Column<long>(name: "company_id", type: "bigint", nullable: true),
-                    number = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    issuedate = table.Column<DateTime>(name: "issue_date", type: "datetime2", nullable: false),
-                    totalamount = table.Column<decimal>(name: "total_amount", type: "money", nullable: false),
-                    created = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_invoice", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_invoice_company_company_id",
-                        column: x => x.companyid,
-                        principalTable: "company",
-                        principalColumn: "ID");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "project",
                 columns: table => new
                 {
@@ -386,6 +393,8 @@ namespace projectman.Migrations
                     status = table.Column<int>(type: "int", nullable: false),
                     startingdatetime = table.Column<DateTime>(name: "starting_datetime", type: "datetime2", nullable: false),
                     endingdatetime = table.Column<DateTime>(name: "ending_datetime", type: "datetime2", nullable: false),
+                    internalcompanyid = table.Column<long>(name: "internal_company_id", type: "bigint", nullable: false),
+                    groupid = table.Column<long>(name: "group_id", type: "bigint", nullable: false),
                     userid = table.Column<long>(name: "user_id", type: "bigint", nullable: true),
                     importanceid = table.Column<string>(name: "importance_id", type: "nvarchar(450)", nullable: true),
                     companyid = table.Column<long>(name: "company_id", type: "bigint", nullable: true),
@@ -409,6 +418,18 @@ namespace projectman.Migrations
                         principalTable: "contact",
                         principalColumn: "ID");
                     table.ForeignKey(
+                        name: "FK_project_group_group_id",
+                        column: x => x.groupid,
+                        principalTable: "group",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_project_internal_company_internal_company_id",
+                        column: x => x.internalcompanyid,
+                        principalTable: "internal_company",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_project_project_importance_importance_id",
                         column: x => x.importanceid,
                         principalTable: "project_importance",
@@ -429,7 +450,10 @@ namespace projectman.Migrations
                     duedate = table.Column<DateTime>(name: "due_date", type: "datetime2", nullable: false),
                     item = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     amount = table.Column<decimal>(type: "money", nullable: false),
-                    invoice = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    orderslipnumber = table.Column<string>(name: "orderslip_number", type: "nvarchar(max)", nullable: true),
+                    orderslipdate = table.Column<DateTime>(name: "orderslip_date", type: "datetime2", nullable: true),
+                    invoicenumber = table.Column<string>(name: "invoice_number", type: "nvarchar(max)", nullable: true),
+                    invoicedate = table.Column<DateTime>(name: "invoice_date", type: "datetime2", nullable: true),
                     projectid = table.Column<long>(name: "project_id", type: "bigint", nullable: false)
                 },
                 constraints: table =>
@@ -498,29 +522,51 @@ namespace projectman.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "invoice_item",
+                name: "project_subtype_entry",
                 columns: table => new
                 {
                     ID = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    invoiceid = table.Column<long>(name: "invoice_id", type: "bigint", nullable: true),
-                    incomingpaymentid = table.Column<long>(name: "incoming_payment_id", type: "bigint", nullable: true),
-                    amount = table.Column<decimal>(type: "money", nullable: false)
+                    subtypeID = table.Column<long>(type: "bigint", nullable: true),
+                    subtypeid = table.Column<long>(name: "subtype_id", type: "bigint", nullable: false),
+                    projectid = table.Column<long>(name: "project_id", type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_invoice_item", x => x.ID);
+                    table.PrimaryKey("PK_project_subtype_entry", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_invoice_item_invoice_invoice_id",
-                        column: x => x.invoiceid,
-                        principalTable: "invoice",
+                        name: "FK_project_subtype_entry_ProjectSubtypes_subtypeID",
+                        column: x => x.subtypeID,
+                        principalTable: "ProjectSubtypes",
+                        principalColumn: "ID");
+                    table.ForeignKey(
+                        name: "FK_project_subtype_entry_project_project_id",
+                        column: x => x.projectid,
+                        principalTable: "project",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "project_timeline_entry",
+                columns: table => new
+                {
+                    ID = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    duedate = table.Column<DateTime>(name: "due_date", type: "datetime2", nullable: false),
+                    desc = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    completedate = table.Column<DateTime>(name: "complete_date", type: "datetime2", nullable: true),
+                    projectid = table.Column<long>(name: "project_id", type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_project_timeline_entry", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_invoice_item_project_incoming_payment_incoming_payment_id",
-                        column: x => x.incomingpaymentid,
-                        principalTable: "project_incoming_payment",
-                        principalColumn: "ID");
+                        name: "FK_project_timeline_entry_project_project_id",
+                        column: x => x.projectid,
+                        principalTable: "project",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -569,21 +615,6 @@ namespace projectman.Migrations
                 column: "persona_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_invoice_company_id",
-                table: "invoice",
-                column: "company_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_invoice_item_incoming_payment_id",
-                table: "invoice_item",
-                column: "incoming_payment_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_invoice_item_invoice_id",
-                table: "invoice_item",
-                column: "invoice_id");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_perm_group_group_id",
                 table: "perm_group",
                 column: "group_id");
@@ -604,9 +635,19 @@ namespace projectman.Migrations
                 column: "contact_id");
 
             migrationBuilder.CreateIndex(
+                name: "IX_project_group_id",
+                table: "project",
+                column: "group_id");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_project_importance_id",
                 table: "project",
                 column: "importance_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_project_internal_company_id",
+                table: "project",
+                column: "internal_company_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_project_user_id",
@@ -636,6 +677,21 @@ namespace projectman.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_project_product_project_id",
                 table: "project_product",
+                column: "project_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_project_subtype_entry_project_id",
+                table: "project_subtype_entry",
+                column: "project_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_project_subtype_entry_subtypeID",
+                table: "project_subtype_entry",
+                column: "subtypeID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_project_timeline_entry_project_id",
+                table: "project_timeline_entry",
                 column: "project_id");
 
             migrationBuilder.CreateIndex(
@@ -680,10 +736,10 @@ namespace projectman.Migrations
                 name: "contact_phone");
 
             migrationBuilder.DropTable(
-                name: "invoice_item");
+                name: "perm_group");
 
             migrationBuilder.DropTable(
-                name: "perm_group");
+                name: "project_incoming_payment");
 
             migrationBuilder.DropTable(
                 name: "project_outgoing_payment");
@@ -692,19 +748,19 @@ namespace projectman.Migrations
                 name: "project_product");
 
             migrationBuilder.DropTable(
+                name: "project_subtype_entry");
+
+            migrationBuilder.DropTable(
+                name: "project_timeline_entry");
+
+            migrationBuilder.DropTable(
                 name: "user_group");
-
-            migrationBuilder.DropTable(
-                name: "invoice");
-
-            migrationBuilder.DropTable(
-                name: "project_incoming_payment");
 
             migrationBuilder.DropTable(
                 name: "product");
 
             migrationBuilder.DropTable(
-                name: "group");
+                name: "ProjectSubtypes");
 
             migrationBuilder.DropTable(
                 name: "project");
@@ -717,6 +773,12 @@ namespace projectman.Migrations
 
             migrationBuilder.DropTable(
                 name: "contact");
+
+            migrationBuilder.DropTable(
+                name: "group");
+
+            migrationBuilder.DropTable(
+                name: "internal_company");
 
             migrationBuilder.DropTable(
                 name: "project_importance");

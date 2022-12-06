@@ -133,5 +133,34 @@ namespace projectman.Repositories
             return _context.Groups;
         }
 
+        public async Task<InternalCompany> GetInternalCompanySetting(long ID)
+        {
+            InternalCompany internalCompany = await _context.InternalCompanies.FindAsync(ID);
+
+            return internalCompany;
+        }
+
+        public IQueryable<InternalCompany> GetInternalCompanySettings()
+        {
+            return _context.InternalCompanies;
+        }
+
+        public async Task<InternalCompany> CreateInternalCompanySettings(InternalCompany t)
+        {
+            await _context.InternalCompanies.AddAsync(t);
+
+            return t;
+        }
+
+        public bool DelInternalCompanySettingUnsafe(long ID)
+        {
+            var s = new InternalCompany { ID = ID };
+
+            _context.InternalCompanies.Attach(s);
+            _context.InternalCompanies.Remove(s);
+
+            return true;
+        }
+
     }
 }
