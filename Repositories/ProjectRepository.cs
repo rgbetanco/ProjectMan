@@ -199,7 +199,7 @@ namespace projectman.Repositories
             return result;
         }
 
-        // GET PROJECT SUBTYPES
+        // GET PROJECT SUBTYPES BY TYPE
         public IQueryable<ProjectSubtype> GetSubtypes(ProjectType ?type)
         {
             var q = _context.ProjectSubtypes.AsQueryable();
@@ -208,6 +208,12 @@ namespace projectman.Repositories
                 q = q.Where(t => t.type == type);
             }
 
+            return q;
+        }
+
+        public IQueryable<ProjectSubtype> GetProjectSubtypes()
+        {
+            var q = _context.ProjectSubtypes.AsQueryable();
             return q;
         }
 
@@ -223,11 +229,22 @@ namespace projectman.Repositories
             return t;
         }
 
+        public async Task<ProjectSubtype> CreateProjectSubtype(ProjectSubtype t)
+        {
+            await _context.ProjectSubtypes.AddAsync(t);
+            return t;
+        }
+
         public async Task<ProjectImportance> GetImportanceAsync(string t)
         {
             var q = GetImportances();
             var s = await q.FirstOrDefaultAsync(u => u.code == t);
             return s;
+        }
+
+        public async Task<ProjectSubtype> GetProjectSubtypeAsync(long t)
+        {
+            return await _context.ProjectSubtypes.FindAsync(t);
         }
 
         public void DelImportanceUnsafe(string t)
@@ -236,6 +253,14 @@ namespace projectman.Repositories
 
             _context.ProjectImportances.Attach(s);
             _context.ProjectImportances.Remove(s);
+        }
+
+        public void DelProjectSubtypeUnsafe(long ID)
+        {
+            var s = new ProjectSubtype { ID = ID };
+
+            _context.ProjectSubtypes.Attach(s);
+            _context.ProjectSubtypes.Remove(s);
         }
     }
 }

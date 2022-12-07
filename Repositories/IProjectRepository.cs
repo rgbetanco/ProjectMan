@@ -27,5 +27,9 @@ namespace projectman.Repositories
         IQueryable<ProjectIncomingPayment> GetNextDueIncomingPayment();
         Task<Project> GetProject(long ID, params string[] includeFields);
         IEnumerable<ProjectType> GetServiceType();
+        IQueryable<ProjectSubtype> GetProjectSubtypes();
+        Task<ProjectSubtype> CreateProjectSubtype(ProjectSubtype t);
+        void DelProjectSubtypeUnsafe(long ID);
+        Task<ProjectSubtype> GetProjectSubtypeAsync(long t);
     }
 }

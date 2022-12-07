@@ -38,14 +38,14 @@
         <div class="row mb-3">
             <div class="col-3">
                 @Html.LabelFor(m => m.type, new { @class = "form-label" })
-                @Html.DropDownListFor(m => m.type, CSHelper.Extensions.RenderingExtension.GetSelectList<ProjectType>(), new { @class = "form-select" })
+                @Html.DropDownListFor(m => m.type, CSHelper.Extensions.RenderingExtension.GetSelectList<ProjectType>(), new { @class = "form-select", @onChange="onTypeChange(this)" })
             </div>
-            <div class="col-9">
+            <div class="col-3">
                 @Html.LabelFor(m => m.subtypes, new { @class = "form-label" })
-                @(Html.CheckBoxesFor(
-                    m => m.subtypes, s => s.subtype_id,
+                @Html.DropDownListFor(
+                    m => m.subtypes,
                     (MultiSelectList)ViewData["subtypes"],
-                    new { @class = "form-check" }, new { @class = "form-check-input" }, new { @class = "form-check-label" }))
+                new { @class = "form-select", @multiple="multiple" })
             </div>
         </div>
 
@@ -350,12 +350,11 @@
 @section Scripts {
     <script>
         $(function () {
-
             var $btnAddDiscount = $('#change-company');
             $btnAddDiscount.on('modal-success', (evt, $formTarget, data) => {
-                console.log($formTarget.find('#persona_name'))
+                console.log($formTarget.find('#contact_name'))
                 console.log(data.company_id)
-                UpdatePersona($formTarget.find('#persona_name'), data.company_id)
+                UpdatePersona($formTarget.find('#contact_name'), data.company_id)
             });
 
             var form = $('#update');
@@ -380,6 +379,19 @@
                 }
             });
         });
+
+        function onTypeChange(proj_type) 
+        {
+            UpdateSubType($('#subtypes'), proj_type.value);
+        }
+
+        function UpdateSubType(_type, _proj_type)
+        {
+            var $target = _type
+            $target.loadSelect(
+                '@HttpUtility.JavaScriptStringEncode(Url.Action("ListSubType", "Project"))',
+                { comp_type: _proj_type });
+        }
 
         function UpdateBrandModelList(_this) 
         {

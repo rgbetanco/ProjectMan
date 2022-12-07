@@ -75,7 +75,7 @@ namespace projectman.Areas.Man.Controllers
         {
             var r = _proj.GetServiceType();
 
-            var result = r.Select(m => new SelectListItem { Value = "" + (int)m, Text = m.ToString() });
+            var result = r.Select(m => new SelectListItem { Value = "" + (int)m, Text = m.GetDisplayName() });
 
             return result;
         }
@@ -153,6 +153,7 @@ namespace projectman.Areas.Man.Controllers
         public IActionResult New()
         {
             var a = new Project();
+            a.type = ProjectType.DevelopmentContract;
             ViewData["group"] = GetGroupList();
             ViewData["internal_company"] = GetInternalCompanyList();
             ViewData["sales_person"] = GetSalePersonList();
@@ -274,6 +275,14 @@ namespace projectman.Areas.Man.Controllers
 
         [HttpPost]
         [AllowAnonymous]
+        public IActionResult ListSubType(string comp_type)
+        {
+            ProjectType t = Enum.Parse<ProjectType>(comp_type);
+            return Json(GetProjectSubtypeList(t));
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
         public IActionResult ListPersonaPerCompany(long ID)
         {
             return Json(GetCompanyContactList(ID));
@@ -315,10 +324,37 @@ namespace projectman.Areas.Man.Controllers
             ViewData["ID"] = ID;
             return PartialView("_RenewContractPopUp");
         }
-
-        public IActionResult SubtypeSetting()
+        
+        public async Task<IActionResult> SubtypeSetting()
         {
-            throw new NotImplementedException();
+            ViewData["product_type"] = GetServiceTypeList();
+            return View(await _proj.GetProjectSubtypes().ToListAsync());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ActionName("SubtypeSetting")]
+        [AuthorizeRole(UserPermission.Edit | UserPermission.Add)]
+        public async Task<IActionResult> SubtypeSettingPost()
+        {
+            await this.TryUpdateTableModelAsync<ProjectSubtype, string>(
+                "ProjectSubtype",   // data-form-table-group name
+                async t =>
+                {
+                    await _proj.CreateProjectSubtype(t);
+                    return true;
+                },
+                t =>
+                {
+                    _proj.DelProjectSubtypeUnsafe(long.Parse(t));
+                    return Task.FromResult(true);
+                },
+                async t => await _proj.GetProjectSubtypeAsync(long.Parse(t))
+            );
+
+            var result = await CommitModel(null);
+
+            return result;
         }
 
         public async Task<IActionResult> ImportanceSetting()
