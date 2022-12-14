@@ -177,7 +177,9 @@
                     <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().item, new { @class = "form-label" })</th>
                     <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().amount, new { @class = "form-label" })</th>
                     <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().orderslip_number, new { @class = "form-label" })</th>
+                    <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().orderslip_date, new { @class = "form-label" })</th>
                     <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().invoice_number, new { @class = "form-label" })</th>
+                    <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().invoice_date, new { @class = "form-label" })</th>
                     <th scope="col">功能</th>
                 </tr>
             </thead>
@@ -196,7 +198,13 @@
                         @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "orderslip_number" })
                     </td>
                     <td scope="row">
+                        @Html.TextBox("temp", "", new { @type="date", @class = "form-control", @data_form_group_subname = "orderslip_date" })
+                    </td>
+                    <td scope="row">
                         @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "invoice_number" })
+                    </td>
+                    <td scope="row">
+                        @Html.TextBox("temp", "", new { @type="date", @class = "form-control", @data_form_group_subname = "invoice_date" })
                     </td>
                     <td scope="row">
                         <button type="button" class="btn btn-secondary btn-delete">

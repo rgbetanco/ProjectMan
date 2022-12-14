@@ -141,13 +141,13 @@
                     {
                         <tr data-form-group="timelines">
                             <td scope="row">
-                                @Html.TextBoxFor(m => m.timelines[i].due_date, new { @class = "form-control", @data_form_group_subname = "due_date", @required="required" })
+                                @Html.LocalDateTimeInputFor(m => m.timelines[i].due_date, new { @class = "form-control", @data_form_group_subname = "due_date", @required="required" })
                             </td>
                             <td scope="row">
                                 @Html.TextBoxFor(m => m.timelines[i].desc, new { @class = "form-control", @data_form_group_subname = "desc" })
                             </td>
                             <td scope="row">
-                                @Html.TextBoxFor(m => m.timelines[i].complete_date, new { @class = "form-control", @data_form_group_subname = "complete_date" })
+                                @Html.LocalDateTimeInputFor(m => m.timelines[i].complete_date, new { @class = "form-control", @data_form_group_subname = "complete_date" })
                             </td>
                             <td scope="row">
                                 @Html.HiddenFor(m => m.timelines[i].ID)
@@ -191,7 +191,10 @@
                             <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().due_date, new { @class = "form-label form-view-hide" })</th>
                             <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().item, new { @class = "form-label" })</th>
                             <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().amount, new { @class = "form-label" })</th>
+                            <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().orderslip_number, new { @class = "form-label" })</th>
+                            <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().orderslip_date, new { @class = "form-label" })</th>
                             <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().invoice_number, new { @class = "form-label" })</th>
+                            <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().invoice_date, new { @class = "form-label" })</th>
                             <th scope="col">功能</th>
                         </tr>
                     </thead>
@@ -210,7 +213,16 @@
                                 @Html.TextBoxFor(m => m.incoming_payments[i].amount, new { @class = "form-control", @data_form_group_subname = "amount", @onchange = "UpdateIncomingPaymentTotals(this)" })
                             </td>
                             <td scope="row">
-                                @Html.TextBoxFor(m => m.incoming_payments[i].invoice_number, new { @class = "form-control", @readonly = "readonly", @data_form_group_subname = "invoice_number" })
+                                @Html.TextBoxFor(m => m.incoming_payments[i].orderslip_number, new { @class = "form-control", @data_form_group_subname = "orderslip_number" })
+                            </td>
+                            <td scope="row">
+                                @Html.LocalDateTimeInputFor(m => m.incoming_payments[i].orderslip_date, new { @class = "form-control", @data_form_group_subname = "orderslip_date" })
+                            </td>
+                            <td scope="row">
+                                @Html.TextBoxFor(m => m.incoming_payments[i].invoice_number, new { @class = "form-control", @data_form_group_subname = "invoice_number" })
+                            </td>
+                            <td scope="row">
+                                @Html.LocalDateTimeInputFor(m => m.incoming_payments[i].invoice_date, new { @class = "form-control", @data_form_group_subname = "invoice_date" })
                             </td>
                             <td scope="row">
                                     @Html.HiddenFor(m => m.incoming_payments[i].ID)
@@ -221,37 +233,45 @@
                             </td>
                         </tr>
                     }
-                    <tr class="d-none" data-form-group-start="incoming_payments" data-form-group="incoming_payments">
-                        <td scope="row">
-                            @Html.Hidden("temp", "", new { @data_form_group_subname = "ID" } )
-                            @Html.TextBox("temp", DateTime.Now.ToString("yyyy-MM-dd"), new { @type="date", @class = "form-control", @data_form_group_subname = "due_date" })
-                        </td>
-                        <td scope="row">
-                            @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "item" })
-                        </td>
-                        <td scope="row">
-                            @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "amount", @onchange = "UpdateIncomingPaymentTotals(this)" })
-                        </td>
-                        <td scope="row">
-                            @Html.TextBox("temp", "", new { @class = "form-control", @readonly = "readonly", @data_form_group_subname = "invoice_number" })
-                        </td>
-                        <td scope="row">
-                            <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
-                                <i class="fa fa-trash" aria-hidden="true"></i>
-                            </button>
-                        </td>
-                    </tr>
+                        <tr class="d-none" data-form-group-start="incoming_payments" data-form-group="incoming_payments">
+                            <td scope="row">
+                                @Html.TextBox("temp", DateTime.Now.ToString("yyyy-MM-dd"), new { @type="date", @class = "form-control", @data_form_group_subname = "due_date" })
+                            </td>
+                            <td scope="row">
+                                @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "item" })
+                            </td>
+                            <td scope="row">
+                                @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "amount", @onchange = "UpdateIncomingPaymentTotals(this)" })
+                            </td>
+                            <td scope="row">
+                                @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "orderslip_number" })
+                            </td>
+                            <td scope="row">
+                                @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "orderslip_date", @type="date" })
+                            </td>
+                            <td scope="row">
+                                @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "invoice_number" })
+                            </td>
+                            <td scope="row">
+                                @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "invoice_date", @type="date" })
+                            </td>
+                            <td scope="row">
+                                <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
                     </tbody>
                     <tfoot>
                         <tr>
                             <td>
                                 <button class="btn btn-secondary" type="button" data-form-group-target="incoming_payments">+ 新增</button>
-                            </td
+                            </td>
                             <th class="text-end">
                                 @Html.LabelFor(m => m.total_income_amount, new { @class = "form-label"})
                             </th>
-                            <td>
-                                $ @Html.TextBoxFor(m => m.total_income_amount, new { @class = "form-control form-text", @readonly = true})
+                            <td colspan="2">
+                                $ @Html.TextBoxFor(m => m.total_income_amount, new { @class = "form-control form-text"})
                             </td>
                         </tr>
                     </tfoot>
@@ -452,8 +472,8 @@
 <script>
 
     $(function () {
+        $('#update').initAsToggleForm(false);
         $('#subtypes').select2();
-        //$('#update').initAsToggleForm(false);
 
         var $btnAddDiscount = $('#change-company');
         $btnAddDiscount.on('modal-success', (evt, $formTarget, data) => {
@@ -478,30 +498,6 @@
             });
         });
 
-    })
-
-    $(function () {
-        var form = $('#update');
-        form.initAsAjaxForm({
-            success: function (data) {
-                var result = createErrorList(data);
-                if (result == null) {
-                    window.history.back();
-                } else {
-                    var alert = form.find(".alert");
-                    alert.html(result);
-                    alert.removeClass('d-none');
-                }
-            },
-            error: function (xhr, textStatus, errorThrown) {
-                var alert = form.find(".alert");
-                alert.text(AjaxErrorToString(xhr, textStatus, errorThrown));
-                alert.removeClass('d-none');
-            },
-            validate: function () {
-                return null
-            }
-        });
     })
 
     function UpdateBrandModelList(_this) 
@@ -553,40 +549,39 @@
         }
 
     var total_income_amount = @Model.total_income_amount;
-        function UpdateIncomingPaymentTotals(_this) {
-            total_income_amount = 0;
-            var t = $('input[name="incoming_payments.Index"]')
-            t.each(function()
-                {
-                    var temp = $('input[name="incoming_payments['+this.value+'].amount"]')
-                    total_income_amount += parseInt(temp[0].value);
-                }
-            );
-            $('#total_income_amount').val(total_income_amount);
-            UpdateNetIncome();
-        }
 
-        var total_pay_amount = @Model.total_pay_amount;
-        function UpdateOutgoingPaymentTotals(_this) {
-            total_pay_amount = 0;
-            var t = $('input[name="outgoing_payments.Index"]')
-            console.log(t[0].value);
-            t.each(function()
-                {
-                    var temp = $('input[name="outgoing_payments['+this.value+'].amount"]')
+    function UpdateIncomingPaymentTotals(_this) {
+        private_total_income_amount = 0;
+        var t = $('[data-form-group=incoming_payments]').not('.d-none').find('[data-form-group-subname=amount]')
+        t.each(function(index, value)
+            {
+                private_total_income_amount += parseInt(t[index].value);
+            }
+        );
+        total_income_amount = private_total_income_amount;
+        $('#total_income_amount').val(private_total_income_amount);
+        UpdateNetIncome();
+    }
 
-                    total_pay_amount += parseInt(temp[0].value);
-                }
-            );
-            $('#total_pay_amount').val(total_pay_amount);
-            UpdateNetIncome();
-        }
+    var total_pay_amount = @Model.total_pay_amount;
 
-        function UpdateNetIncome(){
-            console.log("total_income_amount: ", total_income_amount);
-            console.log("total_pay_amount: ", total_pay_amount);
-            $('#net_income').val(total_income_amount - total_pay_amount);
-        }
+    function UpdateOutgoingPaymentTotals(_this) {
+        private_total_pay_amount = 0;
+
+        var t = $('[data-form-group=outgoing_payments]').not('.d-none').find('[data-form-group-subname=amount]')
+        t.each(function(index, value)
+            {
+                private_total_pay_amount += parseInt(t[index].value);
+            }
+        );
+        total_pay_amount = private_total_pay_amount;
+        $('#total_pay_amount').val(private_total_pay_amount);
+        UpdateNetIncome();
+    }
+
+    function UpdateNetIncome(){
+        $('#net_income').val(total_income_amount - total_pay_amount);
+    }
 
 </script>
 }
