@@ -402,6 +402,9 @@ namespace projectman.Migrations
                     contactaddress = table.Column<string>(name: "contact_address", type: "nvarchar(max)", nullable: true),
                     contactphone = table.Column<string>(name: "contact_phone", type: "nvarchar(max)", nullable: true),
                     remarks = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    totalincomeamount = table.Column<decimal>(name: "total_income_amount", type: "money", nullable: false),
+                    totalpayamount = table.Column<decimal>(name: "total_pay_amount", type: "money", nullable: false),
+                    netincome = table.Column<decimal>(name: "net_income", type: "money", nullable: false),
                     connectedprojectid = table.Column<long>(name: "connected_project_id", type: "bigint", nullable: true)
                 },
                 constraints: table =>
@@ -527,7 +530,6 @@ namespace projectman.Migrations
                 {
                     ID = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    subtypeID = table.Column<long>(type: "bigint", nullable: true),
                     subtypeid = table.Column<long>(name: "subtype_id", type: "bigint", nullable: false),
                     projectid = table.Column<long>(name: "project_id", type: "bigint", nullable: false)
                 },
@@ -535,10 +537,11 @@ namespace projectman.Migrations
                 {
                     table.PrimaryKey("PK_project_subtype_entry", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_project_subtype_entry_ProjectSubtypes_subtypeID",
-                        column: x => x.subtypeID,
+                        name: "FK_project_subtype_entry_ProjectSubtypes_subtype_id",
+                        column: x => x.subtypeid,
                         principalTable: "ProjectSubtypes",
-                        principalColumn: "ID");
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_project_subtype_entry_project_project_id",
                         column: x => x.projectid,
@@ -685,9 +688,9 @@ namespace projectman.Migrations
                 column: "project_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_project_subtype_entry_subtypeID",
+                name: "IX_project_subtype_entry_subtype_id",
                 table: "project_subtype_entry",
-                column: "subtypeID");
+                column: "subtype_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_project_timeline_entry_project_id",

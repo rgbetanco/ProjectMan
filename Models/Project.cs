@@ -56,6 +56,13 @@ namespace projectman.Models
         Completed = 100,
     }
 
+    public class ProjectSubtypeSelect2
+    {
+        public long id { get; set;}
+        public string text { get; set; }
+        public bool? selected { get; set; }
+    }
+
     [Table("project_importance")]
     public class ProjectImportance
     {
@@ -124,9 +131,6 @@ namespace projectman.Models
         [Display(Name = "負責部門")]
         public long group_id { get; set; }
 
-
-
-
         [Display(Name = "業務")]
         [ForeignKey("user_id")]
         public virtual User user { get; set; }
@@ -170,8 +174,26 @@ namespace projectman.Models
         [Display(Name = "請款期程")]
         public virtual List<ProjectIncomingPayment> incoming_payments { get; set; }
 
+        [Display(Name = "收入金額")]
+        [Column(TypeName = "money")]
+        [DataType(DataType.Currency)]
+        [DisplayFormat(DataFormatString = "{0:C0}", ApplyFormatInEditMode = false)]
+        public decimal total_income_amount { get; set; }
+
         [Display(Name = "付款期程")]
         public virtual List<ProjectOutgoingPayment> outgoing_payments { get; set; }
+
+        [Display(Name = "付出金額")]
+        [Column(TypeName = "money")]
+        [DataType(DataType.Currency)]
+        [DisplayFormat(DataFormatString = "{0:C0}", ApplyFormatInEditMode = false)]
+        public decimal total_pay_amount { get; set; }
+
+        [Display(Name = "淨利")]
+        [Column(TypeName = "money")]
+        [DataType(DataType.Currency)]
+        [DisplayFormat(DataFormatString = "{0:C0}", ApplyFormatInEditMode = false)]
+        public decimal net_income { get; set; }
 
         [Display(Name = "細項")]
         public virtual List<ProjectSubtypeEntry> subtypes { get; set; }
@@ -211,7 +233,8 @@ namespace projectman.Models
     public class ProjectSubtypeEntry : UsesProjectID
     {
         [Display(Name = "細項")]
-        public ProjectSubtype subtype { get; set; }
+        [ForeignKey("subtype_id")]
+        public virtual ProjectSubtype subtype { get; set; }
 
         [Display(Name = "細項ID")]
         public long subtype_id { get;set; }

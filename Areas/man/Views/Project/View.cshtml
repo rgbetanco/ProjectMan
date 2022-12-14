@@ -16,266 +16,263 @@
         </div>
     </div>
     <form id="update" data-enable-button="#update-enable-button" asp-action="Update" asp-route-id="@Model.ID">
-    <!-- Store/History buttons -->
-    <div class="row">
-        <div class="col text-start">
-                <button type="reset" class="btn btn-secondary">取消</button>
-                <button type="submit" class="btn btn-primary">更新</button>
+        @*Store/History buttons*@
+        <div class="row">
+            <div class="col text-start">
+                    <button type="reset" class="btn btn-secondary">取消</button>
+                    <button type="submit" class="btn btn-primary">更新</button>
+            </div>
         </div>
-        <div class="col-6">
-
+        @*name and number *@
+        <div class="row mt-4 text-start">
+            <div class="col-5">
+                    @Html.LabelFor(m => m.name, new { @class = "form-label form-view-hide" })
+                    @Html.TextBoxFor(m => m.name, new { @class = "form-control form-text" })
+            </div>
+            <div class="col">
+                    @Html.LabelFor(m => m.number, new { @class = "form-label" })
+                    @Html.TextBoxFor(m => m.number, new {@class = "form-control form-text"})
+            </div>
         </div>
-        <div class="col text-end">
-                @*<button class="btn btn-primary">歷史</button>*@
-        </div>
-    </div>
-
-    <div class="row mt-4 text-start">
-        <div class="col-5">
-                @Html.LabelFor(m => m.name, new { @class = "form-label form-view-hide" })
-                @Html.TextBoxFor(m => m.name, new { @class = "form-control form-text" })
-        </div>
-        <div class="col">
-                @Html.LabelFor(m => m.number, new { @class = "form-label" })
-                @Html.TextBoxFor(m => m.number, new {@class = "form-control form-text"})
-        </div>
-        <div class="col-5">
+        @*type and subtype*@
+        <div class="row mt-4 text-start">
+            <div class="col-5">
                 @Html.LabelFor(m => m.type, new { @class = "form-label" })
-                @Html.DropDownListFor(m => m.type, CSHelper.Extensions.RenderingExtension.GetSelectList<ProjectType>(), new { @class = "form-control form-select" })
+                    @Html.DropDownListFor(m => m.type, CSHelper.Extensions.RenderingExtension.GetSelectList<ProjectType>(), new { @class = "form-control form-select", @onChange="onTypeChange(this)" })
+            </div>
+            <div class="col-3">
+                @Html.LabelFor(m => m.subtypes, new { @class = "form-label" })
+                    @Html.ListBoxFor(m => m.subtypes, m => m.subtype_id, (IEnumerable<SelectListItem>)ViewData["subtypes"], new { @class = "form-select" })
+            </div>
         </div>
-    </div>
+        @*status, duplicate project, starting date, and ending date*@
+        <div class="row text-start mt-4">
+            <div class="col-2">
+                    @Html.LabelFor(m => m.status, new { @class = "form-label" })
+                    @Html.DropDownListFor(m => m.status, CSHelper.Extensions.RenderingExtension.GetSelectList<ProjectStatus>(), new { @class = "form-control form-select" })
+            </div>
+            <div class="col-2 mt-4">
+                    <button class="btn btn-secondary" type="button" id="renew_project">轉出新案</button>
+            </div>
+            <div class="col-4">
+                    @Html.LabelFor(m => m.starting_datetime, new { @class = "form-label form-view-hide" })
+                    @Html.LocalDateTimeInputFor(m => m.starting_datetime, new { @class = "form-control", @step = "1" })
+            </div>
+            <div class="col-4">
+                    @Html.LabelFor(m => m.ending_datetime, new { @class = "form-label form-view-hide" })
+                    @Html.LocalDateTimeInputFor(m => m.ending_datetime, new { @class = "form-control", @step = "1" })
+            </div>
+        </div>
+        @*internal company, group, sales person, importance*@
+        <div class="row text-start mt-3">
+            <div class="col-3">
+                @Html.LabelFor(m => m.internal_company_id, new { @class = "form-label" })
+                @Html.DropDownListFor(m => m.internal_company_id, (IEnumerable<SelectListItem>)ViewData["internal_company"], new { @class = "form-select" })
+            </div>
+            <div class="col-3">
+                @Html.LabelFor(m => m.group_id, new { @class = "form-label" })
+                @Html.DropDownListFor(m => m.group_id, (IEnumerable<SelectListItem>)ViewData["group"], new { @class = "form-select" })
+            </div>
+            <div class="col-3">
+                    @Html.LabelFor(m => m.user_id, new { @class = "form-label" })
+                    @Html.DropDownListFor(m => m.user_id, (IEnumerable<SelectListItem>)ViewData["sales_person"], new { @class = "form-select" })
+            </div>
+            <div class="col-3">
+                    @Html.LabelFor(m => m.importance_id, new { @class = "form-label" })
+                    @Html.DropDownListFor(m => m.importance_id, (IEnumerable<SelectListItem>)ViewData["importance"], new { @class = "form-select" })
+            </div>
+        </div>
+        @*company*@
+        <div class="row text-start mt-4">
+            <div class="col-6">
+                    @Html.LabelFor(m => m.company_id, new { @class = "form-label"})
+                    <div class="input-group">
+                        @Html.HiddenFor(m => m.company_id, new { @class = "form-control",  @readonly = "readonly" } )
+                        @Html.TextBoxFor(m => m.company.name, new { @class = "form-control",  @readonly = "readonly" })
+                        <button type="button" class="btn btn-secondary btn-modal"
+                                data-form-target ="#update"
+                                id="change-company"
+                                data-url="@Url.Action("Picker", "Company")"
+                                data-toggle="modal"
+                                data-target="#modal-popup">
+                            <i class="fa fa-crosshairs fa-fw"></i>
+                        </button>
+                    </div>
+            </div>
+            <div class="col-6">
+                    @Html.LabelFor(m => m.contact.name, new { @class = "form-label"})
+                    <div class="input-group">
+                        @Html.DropDownListFor(m => m.contact.name, (IEnumerable<SelectListItem>)ViewData["personas"], new { @class = "form-select" })
+                    </div>
+            </div>
+        </div>
+        @*contact address and contact phone*@
+        <div class="row text-start mt-4">
+            <div class="col-6">
+                    @Html.LabelFor(m => m.contact_address, new { @class = "form-label" })
+                    @Html.TextBoxFor(m => m.contact_address, new {@class = "form-control form-text"})
+            </div>
+            <div class="col-5">
+                    @Html.LabelFor(m => m.contact_phone, new { @class = "form-label" })
+                    @Html.TextBoxFor(m => m.contact_phone, new {@class = "form-control form-text"})
+            </div>
 
-    <div class="row text-start mt-4">
-        <div class="col-2">
-                @Html.LabelFor(m => m.status, new { @class = "form-label" })
-                @Html.DropDownListFor(m => m.status, CSHelper.Extensions.RenderingExtension.GetSelectList<ProjectStatus>(), new { @class = "form-control form-select" })
         </div>
-        <div class="col-2 mt-4">
-                <button class="btn btn-secondary" type="button" id="renew_project">轉出新案</button>
+        @*remarks*@
+        <div class="row text-start mt-4">
+            <div class="col-7">
+                    @Html.LabelFor(m => m.remarks, new { @class = "form-label" })
+                    @Html.TextAreaFor(m => m.remarks, new {@class = "form-control form-text"})
+            </div>
         </div>
-        <div class="col-4">
-                @Html.LabelFor(m => m.starting_datetime, new { @class = "form-label form-view-hide" })
-                @Html.LocalDateTimeInputFor(m => m.starting_datetime, new { @class = "form-control", @step = "1" })
-        </div>
-        <div class="col-4">
-                @Html.LabelFor(m => m.ending_datetime, new { @class = "form-label form-view-hide" })
-                @Html.LocalDateTimeInputFor(m => m.ending_datetime, new { @class = "form-control", @step = "1" })
-        </div>
-    </div>
-
-    <div class="row text-start mt-4">
-        <div class="col-3">
-                @Html.LabelFor(m => m.user_id, new { @class = "form-label" })
-                @Html.DropDownListFor(m => m.user_id, (IEnumerable<SelectListItem>)ViewData["sales_person"], new { @class = "form-select" })
-        </div>
-        <div class="col-3">
-                @Html.LabelFor(m => m.importance_id, new { @class = "form-label" })
-                @Html.DropDownListFor(m => m.importance_id, (IEnumerable<SelectListItem>)ViewData["importance"], new { @class = "form-select" })
-        </div>
-        <div class="col-6"></div>
-    </div>
-
-    <div class="row text-start mt-4">
-        <div class="col-6">
-                @Html.LabelFor(m => m.company_id, new { @class = "form-label"})
-                <div class="input-group">
-                    @Html.HiddenFor(m => m.company_id, new { @class = "form-control",  @readonly = "readonly" } )
-                    @Html.TextBoxFor(m => m.company.name, new { @class = "form-control",  @readonly = "readonly" })
-                    <button type="button" class="btn btn-secondary btn-modal"
-                            data-form-target ="#update"
-                            id="change-company"
-                            data-url="@Url.Action("Picker", "Company")"
-                            data-toggle="modal"
-                            data-target="#modal-popup">
-                        <i class="fa fa-crosshairs fa-fw"></i>
-                    </button>
-                </div>
-        </div>
-        <div class="col-6">
-                @Html.LabelFor(m => m.contact.name, new { @class = "form-label"})
-                <div class="input-group">
-                    @Html.DropDownListFor(m => m.contact.name, (IEnumerable<SelectListItem>)ViewData["personas"], new { @class = "form-select" })
-                </div>
-        </div>
-    </div>
-
-    <div class="row text-start mt-4">
-        <div class="col-6">
-                @Html.LabelFor(m => m.contact_address, new { @class = "form-label" })
-                @Html.TextBoxFor(m => m.contact_address, new {@class = "form-control form-text"})
-        </div>
-
-        <div class="col-5">
-                @Html.LabelFor(m => m.contact_phone, new { @class = "form-label" })
-                @Html.TextBoxFor(m => m.contact_phone, new {@class = "form-control form-text"})
-        </div>
-
-    </div>
-
-    <div class="row text-start mt-4">
-        <div class="col-7">
-                @Html.LabelFor(m => m.remarks, new { @class = "form-label" })
-                @Html.TextAreaFor(m => m.remarks, new {@class = "form-control form-text"})
-        </div>
-    </div>
-    @*for each product*@
-    
+        @*timelines*@
+        <h5>截止日期表</h5>
+        <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">@Html.LabelFor(m => m.timelines.FirstOrDefault().due_date, new { @class = "form-label" })</th>
+                        <th scope="col">@Html.LabelFor(m => m.timelines.FirstOrDefault().desc, new { @class = "form-label" })</th>
+                        <th scope="col">@Html.LabelFor(m => m.timelines.FirstOrDefault().complete_date, new { @class = "form-label" })</th>
+                        <th scope="col">功能</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (var i = 0; i < Model.timelines.Count(); i++)
+                    {
+                        <tr data-form-group="timelines">
+                            <td scope="row">
+                                @Html.TextBoxFor(m => m.timelines[i].due_date, new { @class = "form-control", @data_form_group_subname = "due_date", @required="required" })
+                            </td>
+                            <td scope="row">
+                                @Html.TextBoxFor(m => m.timelines[i].desc, new { @class = "form-control", @data_form_group_subname = "desc" })
+                            </td>
+                            <td scope="row">
+                                @Html.TextBoxFor(m => m.timelines[i].complete_date, new { @class = "form-control", @data_form_group_subname = "complete_date" })
+                            </td>
+                            <td scope="row">
+                                @Html.HiddenFor(m => m.timelines[i].ID)
+                                @Html.Hidden("timelines.Index", i)
+                                <button type="button" class="btn btn-secondary btn-delete">
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                    <tr class="d-none" data-form-group-start="timelines" data-form-group="timelines">
+                        <td scope="row">
+                            @Html.TextBox("temp", DateTime.Now.ToString("yyyy-MM-dd"), new { @type="date", @class = "form-control", @data_form_group_subname = "due_date", @required="required" })
+                        </td>
+                        <td scope="row">
+                            @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "desc" })
+                        </td>
+                        <td scope="row">
+                            @Html.TextBox("temp", "", new { @type="date", @class = "form-control", @data_form_group_subname = "complete_date" })
+                        </td>
+                        <td scope="row">
+                            <button type="button" class="btn btn-secondary btn-delete">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td>
+                            <button class="btn btn-secondary" type="button" data-form-group-target="timelines">+新增</button>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        @*for each incoming payment*@
+        <h5>應收項目</h5>
+        <table class="table mt-4">
+                    <thead>
+                        <tr>
+                            <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().due_date, new { @class = "form-label form-view-hide" })</th>
+                            <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().item, new { @class = "form-label" })</th>
+                            <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().amount, new { @class = "form-label" })</th>
+                            <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().invoice_number, new { @class = "form-label" })</th>
+                            <th scope="col">功能</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        
+                    @for (var i = 0; i < Model.incoming_payments.Count(); i++)
+                    {
+                        <tr data-form-group="incoming_payments">
+                            <td scope="row">
+                                @Html.LocalDateTimeInputFor(m => m.incoming_payments[i].due_date, new { @class = "form-control", @data_form_group_subname = "due_date" })
+                            </td>
+                            <td scope="row">
+                                @Html.TextBoxFor(m => m.incoming_payments[i].item, new { @class = "form-control", @data_form_group_subname = "item" })
+                            </td>
+                            <td scope="row">
+                                @Html.TextBoxFor(m => m.incoming_payments[i].amount, new { @class = "form-control", @data_form_group_subname = "amount", @onchange = "UpdateIncomingPaymentTotals(this)" })
+                            </td>
+                            <td scope="row">
+                                @Html.TextBoxFor(m => m.incoming_payments[i].invoice_number, new { @class = "form-control", @readonly = "readonly", @data_form_group_subname = "invoice_number" })
+                            </td>
+                            <td scope="row">
+                                    @Html.HiddenFor(m => m.incoming_payments[i].ID)
+                                    @Html.Hidden("incoming_payments.Index", i)
+                                <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                    <tr class="d-none" data-form-group-start="incoming_payments" data-form-group="incoming_payments">
+                        <td scope="row">
+                            @Html.Hidden("temp", "", new { @data_form_group_subname = "ID" } )
+                            @Html.TextBox("temp", DateTime.Now.ToString("yyyy-MM-dd"), new { @type="date", @class = "form-control", @data_form_group_subname = "due_date" })
+                        </td>
+                        <td scope="row">
+                            @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "item" })
+                        </td>
+                        <td scope="row">
+                            @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "amount", @onchange = "UpdateIncomingPaymentTotals(this)" })
+                        </td>
+                        <td scope="row">
+                            @Html.TextBox("temp", "", new { @class = "form-control", @readonly = "readonly", @data_form_group_subname = "invoice_number" })
+                        </td>
+                        <td scope="row">
+                            <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td>
+                                <button class="btn btn-secondary" type="button" data-form-group-target="incoming_payments">+ 新增</button>
+                            </td
+                            <th class="text-end">
+                                @Html.LabelFor(m => m.total_income_amount, new { @class = "form-label"})
+                            </th>
+                            <td>
+                                $ @Html.TextBoxFor(m => m.total_income_amount, new { @class = "form-control form-text", @readonly = true})
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>   
+         @*for each outgoing payment*@
+        <h5>應付項目</h5>
         <table class="table mt-4">
             <thead>
                 <tr>
-                    <th scope="col">@Html.LabelFor(m => m.products.FirstOrDefault().product.category, new { @class = "form-label" })</th>
-                    <th scope="col">@Html.LabelFor(m => m.products.FirstOrDefault().product.brand.name, new { @class = "form-label" } )</th>
-                    <th scope="col">@Html.LabelFor(m => m.products.FirstOrDefault().product.model_name, new { @class = "form-label" })</th>
-                    <th scope="col">@Html.LabelFor(m => m.products.FirstOrDefault().serial_number, new { @class = "form-label" })</th>
+                    <th scope="col">@Html.LabelFor(m => m.outgoing_payments.FirstOrDefault().due_date, new { @class = "form-label form-view-hide" })</th>
+                    <th scope="col">@Html.LabelFor(m => m.outgoing_payments.FirstOrDefault().company_id, new { @class = "form-label" })</th>
+                    <th scope="col">@Html.LabelFor(m => m.outgoing_payments.FirstOrDefault().amount, new { @class = "form-label" })</th>
                     <th scope="col">功能</th>
                 </tr>
             </thead>
             <tbody>
-        
-                @for (var i = 0; i < Model.products.Count(); i++)
-                {
-                    <tr data-form-group="products">
-                        <td scope="row">
-                            @Html.HiddenFor(m => m.products[i].product_id, new { @data_form_group_subname = "product_id" } )
-                            @Html.TextBox("temp", Model.products[i].product.category.GetDisplayName(), new { @class = "form-control", @readonly="readonly", @data_form_group_subname = "category" })
-                        </td>
-                        <td scope="row">
-                            @Html.TextBoxFor( m => m.products[i].product.brand.name, new { @class = "form-control", @readonly="readonly", @data_form_group_subname = "product.brand.name" })
-                        </td>
-                        <td scope="row">
-                            <div class="input-group">
-                                @Html.TextBoxFor( m => m.products[i].product.model_name, new { @class = "form-control", @readonly="readonly", @data_form_group_subname = "product.model_name" })
-                                <button type="button" class="btn btn-secondary btn-modal"
-                                    data-form-group-target="products"
-                                    data-url="@Url.Action("Picker", "Product")"
-                                    data-toggle="modal"
-                                    data-target="#modal-popup">
-                                    <i class="fa-solid fa-pen-to-square"></i>
-                                </button>
-                            </div>
-                        </td>
-                        <td scope="row">
-                                @Html.TextBoxFor(m => m.products[i].serial_number, new { @class = "form-control", @data_form_group_subname = "serial_number" })
-                        </td>
-                        <td scope="row">
-                            @Html.HiddenFor(m => m.products[i].ID)
-                            @Html.Hidden("products.Index", i)
-                            <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
-                                <i class="fa fa-trash" aria-hidden="true"></i>
-                            </button>
-                        </td>
-                    </tr>
-                }
-                    <tr class="d-none" data-form-group-start="products" data-form-group="products">
-                        <td scope="row">
-                            @Html.Hidden("temp", "", new { @data_form_group_subname = "product_id" } )
-                            @Html.TextBox("temp", "", new { @class = "form-control", @readonly="readonly", @data_form_group_subname = "category" })
-                        </td>
-                        <td scope="row">
-                            @Html.TextBox("temp", "", new { @class = "form-control", @readonly="readonly", @data_form_group_subname = "product.brand.name" })
-                        </td>
-                        <td scope="row">
-                            <div class="input-group">
-                                @Html.TextBox("temp", "", new { @class = "form-control", @readonly="readonly", @data_form_group_subname = "product.model_name" })
-                                <button type="button" class="btn btn-secondary btn-modal"
-                                        data-form-group-target="products"
-                                        data-url="@Url.Action("Picker", "Product")"
-                                        data-toggle="modal"
-                                        data-target="#modal-popup">
-                                    <i class="fa-solid fa-pen-to-square"></i>
-                                </button>
-                            </div>
-                        </td>
-                        <td scope="row">
-                            @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "serial_number" })
-                        </td>
-                        <td scope="row">
-                            <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
-                                <i class="fa fa-trash" aria-hidden="true"></i>
-                            </button>
-                        </td>
-                    </tr>
-            </tbody>
-        </table>
-    
-        <button class="btn btn-secondary" type="button" data-form-group-target="products">+ 新增...</button><br />
-        @*for each incoming payment*@
-            <table class="table mt-4">
-                <thead>
-                    <tr>
-                        <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().due_date, new { @class = "form-label form-view-hide" })</th>
-                        <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().item, new { @class = "form-label" })</th>
-                        <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().amount, new { @class = "form-label" })</th>
-                        <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().invoice_number, new { @class = "form-label" })</th>
-                        <th scope="col">功能</th>
-                    </tr>
-                </thead>
-                <tbody>
-        
-            @for (var i = 0; i < Model.incoming_payments.Count(); i++)
-            {
-                <tr data-form-group="incoming_payments">
-                    <td scope="row">
-                        @Html.LocalDateTimeInputFor(m => m.incoming_payments[i].due_date, new { @class = "form-control", @data_form_group_subname = "issueDate" })
-                    </td>
-                    <td scope="row">
-                        @Html.TextBoxFor(m => m.incoming_payments[i].item, new { @class = "form-control", @data_form_group_subname = "item" })
-                    </td>
-                    <td scope="row">
-                        @Html.TextBoxFor(m => m.incoming_payments[i].amount, new { @class = "form-control", @data_form_group_subname = "amount" })
-                    </td>
-                    <td scope="row">
-                        @Html.TextBoxFor(m => m.incoming_payments[i].invoice_number, new { @class = "form-control", @readonly = "readonly", @data_form_group_subname = "invoice" })
-                    </td>
-                    <td scope="row">
-                            @Html.HiddenFor(m => m.incoming_payments[i].ID)
-                            @Html.Hidden("incoming_payments.Index", i)
-                        <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
-                            <i class="fa fa-trash" aria-hidden="true"></i>
-                        </button>
-                    </td>
-                </tr>
-            }
-                <tr class="d-none" data-form-group-start="incoming_payments" data-form-group="incoming_payments">
-                    <td scope="row">
-                        @Html.TextBox("temp", DateTime.Now.ToString("yyyy-MM-dd"), new { @type="date", @class = "form-control", @data_form_group_subname = "issueDate" })
-                    </td>
-                    <td scope="row">
-                        @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "item" })
-                    </td>
-                    <td scope="row">
-                        @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "amount" })
-                    </td>
-                    <td scope="row">
-                        @Html.TextBox("temp", "", new { @class = "form-control", @readonly = "readonly", @data_form_group_subname = "invoice_number" })
-                    </td>
-                    <td scope="row">
-                        <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
-                            <i class="fa fa-trash" aria-hidden="true"></i>
-                        </button>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        <button class="btn btn-secondary" type="button" data-form-group-target="incoming_payments">+ 新增...</button><br />
-        @*for each outgoing payment*@
-        
-            <table class="table mt-4">
-                <thead>
-                    <tr>
-                        <th scope="col">@Html.LabelFor(m => m.outgoing_payments.FirstOrDefault().due_date, new { @class = "form-label form-view-hide" })</th>
-                        <th scope="col">@Html.LabelFor(m => m.outgoing_payments.FirstOrDefault().company_id, new { @class = "form-label" })</th>
-                        <th scope="col">@Html.LabelFor(m => m.outgoing_payments.FirstOrDefault().amount, new { @class = "form-label" })</th>
-                        <th scope="col">功能</th>
-                    </tr>
-                </thead>
-                <tbody>
-        
             @for (var i = 0; i < Model.outgoing_payments.Count(); i++)
             {
                 <tr data-form-group="outgoing_payments">
                     <td scope="row">
-                        @Html.LocalDateTimeInputFor(m => m.outgoing_payments[i].due_date, new { @class = "form-control", @data_form_group_subname = "issueDate" })
+                        @Html.LocalDateTimeInputFor(m => m.outgoing_payments[i].due_date, new { @class = "form-control", @data_form_group_subname = "due_date" })
                     </td>
                     <td scope="row">
                         <div class="input-group flex-nowrap">
@@ -291,7 +288,7 @@
                         </div>
                     </td>
                     <td scope="row">
-                        @Html.TextBoxFor(m => m.outgoing_payments[i].amount, new { @class = "form-control", @data_form_group_subname = "amount" })
+                        @Html.TextBoxFor(m => m.outgoing_payments[i].amount, new { @class = "form-control", @data_form_group_subname = "amount", @onchange = "UpdateOutgoingPaymentTotals(this)" })
                     </td>
                     <td scope="row">
                             @Html.HiddenFor(m => m.outgoing_payments[i].ID)
@@ -302,37 +299,146 @@
                     </td>
                 </tr>
             }
-                <tr class="d-none" data-form-group-start="outgoing_payments" data-form-group="outgoing_payments">
+            <tr class="d-none" data-form-group-start="outgoing_payments" data-form-group="outgoing_payments">
+                <td scope="row">
+                    @Html.TextBox("temp", 
+                        DateTime.Now.ToString("yyyy-MM-dd"), 
+                        new { @type="date", @class = "form-control", @data_form_group_subname = "due_date" })
+                </td>
+                <td scope="row">
+                    <div class="input-group">
+                        @Html.Hidden("temp", "", new { @class = "form-control",  @readonly = "readonly", @data_form_group_subname = "company_id" } )
+                        @Html.TextBox("temp", "", new { @class = "form-control", @readonly = "readonly", @data_form_group_subname = "company.name" })
+                        <button type="button" class="btn btn-secondary btn-modal"
+                            data-form-group-target="outgoing_payments"
+                            data-url="@Url.Action("Picker", "Company")"
+                            data-toggle="modal"
+                            data-target="#modal-popup">
+                            <i class="fa fa-crosshairs fa-fw"></i>
+                        </button>
+                    </div>
+                </td>
+                <td scope="row">
+                    @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "amount", @onchange = "UpdateOutgoingPaymentTotals(this)" })
+                </td>
+                <td scope="row">
+                    <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
+                        <i class="fa fa-trash" aria-hidden="true"></i>
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>
+                        <button class="btn btn-secondary" type="button" data-form-group-target="outgoing_payments">+ 新增</button>
+                    </td>
+                    <th class="text-end">
+                        @Html.LabelFor(m => m.total_pay_amount, new { @class = "form-label"})
+                    </th>
+                    <td>
+                        $ @Html.TextBoxFor(m => m.total_pay_amount, new { @class = "form-control form-text", @readonly = true})
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+
+                    </td>
+                    <th class="text-end">
+                        @Html.LabelFor(m => m.net_income, new { @class = "form-label"})
+                    </th>
+                    <td>
+                        $ @Html.TextBoxFor(m => m.net_income, new { @class = "form-control form-text", @readonly = true})
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+        @*for each product*@
+        <h5>設備/授權/服務清單</h5>
+        <table class="table mt-4">
+        <thead>
+            <tr>
+                <th scope="col">@Html.LabelFor(m => m.products.FirstOrDefault().product.category, new { @class = "form-label" })</th>
+                <th scope="col">@Html.LabelFor(m => m.products.FirstOrDefault().product.brand.name, new { @class = "form-label" } )</th>
+                <th scope="col">@Html.LabelFor(m => m.products.FirstOrDefault().product.model_name, new { @class = "form-label" })</th>
+                <th scope="col">@Html.LabelFor(m => m.products.FirstOrDefault().serial_number, new { @class = "form-label" })</th>
+                <th scope="col">功能</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @for (var i = 0; i < Model.products.Count(); i++)
+            {
+                <tr data-form-group="products">
                     <td scope="row">
-                        @Html.TextBox("temp", 
-                            DateTime.Now.ToString("yyyy-MM-dd"), 
-                            new { @type="date", @class = "form-control", @data_form_group_subname = "issueDate" })
+                        @Html.HiddenFor(m => m.products[i].product_id, new { @data_form_group_subname = "product_id" } )
+                        @Html.TextBox("temp", Model.products[i].product.category.GetDisplayName(), new { @class = "form-control", @readonly="readonly", @data_form_group_subname = "category" })
+                    </td>
+                    <td scope="row">
+                        @Html.TextBoxFor( m => m.products[i].product.brand.name, new { @class = "form-control", @readonly="readonly", @data_form_group_subname = "product.brand.name" })
                     </td>
                     <td scope="row">
                         <div class="input-group">
-                            @Html.Hidden("temp", "", new { @class = "form-control",  @readonly = "readonly", @data_form_group_subname = "company_id" } )
-                            @Html.TextBox("temp", "", new { @class = "form-control", @readonly = "readonly", @data_form_group_subname = "company.name" })
+                            @Html.TextBoxFor( m => m.products[i].product.model_name, new { @class = "form-control", @readonly="readonly", @data_form_group_subname = "product.model_name" })
                             <button type="button" class="btn btn-secondary btn-modal"
-                                data-form-group-target="outgoing_payments"
-                                data-url="@Url.Action("Picker", "Company")"
+                                data-form-group-target="products"
+                                data-url="@Url.Action("Picker", "Product")"
                                 data-toggle="modal"
                                 data-target="#modal-popup">
-                                <i class="fa fa-crosshairs fa-fw"></i>
+                                <i class="fa-solid fa-pen-to-square"></i>
                             </button>
                         </div>
                     </td>
                     <td scope="row">
-                        @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "amount" })
+                        @Html.TextBoxFor(m => m.products[i].serial_number, new { @class = "form-control", @data_form_group_subname = "serial_number" })
                     </td>
                     <td scope="row">
+                        @Html.HiddenFor(m => m.products[i].ID)
+                        @Html.Hidden("products.Index", i)
                         <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
                             <i class="fa fa-trash" aria-hidden="true"></i>
                         </button>
                     </td>
                 </tr>
-                </tbody>
-            </table>
-    <button class="btn btn-secondary" type="button" data-form-group-target="outgoing_payments">+ 新增...</button><br />
+            }
+            <tr class="d-none" data-form-group-start="products" data-form-group="products">
+                <td scope="row">
+                    @Html.Hidden("temp", "", new { @data_form_group_subname = "product_id" } )
+                    @Html.TextBox("temp", "", new { @class = "form-control", @readonly="readonly", @data_form_group_subname = "category" })
+                </td>
+                <td scope="row">
+                    @Html.TextBox("temp", "", new { @class = "form-control", @readonly="readonly", @data_form_group_subname = "product.brand.name" })
+                </td>
+                <td scope="row">
+                    <div class="input-group">
+                        @Html.TextBox("temp", "", new { @class = "form-control", @readonly="readonly", @data_form_group_subname = "product.model_name" })
+                        <button type="button" class="btn btn-secondary btn-modal"
+                                data-form-group-target="products"
+                                data-url="@Url.Action("Picker", "Product")"
+                                data-toggle="modal"
+                                data-target="#modal-popup">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                    </div>
+                </td>
+                <td scope="row">
+                    @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "serial_number" })
+                </td>
+                <td scope="row">
+                    <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
+                        <i class="fa fa-trash" aria-hidden="true"></i>
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td>
+                    <button class="btn btn-secondary" type="button" data-form-group-target="products">+ 新增</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
     </form>
 
 </div>
@@ -343,93 +449,144 @@
 </div>
 
 @section Scripts {
-        <script>
+<script>
 
-        $(function () {
-            $('#update').initAsToggleForm(false);
+    $(function () {
+        $('#subtypes').select2();
+        //$('#update').initAsToggleForm(false);
+
+        var $btnAddDiscount = $('#change-company');
+        $btnAddDiscount.on('modal-success', (evt, $formTarget, data) => {
+            console.log($formTarget.find('#persona_name'))
+            console.log(data.company_id)
+            UpdatePersona($formTarget.find('#persona_name'), data.company_id)
         });
 
-        $(function () {
+        let btnRenew = document.getElementById('renew_project');
 
-            var $btnAddDiscount = $('#change-company');
-            $btnAddDiscount.on('modal-success', (evt, $formTarget, data) => {
-                console.log($formTarget.find('#persona_name'))
-                console.log(data.company_id)
-                UpdatePersona($formTarget.find('#persona_name'), data.company_id)
-            });
-
-            let btnRenew = document.getElementById('renew_project');
-
-            $(btnRenew).on('click', (e) => {
+        $(btnRenew).on('click', (e) => {
                 
-                var btn = $(e.currentTarget);
-                var rowID = btn.data('index');
+            var btn = $(e.currentTarget);
+            var rowID = btn.data('index');
 
-                var url = '@Url.ActionLink("RenewContractPopUp")' + '?id=' + @Model.ID;
-                var target = $('#modal-confirm-renew-project-popup');
+            var url = '@Url.ActionLink("RenewContractPopUp")' + '?id=' + @Model.ID;
+            var target = $('#modal-confirm-renew-project-popup');
 
-                $.get(url).done(function (data) {
-                    target.find(".modal-dialog").html(data);
-                    target.modal("show");
-                });
+            $.get(url).done(function (data) {
+                target.find(".modal-dialog").html(data);
+                target.modal("show");
             });
-
         });
 
-        $(function () {
-            var form = $('#update');
-            form.initAsAjaxForm({
-                success: function (data) {
-                    var result = createErrorList(data);
-                    if (result == null) {
-                        window.history.back();
-                    } else {
-                        var alert = form.find(".alert");
-                        alert.html(result);
-                        alert.removeClass('d-none');
-                    }
-                },
-                error: function (xhr, textStatus, errorThrown) {
+    })
+
+    $(function () {
+        var form = $('#update');
+        form.initAsAjaxForm({
+            success: function (data) {
+                var result = createErrorList(data);
+                if (result == null) {
+                    window.history.back();
+                } else {
                     var alert = form.find(".alert");
-                    alert.text(AjaxErrorToString(xhr, textStatus, errorThrown));
+                    alert.html(result);
                     alert.removeClass('d-none');
-                },
-                validate: function () {
-                    return null
+                }
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                var alert = form.find(".alert");
+                alert.text(AjaxErrorToString(xhr, textStatus, errorThrown));
+                alert.removeClass('d-none');
+            },
+            validate: function () {
+                return null
+            }
+        });
+    })
+
+    function UpdateBrandModelList(_this) 
+    {
+        var _prod = _this.value;
+        UpdateBrand(_prod, _this);
+        UpdateModel(_prod, _this);
+
+    }
+
+    function UpdateBrand(_prod, _this)
+    {
+        var $target = $(_this).closest('[data-form-group]').find('.select-brand')
+        $target.loadSelect(
+            '@HttpUtility.JavaScriptStringEncode(Url.Action("ListBrandForCategory", "Project"))',
+            { ID: _prod });
+    }
+
+    function UpdatePersona(_persona, _comp)
+    {
+        var $target = _persona
+        $target.loadSelect(
+        '@HttpUtility.JavaScriptStringEncode(Url.Action("ListPersonaPerCompany", "Project"))',
+            { ID: _comp });
+    }
+
+    function UpdateModel(_prod, _this)
+    {
+        var $target = $(_this).closest('[data-form-group]').find('.select-model')
+        $target.loadSelect(
+            '@HttpUtility.JavaScriptStringEncode(Url.Action("ListModelForCategory", "Project"))',
+            { ID: _prod });
+    }
+
+    function onTypeChange(proj_type) {
+        UpdateSubType($('#subtypes'), proj_type.value);
+    }
+
+    function UpdateSubType(_type, _proj_type) {
+            $('#subtypes').val(null).trigger('change');
+            $('#subtypes').select2({
+                ajax: {
+                    method: 'POST',
+                    url: '/Project/ListSubType',
+                    dataType: 'json',
+                    data: { comp_type: _proj_type }
                 }
             });
-        });
-            function UpdateBrandModelList(_this) 
-            {
-                var _prod = _this.value;
-                UpdateBrand(_prod, _this);
-                UpdateModel(_prod, _this);
+        }
 
-            }
+    var total_income_amount = @Model.total_income_amount;
+        function UpdateIncomingPaymentTotals(_this) {
+            total_income_amount = 0;
+            var t = $('input[name="incoming_payments.Index"]')
+            t.each(function()
+                {
+                    var temp = $('input[name="incoming_payments['+this.value+'].amount"]')
+                    total_income_amount += parseInt(temp[0].value);
+                }
+            );
+            $('#total_income_amount').val(total_income_amount);
+            UpdateNetIncome();
+        }
 
-            function UpdateBrand(_prod, _this)
-            {
-                var $target = $(_this).closest('[data-form-group]').find('.select-brand')
-                $target.loadSelect(
-                    '@HttpUtility.JavaScriptStringEncode(Url.Action("ListBrandForCategory", "Project"))',
-                    { ID: _prod });
-            }
+        var total_pay_amount = @Model.total_pay_amount;
+        function UpdateOutgoingPaymentTotals(_this) {
+            total_pay_amount = 0;
+            var t = $('input[name="outgoing_payments.Index"]')
+            console.log(t[0].value);
+            t.each(function()
+                {
+                    var temp = $('input[name="outgoing_payments['+this.value+'].amount"]')
 
-            function UpdatePersona(_persona, _comp)
-            {
-                var $target = _persona
-                $target.loadSelect(
-                '@HttpUtility.JavaScriptStringEncode(Url.Action("ListPersonaPerCompany", "Project"))',
-                    { ID: _comp });
-            }
+                    total_pay_amount += parseInt(temp[0].value);
+                }
+            );
+            $('#total_pay_amount').val(total_pay_amount);
+            UpdateNetIncome();
+        }
 
-            function UpdateModel(_prod, _this)
-            {
-                var $target = $(_this).closest('[data-form-group]').find('.select-model')
-                $target.loadSelect(
-                    '@HttpUtility.JavaScriptStringEncode(Url.Action("ListModelForCategory", "Project"))',
-                    { ID: _prod });
-            }
+        function UpdateNetIncome(){
+            console.log("total_income_amount: ", total_income_amount);
+            console.log("total_pay_amount: ", total_pay_amount);
+            $('#net_income').val(total_income_amount - total_pay_amount);
+        }
 
-        </script>
+</script>
 }

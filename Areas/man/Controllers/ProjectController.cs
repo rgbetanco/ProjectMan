@@ -15,6 +15,8 @@ using Microsoft.Identity.Client;
 using Azure.Core;
 using CSHelper.Authorization;
 using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
+using Microsoft.CodeAnalysis.Options;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace projectman.Areas.Man.Controllers
 {
@@ -79,11 +81,35 @@ namespace projectman.Areas.Man.Controllers
 
             return result;
         }
-        protected MultiSelectList GetProjectSubtypeList(ProjectType type, IEnumerable<long> selectedValues = null)
+        protected object GetProjectSubtypeList(ProjectType type, IEnumerable<long> selectedValues = null)
         {
-            var r = _proj.GetSubtypes(type).Select(n => new SelectListItem { Value = n.ID.ToString(), Text = n.name });
+            var r = _proj.GetSubtypes(type).AsNoTracking();
+            var obj = new { results = new List<ProjectSubtypeSelect2> { } };
+            foreach(ProjectSubtype o in r)
+            {
+                obj.results.Add(new ProjectSubtypeSelect2 { id = o.ID, text = o.name });
+            }
+            return obj;
+        }
+        protected object GetSubtypesByCompanyID(long ID)
+        {
+            var r = _proj.GetProject(ID, "subtypes", "subtypes.subtype");
+            var subtypes = r.Result.subtypes;
+            var obj = new { results = new List<ProjectSubtypeSelect2> { } };
+            foreach (ProjectSubtypeEntry o in subtypes)
+            {
+                obj.results.Add(new ProjectSubtypeSelect2 { id = o.ID, text = o.subtype.name, selected = true });
+            }
+            return obj;
+        }
 
-            return new MultiSelectList(r, "Value", "Text", selectedValues);
+        protected IEnumerable<SelectListItem> GetSubtypesByCompanyID2(long ID)
+        {
+            var r = _proj.GetProject(ID, "subtypes", "subtypes.subtype");
+
+            var result = r.Result.subtypes.Select(m => new SelectListItem { Value = "" + (int)m.subtype_id, Text = m.subtype.name, Selected = true });
+
+            return result;
         }
 
         protected IEnumerable<SelectListItem> GetCompanyContactList(long comp_id)
@@ -175,7 +201,7 @@ namespace projectman.Areas.Man.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("New")]
-        public async Task<IActionResult> NewPost()
+        public async Task<IActionResult> NewPost(string[] subtypes)
         {
             var m = new Project();
 
@@ -189,18 +215,32 @@ namespace projectman.Areas.Man.Controllers
                 a => a.starting_datetime,
                 a => a.ending_datetime,
                 a => a.user_id,
+                a => a.group_id,
+                a => a.internal_company_id,
                 a => a.importance_id,
                 a => a.company_id,
                 a => a.contact_id,
                 a => a.contact_address,
                 a => a.contact_phone,
-                a => a.remarks
+                a => a.remarks,
+                a => a.total_income_amount,
+                a => a.total_pay_amount,
+                a => a.net_income
             );
 
             await this.TryUpdateModelListAsync(m, a => a.products, b => b.product_id, b => b.serial_number);
+            await this.TryUpdateModelListAsync(m, a => a.timelines, b => b.due_date, b => b.desc, b => b.complete_date);
             await this.TryUpdateModelListAsync(m, a => a.incoming_payments, b => b.due_date, b => b.item, b => b.amount, b => b.invoice_number, b => b.orderslip_number, b => b.invoice_date, b => b.orderslip_date);
             await this.TryUpdateModelListAsync(m, a => a.outgoing_payments, b => b.due_date, b => b.company_id, b => b.amount);
-            
+
+            var s = new List<ProjectSubtypeEntry>();
+            foreach(string sub in subtypes)
+            {
+                s.Add(new ProjectSubtypeEntry { subtype_id = long.Parse(sub) });
+            }
+
+            m.subtypes = s;
+
             await _proj.CreateProject(m);
             var result = await CommitModel(m);
 
@@ -209,11 +249,14 @@ namespace projectman.Areas.Man.Controllers
 
         public async Task<IActionResult> View(long ID)
         {
-            Project project = await _proj.GetProject(ID, "products", "products.product", "products.product.brand","incoming_payments", "outgoing_payments");
+            Project project = await _proj.GetProject(ID, "products", "products.product", "products.product.brand","incoming_payments", "outgoing_payments", "subtypes", "timelines");
 
+            ViewData["group"] = GetGroupList();
+            ViewData["internal_company"] = GetInternalCompanyList();
             ViewData["sales_person"] = GetSalePersonList();
             ViewData["importance"] = GetImportanceList();
             ViewData["service_type"] = GetServiceTypeList();
+            ViewData["subtypes"] = GetSubtypesByCompanyID2(ID);
 
             // generate list of modules for dropdown lists
             ViewData["personas"] = GetCompanyContactList(-1);
@@ -242,7 +285,7 @@ namespace projectman.Areas.Man.Controllers
         [HttpPost]
         public async Task<IActionResult> Update(long ID)
         {
-            Project project = await _proj.GetProject(ID, "products", "products.product", "products.product.brand", "incoming_payments", "outgoing_payments");
+            Project project = await _proj.GetProject(ID, "products", "products.product", "products.product.brand", "incoming_payments", "outgoing_payments","subtypes","timelines");
             if (project == null)
             {
                 return NotFound();
@@ -251,6 +294,8 @@ namespace projectman.Areas.Man.Controllers
             await this.TryUpdateModelListAsync(project, a => a.products, b => b.product_id, b => b.serial_number);
             await this.TryUpdateModelListAsync(project, a => a.incoming_payments, b => b.due_date, b => b.item, b => b.amount, b => b.invoice_number, b => b.orderslip_number, b => b.invoice_date, b => b.orderslip_date);
             await this.TryUpdateModelListAsync(project, a => a.outgoing_payments, b => b.due_date, b => b.company_id, b => b.amount);
+            await this.TryUpdateModelListAsync(project, a => a.subtypes, b => b.subtype_id);
+            await this.TryUpdateModelListAsync(project, a => a.timelines, b => b.due_date, b => b.desc, b => b.complete_date);
 
             await TryUpdateModelAsync<Project>(
                 project,
@@ -258,6 +303,8 @@ namespace projectman.Areas.Man.Controllers
                 a => a.name,
                 a => a.number,
                 a => a.type,
+                a => a.group_id,
+                a => a.internal_company_id,
                 a => a.status,
                 a => a.starting_datetime,
                 a => a.ending_datetime,
@@ -267,7 +314,10 @@ namespace projectman.Areas.Man.Controllers
                 a => a.contact_id,
                 a => a.contact_address,
                 a => a.contact_phone,
-                a => a.remarks
+                a => a.remarks,
+                a => a.total_income_amount,
+                a => a.total_pay_amount,
+                a => a.net_income
             );
 
             return await CommitModel(project);
@@ -275,8 +325,19 @@ namespace projectman.Areas.Man.Controllers
 
         [HttpPost]
         [AllowAnonymous]
+        public IActionResult ListSubTypeByCompanyId(long ID)
+        {
+            return Json(GetSubtypesByCompanyID(ID));
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
         public IActionResult ListSubType(string comp_type)
         {
+            if (String.IsNullOrEmpty(comp_type))
+            {
+                return Json(GetProjectSubtypeList(ProjectType.DevelopmentContract));
+            }
             ProjectType t = Enum.Parse<ProjectType>(comp_type);
             return Json(GetProjectSubtypeList(t));
         }

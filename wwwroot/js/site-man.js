@@ -26,7 +26,8 @@ $(function () {
         let t = new CSTable(i, {
             nullDataMsg: '請選擇塞選條件...',
             emptyDataMsg: '無相關資料',
-            downloadMsg: '下載中, 請稍後...'
+            downloadMsg: '下載中, 請稍後...',
+            fetchOptions: { cache: "reload" }
         });
     }
 
@@ -99,12 +100,16 @@ $(function () {
 
     $d.on('change', 'input[type="datetime-local"][data-utc-target]', function () {
         let $e = $(this);
-        let $field = $($e.data('utcTarget'));
+        let $field = $($e.attr('data-utc-target'));
 
         const tempDate = new Date(`${$e.val()}Z`);
         const date = new Date(tempDate.getTime() + tempDate.getTimezoneOffset() * 60000);
 
-        $field.val(date.toISOString());
+        try {
+            $field.val(date.toISOString());
+        } catch (e) {
+
+        }
     });
 
     // handle form group removal button click
@@ -158,31 +163,37 @@ $(function () {
     footerShow((footerState != null) ? footerState : 1);
 });
 
+var _onAutoReloadFnc = function (event) {
+    var historyTraversal = event.persisted ||
+        (typeof window.performance != "undefined" &&
+            window.performance.navigation.type === 2);
+    if (historyTraversal) {
+        if (typeof reloadNow === "function") {
+            reloadNow()
+        } else {
+            window.location.reload()
+        }
+    }
+}
+
 // call this function on page start to force the page to reload whenever the user
 // backs into it from another page
 function enableAutoReload() {
-    window.addEventListener("pageshow", function (event) {
-        var historyTraversal = event.persisted ||
-            (typeof window.performance != "undefined" &&
-                window.performance.navigation.type === 2);
-        if (historyTraversal) {
-            if (typeof reloadNow === "function") {
-                reloadNow();
-            } else {
-                window.location.reload();
-            }
-        }
-    })
+    window.removeEventListener("pageshow", _onAutoReloadFnc)
+    window.addEventListener("pageshow", _onAutoReloadFnc, false)
 }
 
 // update datetime input field using hidden utc date input field
 function updateDateTimeControl( $date_input ) {
     $date_input.each(function (idx, ele) {
         let $e = $(ele);
-        let d = new Date($($e.data('utcTarget')).val());
-        let date = (new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString()).slice(0, -1).replace(/\.000$/, "");
+        let d = new Date($($e.attr('data-utc-target')).val());
+        try {
+            let date = (new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString()).slice(0, -1).replace(/\.000$/, "");
+            $e.val(date);
+        } catch (e) {
 
-        $e.val(date);
+        }
     });
 }
 
@@ -951,7 +962,18 @@ function _formGroupPrepareAdd(element) {
     // create indexed names for the new fields
     var childFields = $group.find("[data-form-group-subname]");
     childFields.each(function (idx, e) {
-        $(e).attr('name', `${groupName}[${index}].${$(e).data("form-group-subname")}`);
+        let $e = $(e)
+        let newName = `${groupName}[${index}].${$e.data("form-group-subname")}`
+
+        if ($e.is('[data-utc-target]')) {
+            // handle local date time input
+            let $actualE = $group.find($e.attr('data-utc-target'));
+            let newID = newName.replace(/[\[\].]/g, '_');
+            $actualE.attr("id", newID);
+            $e.attr('data-utc-target', '#' + newID);
+            $e = $actualE;
+        }
+        $e.attr('name', newName );
     });
 
     // record index with the new fields
@@ -1059,11 +1081,29 @@ function formGroupApplyData($formGroup, data) {
                 } else {
                     $this.removeProp('checked');
                 }
-            } else if (!optional || $this.val() == '') {
-                if ($this.is("input"))
-                    $this.val(value);
-                else
-                    $this.text(value);
+            } else {
+                if ($this.is('[data-utc-target]')) {
+                // targetting local date display -- change hidden input instead
+                    let $target = $e.find($this.attr('data-utc-target'));
+
+                    if (!optional || $target.val() == '') {
+                        $target.val(value);
+                        updateDateTimeControl($this);
+                    }
+
+                } else {
+                    if (!optional || $this.val() == '') {
+                        if ($this.is("input"))
+                            $this.val(value);
+                        else
+                            $this.text(value);
+
+                        // update local date display if needed
+                        let $dateDisplay = $e.find(`[data-utc-target="#${$this.attr('id')}"]`);
+                        updateDateTimeControl($dateDisplay)
+                    }
+                }
+
             }
         })
     });

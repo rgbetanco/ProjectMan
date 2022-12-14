@@ -42,13 +42,9 @@
             </div>
             <div class="col-3">
                 @Html.LabelFor(m => m.subtypes, new { @class = "form-label" })
-                @Html.DropDownListFor(
-                    m => m.subtypes,
-                    (MultiSelectList)ViewData["subtypes"],
-                new { @class = "form-select", @multiple="multiple" })
+                <select id="subtypes" name="subtypes" class="js-data-subtype-ajax col-3 form-select" multiple allowClear></select>
             </div>
         </div>
-
 
         <div class="row mb-3">
             <div class="col-2">
@@ -150,7 +146,7 @@
                             @Html.TextBox("temp", DateTime.Now.ToString("yyyy-MM-dd"), new { @type="date", @class = "form-control", @data_form_group_subname = "due_date", @required="required" })
                         </td>
                         <td scope="row">
-                            @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "item" })
+                            @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "desc" })
                         </td>
                         <td scope="row">
                             @Html.TextBox("temp", "", new { @type="date", @class = "form-control", @data_form_group_subname = "complete_date" })
@@ -194,7 +190,7 @@
                         @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "item" })
                     </td>
                     <td scope="row">
-                        @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "amount" })
+                        @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "amount", @onchange = "UpdateIncomingPaymentTotals(this)" })
                     </td>
                     <td scope="row">
                         @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "orderslip_number" })
@@ -215,10 +211,10 @@
                         <button class="btn btn-secondary" type="button" data-form-group-target="incoming_payments">+新增</button>
                     </td>
                     <th class="text-end">
-                        收入金額
+                        @Html.LabelFor(m => m.total_income_amount, new { @class = "form-label"})
                     </th>
                     <td>
-                        $
+                        $ @Html.TextBoxFor(m => m.total_income_amount, new { @class = "form-control form-text", @readonly = true})
                     </td>
               </tr>
             </tfoot>
@@ -254,7 +250,7 @@
                         </div>
                     </td>
                     <td scope="row">
-                        @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "amount" })
+                        @Html.TextBox("temp","", new { @class = "form-control", @data_form_group_subname = "amount", @onchange = "UpdateOutgoingPaymentTotals(this)" })
                     </td>
                     <td scope="row">
                         <button type="button" class="btn btn-secondary btn-delete">
@@ -269,10 +265,10 @@
                         <button class="btn btn-secondary" type="button" data-form-group-target="outgoing_payments">+新增</button>
                     </td>
                     <th class="text-end">
-                        付出金額
+                        @Html.LabelFor(m => m.total_pay_amount, new { @class = "form-label"})
                     </th>
                     <td>
-                        $
+                        $ @Html.TextBoxFor(m => m.total_pay_amount, new { @class = "form-control form-text", @readonly = true})
                     </td>
                 </tr>
                 <tr>
@@ -280,10 +276,10 @@
 
                     </td>
                     <th class="text-end">
-                         淨利
+                        @Html.LabelFor(m => m.net_income, new { @class = "form-label"})
                     </th>
                     <td>
-                        $
+                        $ @Html.TextBoxFor(m => m.net_income, new { @class = "form-control form-text", @readonly = true})
                     </td>
                 </tr>
             </tfoot>
@@ -350,6 +346,16 @@
 @section Scripts {
     <script>
         $(function () {
+
+            $('.js-data-subtype-ajax').select2({
+                ajax: {
+                    method: 'POST',
+                    url: '/Project/ListSubType',
+                    dataType: 'json',
+                    data: { comp_type: '' }
+                },
+            });
+
             var $btnAddDiscount = $('#change-company');
             $btnAddDiscount.on('modal-success', (evt, $formTarget, data) => {
                 console.log($formTarget.find('#contact_name'))
@@ -380,6 +386,40 @@
             });
         });
 
+        var total_income_amount = 0;
+        function UpdateIncomingPaymentTotals(_this) {
+            total_income_amount = 0;
+            var t = $('input[name="incoming_payments.Index"]')
+            t.each(function()
+                {
+                    var temp = $('input[name="incoming_payments['+this.value+'].amount"]')
+                    total_income_amount += parseInt(temp[0].value);
+                }
+            );
+            $('#total_income_amount').val(total_income_amount);
+            UpdateNetIncome();
+        }
+
+        var total_pay_amount = 0
+        function UpdateOutgoingPaymentTotals(_this) {
+            total_pay_amount = 0;
+            var t = $('input[name="outgoing_payments.Index"]')
+            console.log(t[0].value);
+            t.each(function()
+                {
+                    var temp = $('input[name="outgoing_payments['+this.value+'].amount"]')
+
+                    total_pay_amount += parseInt(temp[0].value);
+                }
+            );
+            $('#total_pay_amount').val(total_pay_amount);
+            UpdateNetIncome();
+        }
+
+        function UpdateNetIncome(){
+            $('#net_income').val(total_income_amount - total_pay_amount);
+        }
+
         function onTypeChange(proj_type) 
         {
             UpdateSubType($('#subtypes'), proj_type.value);
@@ -387,10 +427,15 @@
 
         function UpdateSubType(_type, _proj_type)
         {
-            var $target = _type
-            $target.loadSelect(
-                '@HttpUtility.JavaScriptStringEncode(Url.Action("ListSubType", "Project"))',
-                { comp_type: _proj_type });
+            $('#subtypes').val(null).trigger('change');
+            $('.js-data-subtype-ajax').select2({
+                ajax: {
+                    method: 'POST',
+                    url: '/Project/ListSubType',
+                    dataType: 'json',
+                    data: { comp_type: _proj_type }
+                },
+            });
         }
 
         function UpdateBrandModelList(_this) 

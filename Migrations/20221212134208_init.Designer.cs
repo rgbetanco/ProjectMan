@@ -12,7 +12,7 @@ using projectman.Data;
 namespace projectman.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20221206070738_init")]
+    [Migration("20221212134208_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -441,6 +441,9 @@ namespace projectman.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal>("net_income")
+                        .HasColumnType("money");
+
                     b.Property<string>("number")
                         .HasColumnType("nvarchar(max)");
 
@@ -452,6 +455,12 @@ namespace projectman.Migrations
 
                     b.Property<int>("status")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("total_income_amount")
+                        .HasColumnType("money");
+
+                    b.Property<decimal>("total_pay_amount")
+                        .HasColumnType("money");
 
                     b.Property<int>("type")
                         .HasColumnType("int");
@@ -616,9 +625,6 @@ namespace projectman.Migrations
                     b.Property<long>("project_id")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("subtypeID")
-                        .HasColumnType("bigint");
-
                     b.Property<long>("subtype_id")
                         .HasColumnType("bigint");
 
@@ -626,7 +632,7 @@ namespace projectman.Migrations
 
                     b.HasIndex("project_id");
 
-                    b.HasIndex("subtypeID");
+                    b.HasIndex("subtype_id");
 
                     b.ToTable("project_subtype_entry");
                 });
@@ -940,7 +946,9 @@ namespace projectman.Migrations
 
                     b.HasOne("projectman.Models.ProjectSubtype", "subtype")
                         .WithMany()
-                        .HasForeignKey("subtypeID");
+                        .HasForeignKey("subtype_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("project");
 
