@@ -116,8 +116,13 @@
 
 
         function editFormatter(data, row, table) {
-            return document.createRange()
-                .createContextualFragment('<button type="button" data-index="' + table.data[row].id + '" class="btn-delete btn"><i class="fas fa-trash"></i></button>');
+            if (table.data[row].id != 1) {
+                return document.createRange()
+                    .createContextualFragment('<button type="button" data-index="' + table.data[row].id + '" class="btn-delete btn"><i class="fas fa-trash"></i></button>');
+            } else {
+                return document.createRange()
+                    .createContextualFragment('<button type="button" class="btn"><i class="fas fa-person"></i></button>');
+            }
         }
 
     </script>

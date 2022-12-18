@@ -114,6 +114,16 @@ namespace projectman.Areas.Man.Controllers
 
         protected IEnumerable<SelectListItem> GetCompanyContactList(long comp_id)
         {
+            if (comp_id == 1)
+            {
+                var c = _persona.GetContacts().Select(n => new SelectListItem { Value = n.ID.ToString(), Text = n.name });
+                if (!c.Any())
+                {
+                    c.Append(new SelectListItem { Value = "所有", Text = "所有" });
+                }
+                return c;
+            }
+
             var r = _persona.GetCompanyContacts(comp_id).Select(n => new SelectListItem { Value = n.ID.ToString(), Text = n.name });
             if (!r.Any())
             {
@@ -155,19 +165,37 @@ namespace projectman.Areas.Man.Controllers
             });
         }
 
-        public async Task<IActionResult> ProjectAll(QueryVM request)
+        public IActionResult ProjectAll()
         {
+            List<DashboardView> v = new List<DashboardView>();
+
             var result = _proj.GetAllProject();
-            return await GetTableReplyAsync(result, request, null, r => new
+            
+            foreach(Project p in result)
             {
-                id = r.ID,
-                number = r.number,
-                name = r.name,
-                remarks = r.remarks,
-                starting_date = r.starting_datetime,
-                nextInvoice = r.incoming_payments.FirstOrDefault().due_date,
-                item = r.incoming_payments.FirstOrDefault().item
-            }); 
+                foreach(ProjectTimelineEntry e in p.timelines)
+                {
+                    v.Add(new DashboardView
+                    {
+                        project_id = p.ID,
+                        project_name = p.name,
+                        entry_name = e.desc,
+                        due_date = e.due_date
+                    });
+                }
+                foreach(ProjectIncomingPayment i in p.incoming_payments)
+                {
+                    v.Add(new DashboardView 
+                    {
+                        project_id = p.ID,
+                        project_name = p.name,
+                        entry_name = i.item,
+                        due_date = i.due_date
+                    });
+                }
+            }
+
+            return Json(v); 
         }
 
         public IActionResult Index()

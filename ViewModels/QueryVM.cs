@@ -25,6 +25,7 @@ namespace projectman.Models
 
         public string order { get; set; }
 
+        public bool showIndividual { get; set; } = false;
 
         public IQueryable<T> Apply<T>( IQueryable<T> query, IDictionary<string,string> fieldMap = null )
         {

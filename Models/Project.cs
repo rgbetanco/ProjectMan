@@ -78,6 +78,14 @@ namespace projectman.Models
         public string desc { get; set; }
     }
 
+    public class DashboardView
+    {
+        public long project_id { get; set; }
+        public string project_name { get; set; }
+        public string entry_name { get; set; }
+        public DateTime due_date { get; set; }
+    }
+
     public class ProjectSubtype : UsesID
     {
 

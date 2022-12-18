@@ -9,7 +9,7 @@ namespace projectman.Repositories
     {
         IQueryable<Company> GetCompanies();
         IList<CompanyInPersonasViewModel> GetPersonsInCompanyByPersonID(long ID);
-        IQueryable<Company> FindCompanies(string keyword = null);
+        IQueryable<Company> FindCompanies(string keyword = null, bool showIndividual = false);
         CreditRating GetCreditRating(string ID);
         Task<Company> CreateCompany(Company u);
         Task<Company> GetCompany(long ID, params string[] includeFields);

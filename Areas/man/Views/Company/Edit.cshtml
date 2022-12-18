@@ -252,30 +252,30 @@
             $('#update').initAsToggleForm(false);
         });
 
-            $(function () {
+            //$(function () {
 
-                var form = $('#update');
-                form.initAsAjaxForm({
-                    success: function (data) {
-                        var result = createErrorList(data);
-                        if (result == null) {
-                            window.history.back();
-                        } else {
-                            var alert = form.find(".alert");
-                            alert.html(result);
-                            alert.removeClass('d-none');
-                        }
-                    },
-                    error: function (xhr, textStatus, errorThrown) {
-                        var alert = form.find(".alert");
-                        alert.text(AjaxErrorToString(xhr, textStatus, errorThrown));
-                        alert.removeClass('d-none');
-                    },
-                    validate: function () {
-                        return null
-                    }
-                });
-            });
+            //    var form = $('#update');
+            //    form.initAsAjaxForm({
+            //        success: function (data) {
+            //            var result = createErrorList(data);
+            //            if (result == null) {
+            //                window.history.back();
+            //            } else {
+            //                var alert = form.find(".alert");
+            //                alert.html(result);
+            //                alert.removeClass('d-none');
+            //            }
+            //        },
+            //        error: function (xhr, textStatus, errorThrown) {
+            //            var alert = form.find(".alert");
+            //            alert.text(AjaxErrorToString(xhr, textStatus, errorThrown));
+            //            alert.removeClass('d-none');
+            //        },
+            //        validate: function () {
+            //            return null
+            //        }
+            //    });
+            //});
 
         </script>
     }

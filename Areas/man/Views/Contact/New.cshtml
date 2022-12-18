@@ -134,7 +134,7 @@
                             @Html.TextBox("temp", "", new { @class = "form-control",  @readonly = "readonly", @data_form_group_subname = "company.name" })
                             <button type="button" class="btn btn-secondary btn-modal"
                                     data-form-group-target="companies"
-                                    data-url="@Url.Action("Picker", "Company")"
+                                    data-url="@Url.Action("PickerWithoutIndividual", "Company")"
                                     data-toggle="modal"
                                     data-target="#modal-popup">
                                 <i class="fa fa-pen"></i>

@@ -141,7 +141,7 @@
                     {
                         <tr data-form-group="timelines">
                             <td scope="row">
-                                @Html.LocalDateTimeInputFor(m => m.timelines[i].due_date, new { @class = "form-control", @data_form_group_subname = "due_date", @required="required" })
+                                @Html.LocalDateTimeInputFor(m => m.timelines[i].due_date, new { @class = "form-control", @data_form_group_subname = "due_date" })
                             </td>
                             <td scope="row">
                                 @Html.TextBoxFor(m => m.timelines[i].desc, new { @class = "form-control", @data_form_group_subname = "desc" })
@@ -160,7 +160,7 @@
                     }
                     <tr class="d-none" data-form-group-start="timelines" data-form-group="timelines">
                         <td scope="row">
-                            @Html.TextBox("temp", DateTime.Now.ToString("yyyy-MM-dd"), new { @type="date", @class = "form-control", @data_form_group_subname = "due_date", @required="required" })
+                            @Html.TextBox("temp", DateTime.Now.ToString("yyyy-MM-dd"), new { @type="date", @class = "form-control", @data_form_group_subname = "due_date" })
                         </td>
                         <td scope="row">
                             @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "desc" })
@@ -227,7 +227,7 @@
                             <td scope="row">
                                     @Html.HiddenFor(m => m.incoming_payments[i].ID)
                                     @Html.Hidden("incoming_payments.Index", i)
-                                <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
+                            <button type="button" class="btn btn-secondary" onclick="formIncomingPaymentRemove(this)">
                                     <i class="fa fa-trash" aria-hidden="true"></i>
                                 </button>
                             </td>
@@ -256,7 +256,7 @@
                                 @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "invoice_date", @type="date" })
                             </td>
                             <td scope="row">
-                                <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
+                        <button type="button" class="btn btn-secondary" onclick="formIncomingPaymentRemove(this)">
                                     <i class="fa fa-trash" aria-hidden="true"></i>
                                 </button>
                             </td>
@@ -312,8 +312,8 @@
                     </td>
                     <td scope="row">
                             @Html.HiddenFor(m => m.outgoing_payments[i].ID)
-                            @Html.Hidden("outgoing_payment.Index", i)
-                        <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
+                            @Html.Hidden("outgoing_payments.Index", i)
+                        <button type="button" class="btn btn-secondary" onclick="formOutgoingPaymentRemove(this)">
                             <i class="fa fa-trash" aria-hidden="true"></i>
                         </button>
                     </td>
@@ -342,7 +342,7 @@
                     @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "amount", @onchange = "UpdateOutgoingPaymentTotals(this)" })
                 </td>
                 <td scope="row">
-                    <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
+                        <button type="button" class="btn btn-secondary" onclick="formOutgoingPaymentRemove(this)">
                         <i class="fa fa-trash" aria-hidden="true"></i>
                     </button>
                 </td>
@@ -472,14 +472,14 @@
 <script>
 
     $(function () {
-        $('#update').initAsToggleForm(false);
-        $('#subtypes').select2();
-
+            $('#subtypes').select2();
+            $('#update').initAsToggleForm(false);
+        
         var $btnAddDiscount = $('#change-company');
         $btnAddDiscount.on('modal-success', (evt, $formTarget, data) => {
-            console.log($formTarget.find('#persona_name'))
+            console.log($formTarget.find('#contact_name'))
             console.log(data.company_id)
-            UpdatePersona($formTarget.find('#persona_name'), data.company_id)
+            UpdatePersona($formTarget.find('#contact_name'), data.company_id)
         });
 
         let btnRenew = document.getElementById('renew_project');
@@ -548,11 +548,67 @@
             });
         }
 
-    var total_income_amount = @Model.total_income_amount;
+    function formIncomingPaymentRemove(element) {
+            let $ele = $(element);
+            let event = $.Event('form-group-remove');
+            var $group = formGroupGetFromChild($ele);
+            $group.trigger(event);
 
+            if (event.isDefaultPrevented()) {
+                return false;    // if default is prevented, then form group doesn't get removed
+            }
+
+            $parent = $group.parent();
+
+            // check if this group came from the server
+            var prefix = formGroupGetPrefix($group);
+            if (prefix != null) {
+                var id = $group.find(`[name="${prefix}.ID"]`);
+                if (id != null && id.length > 0) {
+                    $group.prepend(`<input type="hidden" name="${prefix}.Deleted" value="true" />`);
+                    $group.hide();
+                    UpdateIncomingPaymentTotals(element);
+                    return;
+                }
+            }
+            $group.trigger('form-group-removed');
+            $group.remove();
+            UpdateIncomingPaymentTotals(element);
+        }
+
+        function formOutgoingPaymentRemove(element) {
+            let $ele = $(element);
+            let event = $.Event('form-group-remove');
+            var $group = formGroupGetFromChild($ele);
+            $group.trigger(event);
+
+            if (event.isDefaultPrevented()) {
+                return false;    // if default is prevented, then form group doesn't get removed
+            }
+
+            $parent = $group.parent();
+            console.log($group);
+            // check if this group came from the server
+            var prefix = formGroupGetPrefix($group);
+            if (prefix != null) {
+                var id = $group.find(`[name="${prefix}.ID"]`);
+                if (id != null && id.length > 0) {
+                    $group.prepend(`<input type="hidden" name="${prefix}.Deleted" value="true" />`);
+                    $group.hide();
+                    UpdateOutgoingPaymentTotals(element);
+                    return;
+                }
+            }
+
+            $group.trigger('form-group-removed');
+            $group.remove();
+            UpdateOutgoingPaymentTotals(element);
+        }
+
+    var total_income_amount = @Model.total_income_amount;
     function UpdateIncomingPaymentTotals(_this) {
         private_total_income_amount = 0;
-        var t = $('[data-form-group=incoming_payments]').not('.d-none').find('[data-form-group-subname=amount]')
+            var t = $('[data-form-group=incoming_payments]:visible').not('.d-none').find('[data-form-group-subname=amount]')
         t.each(function(index, value)
             {
                 private_total_income_amount += parseInt(t[index].value);
@@ -564,11 +620,9 @@
     }
 
     var total_pay_amount = @Model.total_pay_amount;
-
     function UpdateOutgoingPaymentTotals(_this) {
         private_total_pay_amount = 0;
-
-        var t = $('[data-form-group=outgoing_payments]').not('.d-none').find('[data-form-group-subname=amount]')
+        var t = $('[data-form-group=outgoing_payments]:visible').not('.d-none').find('[data-form-group-subname=amount]')
         t.each(function(index, value)
             {
                 private_total_pay_amount += parseInt(t[index].value);
