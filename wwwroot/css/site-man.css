@@ -394,28 +394,19 @@ input[type="checkbox"].toggle:checked:after {
     font-weight: bolder;
 }
 
-.form-editmode .form-edit-hide {
-    display: none;
-}
-
-.form-viewmode .form-view-hide {
-    display: none;
-}
-
-.form-viewmode :not(.form-check-alwaysshow) input[type="checkbox"]:not(:checked),
-.form-viewmode :not(.form-check-alwaysshow) input[type="checkbox"]:not(:checked):not(.form-check-alwaysshow) + label,
-.form-viewmode :not(.form-check-alwaysshow) input[type="radio"]:not(:checked),
-.form-viewmode :not(.form-check-alwaysshow) input[type="radio"]:not(:checked):not(.form-check-alwaysshow) + label {
+.form-viewmode input[type=submit]:not(.form-view-show),
+.form-viewmode input[type=reset]:not(.form-view-show),
+.form-viewmode button:not(.form-view-show),
+.form-viewmode .btn:not(.form-view-show),
+.form-viewmode .form-check:not(.form-check-alwaysshow):has(input[type="checkbox"]:not(:checked)),
+.form-viewmode .form-check:not(.form-check-alwaysshow) input[type="checkbox"]:not(:checked):not(.form-check-alwaysshow) + label,
+.form-viewmode .form-check:not(.form-check-alwaysshow):has(input[type="radio"]:not(:checked)),
+.form-viewmode .form-check:not(.form-check-alwaysshow) input[type="radio"]:not(:checked):not(.form-check-alwaysshow) + label {
     display: none;
 }
 
 .form-viewmode .form-check-input:disabled ~ .form-check-label, .form-check-input[disabled] ~ .form-check-label {
     opacity: 100%;
-}
-
-.form-viewmode .form-select {
-    background: none;
-    border: none;
 }
 
 .form-viewmode .form-label {
@@ -424,9 +415,47 @@ input[type="checkbox"].toggle:checked:after {
     margin-bottom: 0em;
 }
 
-.form-viewmode .input-group-text {
+.form-viewmode .form-select:not(.form-view-enable),
+.form-viewmode .input-group-text:not(.form-view-enable),
+.form-viewmode .form-control:not(.form-view-enable) {
     background: none;
     border: none;
+}
+
+.form-viewmode .select2-selection:not(.form-view-enable) {
+    background-color: #00000000 !important;
+    border: none !important;
+}
+
+.form-viewmode .form-view-hide,
+.form-viewmode .cke_top:not(.form-view-enable) {
+    display: none;
+}
+
+.form-viewmode .form-view-show {
+    display: block;
+}
+
+.form-viewmode .form-view-inline:not(.form-view-hide) {
+    display: inline-block;
+    margin-right: 1rem;
+}
+
+.form-editmode .cke_top.form-edit-disable {
+    display: none;
+}
+
+.form-editmode .form-edit-hide {
+    display: none;
+}
+
+.form-editmode .form-edit-show {
+    display: block;
+}
+
+.form-editmode .form-edit-inline:not(.form-edit-hide) {
+    display: inline-block;
+    margin-right: 1rem;
 }
 
 .form-label {

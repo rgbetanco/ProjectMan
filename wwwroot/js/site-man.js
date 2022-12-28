@@ -312,14 +312,19 @@ jQuery.fn.extend({
     },
 
     // loads selection data from the server via POST
+    // the server returns an JSON array of items in the form:
+    // { text: "xxx", value: "xxx", data: xxx (optional) }
     loadSelect: function (url, data, options) {
 
         if ( !isDefined(options) )
             options = {};
 
         let $this = this;
-        let waiting = $('<option></option').val('').text("請稍後...");
-        $this.empty().append(waiting).show();
+        let $waiting = $('<option/>', {
+            text: "請稍後...",
+            value: ''
+        })
+        $this.empty().append($waiting).show();
 
         $.ajax({
             url: url,
@@ -327,20 +332,26 @@ jQuery.fn.extend({
             cache: false,
             type: "POST",
             success: function (data) {
-                var markups = $(document.createDocumentFragment());
+                var $markups = $(document.createDocumentFragment());
 
                 if (options.blankOption) {
-                    markups.append($('<option></option').val('').text(options.blankOption) );
+                    $markups.append($('<option/>', {
+                        text: options.blankOption,
+                        value: ''
+                    }))
                 }
 
                 for (var x = 0; x < data.length; x++) {
-                    markups.append($('<option></option').val(data[x].value).text(data[x].text));
+                    $markups.append($('<option/>', data[x]))
                 }
-                $this.empty().append(markups);
+                $this.empty().append($markups)
             },
             error: function (xhr, status, error) {
-                let waiting = $('<option></option').val('').text(`錯誤 ${xhr.responseText}`);
-                $this.empty().append(waiting).show();
+                let $waiting = $('<option/>', {
+                    text: `錯誤 ${xhr.responseText}`,
+                    value: ''
+                })
+                $this.empty().append($waiting).show();
             }
         });
     }
@@ -819,64 +830,139 @@ jQuery.fn.extend({
         $f.enableForm(enableNow);
     },
 
+    // toggles a form between view and edit mode
+    // 1. data-enable-button should be set to the ID of the button for enabling edit mode
+    // 2. view mode:
+    //    - form will be marked with the form-viewmode class
+    //    - controls marked with form-view-enable will be enabled
+    //    - controls that aren't marked with form-view-enable will be disabled
+    //    - controls that aren't marked with either form-view-enable or form-view-disable will be disabled
+    //    - elements that are marked with form-view-hide will be hidden
+    //    - elements that are marked with form-view-show will be set to block display mode
+    //    - elements that are marked with form-view-inline will be set to inline-block display mode
+    //    - ckeditor's toolbar will be disabled if form-view-enable is not set
+    // 3. edit mode:
+    //    - form will be marked with the form-editmode class
+    //    - controls marked with form-edit-disable will be disabled
+    //    - controls marked with form-edit-enable will be enabled
+    //    - controls that aren't marked by either form-edit-disable or form-edit-enable will use its original status when page was loaded
+    //    - elements that are marked with form-edit-hide will be hidden
+    //    - elements that are marked with form-edit-show will be set to block display mode
+    //    - elements that are marked with form-edit-inline will be set to inline-block display mode
+    //    - ckeditor's toolbar will be disabled if form-edit-disable is set
     enableForm: function (enable) {
-        let f = this;
-        let $t = f.find('table[data-form-table-group]');
+        let $f = this;
 
-        $(f.data('enable-button'))
+        // enable/disable view/edit toggle button
+        $($f.data('enable-button'))
             .prop("disabled", enable);
 
-        f.find(".btn").prop("disabled", !enable);
-        f.find(".form-select").prop("disabled", !enable);
+        // edit mode:
+        // enable controls that don't have form-show-enable/form-show-disable
+        // enable !form-edit-disable or form-edit-enable
+        // disable form-edit-disable
 
-        let $fc = f.find(".form-check");
-        if (enable) {
-            f.find(".btn").show();
-            f.addClass('form-editmode');
-            f.removeClass('form-viewmode');
+        // view mode:
+        // enable !form-view-disable or form-view-enable
+        // disable form-view-disable
 
-            f.find(".form-control-plaintext")
-                .removeClass("form-control-plaintext")
-                .addClass("form-control")
-                .prop("readonly", false);
+        let enableClass = enable ? '.form-edit-enable' : '.form-view-enable';
+        let disableClass = enable ? '.form-edit-disable' : '.form-view-disable';
+        let _updateEnableState = function () {
+            if (!this.hasAttribute('data-enablevalue-orig')) {
+                this.setAttribute('data-enablevalue-orig', this.disabled)
+            }
 
-            $fc.show();
-            $fc.find(":checkbox,:radio").prop("disabled", false);
-            $fc.removeClass("form-check-inline");
+            let cl = this.classList
+            if (cl.contains(enableClass)) {
+                this.disabled = false
+            } else if (cl.contains(disableClass)) {
+                this.disabled = true
+            } else if (enable) {
+                this.disabled = this.getAttribute('data-enablevalue-orig')==='true'
+            } else {
+                this.disabled = true
+            }
+        };
 
-            // enable editable content
-            $t.find('[data-edittable-orig]').prop('contenteditable', true);
-        } else {
-            f.find(".btn").hide();
-            f.addClass('form-viewmode');
-            f.removeClass('form-editmode');
-
-            f.find(".form-control")
-                .addClass("form-control-plaintext")
-                .removeClass("form-control")
-                .prop("readonly", true);
-
-            f.find(".form-check:has(:checkbox:not(:checked),:radio:not(:checked)):not(.form-check-alwaysshow)").hide();
-            $fc.find(":checkbox,:radio").prop("disabled", true);
-            $fc.addClass("form-check-inline");
-
-            // disable editable content
-            $t.find('[data-edittable-orig]').prop('contenteditable', false);
+        let _setReadonlyState = function () {
+            this.readOnly = true
         }
 
-        f.trigger('form-enable', { enable : enable } );
+        let _unsetReadonlyState = function () {
+            this.readOnly = false
+        }
+
+        let _updateReadOnlyState = function () {
+            if (!this.hasAttribute('data-enablevalue-orig')) {
+                this.setAttribute('data-enablevalue-orig', this.readOnly)
+            }
+
+            let cl = this.classList
+            if (cl.contains(enableClass)) {
+                _unsetReadonlyState.call(this)
+            } else if (cl.contains(disableClass)) {
+                _setReadonlyState.call(this)
+            } else if (enable) {
+                if (this.getAttribute('data-enablevalue-orig') === 'true') {
+                    _setReadonlyState.call(this)
+                } else {
+                    _unsetReadonlyState.call(this)
+                }
+            } else {
+                _setReadonlyState.call(this)
+            }
+        };
+
+        let _updateContentEditableState = function () {
+            if (!this.hasAttribute('data-enablevalue-orig')) {
+                this.setAttribute('data-enablevalue-orig', this.contentEditable)
+            }
+
+            let cl = this.classList
+            if (cl.contains(enableClass)) {
+                this.contentEditable = true
+            } else if (cl.contains(disableClass)) {
+                this.contentEditable = false
+            } else if (enable) {
+                this.contentEditable = this.getAttribute('data-enablevalue-orig') === 'true'
+            } else {
+                this.contentEditable = false
+            }
+        };
+
+        $f.find(".btn,.form-select").each( _updateEnableState )
+
+        let $fc = $f.find(".form-check");
+        $fc.find(":checkbox,:radio").each(_updateEnableState)
+
+        $f.find('.form-control').each(_updateReadOnlyState)
+
+        if (enable) {
+            $f.addClass('form-editmode');
+            $f.removeClass('form-viewmode');
+        } else {
+            $f.addClass('form-viewmode');
+            $f.removeClass('form-editmode');
+        }
+
+        // enable/disable editable table content
+        let $t = $f.find('table[data-form-table-group]');
+        $t.find('[data-edittable-orig]').each(_updateContentEditableState)
+
+        $f.trigger('form-enable', { enable : enable } );
     },
 
     initFormGroupResetButton: function () {
-        let f = this;
-        f.find('table[data-form-table-group]').find('[contenteditable]').each(function () {
+        let $f = this;
+        $f.find('table[data-form-table-group]').find('[contenteditable]').each(function () {
             let $this = $(this);
             $this.attr('data-edittable-orig', $this.text());
         });
 
-        f.on("reset", function () {
+        $f.on("reset", function () {
                 // find all elements with data-form-group in the form
-                var group = f.find("[data-form-group]");
+                var group = $f.find("[data-form-group]");
 
                 group.each(function (idx) {
                     var g = $(this);
@@ -903,7 +989,7 @@ jQuery.fn.extend({
                 });
 
                 // handle table reset
-                f.find('table[data-form-table-group]').find('[data-edittable-orig]').each(function () {
+                $f.find('table[data-form-table-group]').find('[data-edittable-orig]').each(function () {
                     let $this = $(this);
                     $this.text( $this.data('edittable-orig') );
                 });

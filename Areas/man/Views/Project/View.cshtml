@@ -141,13 +141,13 @@
                     {
                         <tr data-form-group="timelines">
                             <td scope="row">
-                                @Html.TextBoxFor(m => m.timelines[i].due_date, new { @class = "form-control", @data_form_group_subname = "due_date", @required="required" })
+                                @Html.LocalDateTimeInputFor(m => m.timelines[i].due_date, new { @class = "form-control", @data_form_group_subname = "due_date", @required="required" })
                             </td>
                             <td scope="row">
                                 @Html.TextBoxFor(m => m.timelines[i].desc, new { @class = "form-control", @data_form_group_subname = "desc" })
                             </td>
                             <td scope="row">
-                                @Html.TextBoxFor(m => m.timelines[i].complete_date, new { @class = "form-control", @data_form_group_subname = "complete_date" })
+                            @Html.LocalDateTimeInputFor(m => m.timelines[i].complete_date, new { @class = "form-control", @data_form_group_subname = "complete_date" })
                             </td>
                             <td scope="row">
                                 @Html.HiddenFor(m => m.timelines[i].ID)
@@ -246,12 +246,15 @@
                         <tr>
                             <td>
                                 <button class="btn btn-secondary" type="button" data-form-group-target="incoming_payments">+ 新增</button>
-                            </td
+                            </td>
                             <th class="text-end">
-                                @Html.LabelFor(m => m.total_income_amount, new { @class = "form-label"})
+                                @Html.DisplayNameFor(m => m.total_income_amount)
                             </th>
                             <td>
-                                $ @Html.TextBoxFor(m => m.total_income_amount, new { @class = "form-control form-text", @readonly = true})
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    @Html.TextBoxFor(m => m.total_income_amount, new { @class = "form-control", @readonly = true})
+                                </div>
                             </td>
                         </tr>
                     </tfoot>
@@ -334,10 +337,13 @@
                         <button class="btn btn-secondary" type="button" data-form-group-target="outgoing_payments">+ 新增</button>
                     </td>
                     <th class="text-end">
-                        @Html.LabelFor(m => m.total_pay_amount, new { @class = "form-label"})
+                        @Html.DisplayNameFor(m => m.total_pay_amount)
                     </th>
                     <td>
-                        $ @Html.TextBoxFor(m => m.total_pay_amount, new { @class = "form-control form-text", @readonly = true})
+                        <div class="input-group">
+                          <span class="input-group-text">$</span>
+                          @Html.TextBoxFor(m => m.total_pay_amount, new { @class = "form-control", @readonly = true})
+                        </div>
                     </td>
                 </tr>
                 <tr>
@@ -345,10 +351,13 @@
 
                     </td>
                     <th class="text-end">
-                        @Html.LabelFor(m => m.net_income, new { @class = "form-label"})
+                        @Html.DisplayNameFor(m => m.net_income)
                     </th>
                     <td>
-                        $ @Html.TextBoxFor(m => m.net_income, new { @class = "form-control form-text", @readonly = true})
+                        <div class="input-group">
+                          <span class="input-group-text">$</span>
+                          @Html.TextBoxFor(m => m.net_income, new { @class = "form-control", @readonly = true})
+                        </div>
                     </td>
                 </tr>
             </tfoot>
@@ -453,7 +462,7 @@
 
     $(function () {
         $('#subtypes').select2();
-        //$('#update').initAsToggleForm(false);
+        $('#update').initAsToggleForm(false);
 
         var $btnAddDiscount = $('#change-company');
         $btnAddDiscount.on('modal-success', (evt, $formTarget, data) => {
@@ -480,29 +489,29 @@
 
     })
 
-    $(function () {
-        var form = $('#update');
-        form.initAsAjaxForm({
-            success: function (data) {
-                var result = createErrorList(data);
-                if (result == null) {
-                    window.history.back();
-                } else {
-                    var alert = form.find(".alert");
-                    alert.html(result);
-                    alert.removeClass('d-none');
-                }
-            },
-            error: function (xhr, textStatus, errorThrown) {
-                var alert = form.find(".alert");
-                alert.text(AjaxErrorToString(xhr, textStatus, errorThrown));
-                alert.removeClass('d-none');
-            },
-            validate: function () {
-                return null
-            }
-        });
-    })
+    //$(function () {
+    //    var form = $('#update');
+    //    form.initAsAjaxForm({
+    //        success: function (data) {
+    //            var result = createErrorList(data);
+    //            if (result == null) {
+    //                window.history.back();
+    //            } else {
+    //                var alert = form.find(".alert");
+    //                alert.html(result);
+    //                alert.removeClass('d-none');
+    //            }
+    //        },
+    //        error: function (xhr, textStatus, errorThrown) {
+    //            var alert = form.find(".alert");
+    //            alert.text(AjaxErrorToString(xhr, textStatus, errorThrown));
+    //            alert.removeClass('d-none');
+    //        },
+    //        validate: function () {
+    //            return null
+    //        }
+    //    });
+    //})
 
     function UpdateBrandModelList(_this) 
     {

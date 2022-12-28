@@ -211,10 +211,13 @@
                         <button class="btn btn-secondary" type="button" data-form-group-target="incoming_payments">+新增</button>
                     </td>
                     <th class="text-end">
-                        @Html.LabelFor(m => m.total_income_amount, new { @class = "form-label"})
+                        @Html.DisplayNameFor(m => m.total_income_amount)
                     </th>
                     <td>
-                        $ @Html.TextBoxFor(m => m.total_income_amount, new { @class = "form-control form-text", @readonly = true})
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            @Html.TextBoxFor(m => m.total_income_amount, new { @class = "form-control", @readonly = true})
+                        </div>
                     </td>
               </tr>
             </tfoot>
@@ -265,10 +268,13 @@
                         <button class="btn btn-secondary" type="button" data-form-group-target="outgoing_payments">+新增</button>
                     </td>
                     <th class="text-end">
-                        @Html.LabelFor(m => m.total_pay_amount, new { @class = "form-label"})
+                        @Html.DisplayNameFor(m => m.total_pay_amount)
                     </th>
                     <td>
-                        $ @Html.TextBoxFor(m => m.total_pay_amount, new { @class = "form-control form-text", @readonly = true})
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            @Html.TextBoxFor(m => m.total_pay_amount, new { @class = "form-control", @readonly = true})
+                        </div>
                     </td>
                 </tr>
                 <tr>
@@ -276,10 +282,13 @@
 
                     </td>
                     <th class="text-end">
-                        @Html.LabelFor(m => m.net_income, new { @class = "form-label"})
+                        @Html.DisplayNameFor(m => m.net_income)
                     </th>
                     <td>
-                        $ @Html.TextBoxFor(m => m.net_income, new { @class = "form-control form-text", @readonly = true})
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            @Html.TextBoxFor(m => m.net_income, new { @class = "form-control", @readonly = true})
+                        </div>
                     </td>
                 </tr>
             </tfoot>

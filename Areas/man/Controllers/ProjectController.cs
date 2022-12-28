@@ -134,7 +134,7 @@ namespace projectman.Areas.Man.Controllers
                 number = r.number,
                 name = r.name,
                 remarks = r.remarks,
-                nextInvoice = String.IsNullOrEmpty(_nextInvoice.FirstOrDefault(a => a.project_id == r.ID).due_date.ToString()) ? "沒有" : _nextInvoice.FirstOrDefault(a => a.project_id == r.ID).due_date.ToShortDateString(),
+                nextInvoice = String.IsNullOrEmpty(_nextInvoice.FirstOrDefault(a => a.project_id == r.ID).due_date.ToString()) ? "無" : _nextInvoice.FirstOrDefault(a => a.project_id == r.ID).due_date.ToShortDateString(),
             });
         }
 
@@ -150,7 +150,7 @@ namespace projectman.Areas.Man.Controllers
                 number = r.number,
                 name = r.name,
                 remarks = r.remarks,
-                nextInvoice = String.IsNullOrEmpty(_nextInvoice.FirstOrDefault(a => a.project_id == r.ID).due_date.ToString()) ? "沒有" : _nextInvoice.FirstOrDefault(a => a.project_id == r.ID).due_date.ToShortDateString(),
+                nextInvoice = String.IsNullOrEmpty(_nextInvoice.FirstOrDefault(a => a.project_id == r.ID).due_date.ToString()) ? "無" : _nextInvoice.FirstOrDefault(a => a.project_id == r.ID).due_date.ToShortDateString(),
                 item = String.IsNullOrEmpty(_nextInvoice.FirstOrDefault(a => a.project_id == r.ID).item) ? "沒有" : _nextInvoice.FirstOrDefault(a => a.project_id == r.ID).item
             });
         }
