@@ -12,6 +12,7 @@ namespace projectman.Repositories
         Task<Contact> Get(long ID, params string[] includeFields);
         Task<ContactCompany> CreateContactCompany(ContactCompany u);
         IQueryable<CompanyContactsViewModel> GetCompanyContacts(long comp_id);
+        IQueryable<CompanyContactsViewModel> GetContacts();
         string GetCompanyName(long company_id);
         bool Del(Contact s);
     }

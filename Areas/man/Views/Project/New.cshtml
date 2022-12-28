@@ -152,7 +152,7 @@
                             @Html.TextBox("temp", "", new { @type="date", @class = "form-control", @data_form_group_subname = "complete_date" })
                         </td>
                         <td scope="row">
-                            <button type="button" class="btn btn-secondary btn-delete">
+                        <button type="button" class="btn btn-secondary btn-delete">
                                 <i class="fa fa-trash" aria-hidden="true"></i>
                             </button>
                         </td>
@@ -177,7 +177,9 @@
                     <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().item, new { @class = "form-label" })</th>
                     <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().amount, new { @class = "form-label" })</th>
                     <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().orderslip_number, new { @class = "form-label" })</th>
+                    <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().orderslip_date, new { @class = "form-label" })</th>
                     <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().invoice_number, new { @class = "form-label" })</th>
+                    <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().invoice_date, new { @class = "form-label" })</th>
                     <th scope="col">功能</th>
                 </tr>
             </thead>
@@ -196,10 +198,16 @@
                         @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "orderslip_number" })
                     </td>
                     <td scope="row">
+                        @Html.TextBox("temp", "", new { @type="date", @class = "form-control", @data_form_group_subname = "orderslip_date" })
+                    </td>
+                    <td scope="row">
                         @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "invoice_number" })
                     </td>
                     <td scope="row">
-                        <button type="button" class="btn btn-secondary btn-delete">
+                        @Html.TextBox("temp", "", new { @type="date", @class = "form-control", @data_form_group_subname = "invoice_date" })
+                    </td>
+                    <td scope="row">
+                        <button type="button" class="btn btn-secondary" onclick="formIncomingPaymentRemove(this)">
                             <i class="fa fa-trash" aria-hidden="true"></i>
                         </button>
                     </td>
@@ -256,7 +264,7 @@
                         @Html.TextBox("temp","", new { @class = "form-control", @data_form_group_subname = "amount", @onchange = "UpdateOutgoingPaymentTotals(this)" })
                     </td>
                     <td scope="row">
-                        <button type="button" class="btn btn-secondary btn-delete">
+                        <button type="button" class="btn btn-secondary" onclick="formOutgoingPaymentRemove(this)">
                             <i class="fa fa-trash" aria-hidden="true"></i>
                         </button>
                     </td>
@@ -347,7 +355,6 @@
             </tfoot>
         </table>
 
-
     </form>
         
 </div>
@@ -367,8 +374,6 @@
 
             var $btnAddDiscount = $('#change-company');
             $btnAddDiscount.on('modal-success', (evt, $formTarget, data) => {
-                console.log($formTarget.find('#contact_name'))
-                console.log(data.company_id)
                 UpdatePersona($formTarget.find('#contact_name'), data.company_id)
             });
 
@@ -395,6 +400,64 @@
             });
         });
 
+        function formIncomingPaymentRemove(element) {
+            let $ele = $(element);
+            let event = $.Event('form-group-remove');
+            var $group = formGroupGetFromChild($ele);
+            $group.trigger(event);
+
+            if (event.isDefaultPrevented()) {
+                return false;    // if default is prevented, then form group doesn't get removed
+            }
+
+            $parent = $group.parent();
+
+            // check if this group came from the server
+            var prefix = formGroupGetPrefix($group);
+            if (prefix != null) {
+                var id = $group.find(`[name="${prefix}.ID"]`);
+                if (id != null && id.length > 0) {
+                    $group.prepend(`<input type="hidden" name="${prefix}.Deleted" value="true" />`);
+                    $group.hide();
+                    return;
+                }
+            }
+
+            $group.trigger('form-group-removed');
+            $group.remove();
+            UpdateIncomingPaymentTotals(element);
+
+        }
+
+        function formOutgoingPaymentRemove(element) {
+            let $ele = $(element);
+            let event = $.Event('form-group-remove');
+            var $group = formGroupGetFromChild($ele);
+            $group.trigger(event);
+
+            if (event.isDefaultPrevented()) {
+                return false;    // if default is prevented, then form group doesn't get removed
+            }
+
+            $parent = $group.parent();
+
+            // check if this group came from the server
+            var prefix = formGroupGetPrefix($group);
+            if (prefix != null) {
+                var id = $group.find(`[name="${prefix}.ID"]`);
+                if (id != null && id.length > 0) {
+                    $group.prepend(`<input type="hidden" name="${prefix}.Deleted" value="true" />`);
+                    $group.hide();
+                    return;
+                }
+            }
+
+            $group.trigger('form-group-removed');
+            $group.remove();
+            UpdateOutgoingPaymentTotals(element);
+
+        }
+
         var total_income_amount = 0;
         function UpdateIncomingPaymentTotals(_this) {
             total_income_amount = 0;
@@ -413,7 +476,7 @@
         function UpdateOutgoingPaymentTotals(_this) {
             total_pay_amount = 0;
             var t = $('input[name="outgoing_payments.Index"]')
-            console.log(t[0].value);
+            
             t.each(function()
                 {
                     var temp = $('input[name="outgoing_payments['+this.value+'].amount"]')

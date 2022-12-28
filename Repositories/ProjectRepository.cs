@@ -76,9 +76,16 @@ namespace projectman.Repositories
             return _context.Projects.AsQueryable();
         }
 
-        public IQueryable<Project> GetAllProject()
+        public IQueryable<Project> GetAllProject()  
         {
-            return _context.Projects.Include(m => m.incoming_payments.OrderByDescending(m => m.due_date)).OrderBy(m => m.starting_datetime);
+            var t = _context.Projects
+                .Include(m => m.incoming_payments
+                    .Where(n => n.due_date <= DateTime.Now.AddMonths(1))
+                    .Where(n => string.IsNullOrWhiteSpace(n.invoice_number) || string.IsNullOrWhiteSpace(n.orderslip_number)))
+                .Include(m => m.timelines
+                    .Where(n => n.due_date <= DateTime.Now.AddMonths(1))
+                    .Where(n => string.IsNullOrWhiteSpace(n.complete_date.ToString())));
+            return t;
         }
 
         public async Task<Project> CreateProject(Project u)

@@ -74,6 +74,12 @@ namespace projectman.Repositories
             return q;
         }
 
+        public IQueryable<CompanyContactsViewModel> GetContacts()
+        {
+            var q = (from pc in _context.ContactCompanies join p in _context.Contacts on pc.contact_id equals p.ID select new CompanyContactsViewModel { ID = p.ID, name = p.name, job_title = pc.job_title, phone = p.phones.Where(m => m.is_default == true).FirstOrDefault().number }).AsNoTracking();
+            return q;
+        }
+
         public bool Del(Contact s)
         {
             _context.Contacts.Remove(s);

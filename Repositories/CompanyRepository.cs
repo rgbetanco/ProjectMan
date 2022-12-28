@@ -32,9 +32,13 @@ namespace projectman.Repositories
             return _context.Companies;
         }
 
-        public IQueryable<Company> FindCompanies(string keyword = null)
+        public IQueryable<Company> FindCompanies(string keyword = null, bool showIndividual = false)
         {
-            var result = _context.Companies.AsQueryable();
+            var result = _context.Companies.AsQueryable().Where(n => n.ID > 1);
+            if (showIndividual)
+            {
+                result = _context.Companies.AsQueryable();
+            }
 
             if (!string.IsNullOrWhiteSpace(keyword))
             {

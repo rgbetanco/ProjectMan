@@ -32,7 +32,7 @@ namespace projectman.Repositories
                 result = result.Where(u => u.brand_id == brand);
             }
 
-            if (category != "-1")
+            if (!string.IsNullOrWhiteSpace(category))
             {
                 //result = result.Where(u => u.category == (ProductCategory)Enum.Parse(typeof(ProductCategory), category));
                 result = result.Where(u => u.category == (ProductCategory)Enum.Parse(typeof(ProductCategory), category));

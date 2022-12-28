@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using CSHelper.Extensions;
 using CSHelper.Authorization;
+using System.Data;
 
 namespace projectman.Areas.man.Controllers
 {
@@ -149,9 +150,14 @@ namespace projectman.Areas.man.Controllers
             return PartialView("_PickerPopup");
         }
 
+        public IActionResult PickerWithoutIndividual()
+        {
+            return PartialView("_PickerPopupWithoutIndividual");
+        }
+
         public async Task<IActionResult> PickerQuery(QueryVM request)
         {
-            var result = _comp.FindCompanies(request.search);
+            var result = _comp.FindCompanies(request.search, request.showIndividual);
 
             return await GetTableReplyAsync(result, request, null, r => new
             {
