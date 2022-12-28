@@ -277,7 +277,7 @@ namespace projectman.Areas.Man.Controllers
 
         public async Task<IActionResult> View(long ID)
         {
-            Project project = await _proj.GetProject(ID, "products", "products.product", "products.product.brand","incoming_payments", "outgoing_payments", "subtypes", "timelines");
+            Project project = await _proj.GetProject(ID, "products", "products.product", "products.product.brand","incoming_payments", "outgoing_payments", "outgoing_payments.company", "company", "subtypes", "timelines", "user", "contact");
 
             ViewData["group"] = GetGroupList();
             ViewData["internal_company"] = GetInternalCompanyList();
@@ -291,22 +291,8 @@ namespace projectman.Areas.Man.Controllers
             if (project.company_id != null)
             {
                 ViewData["personas"] = GetCompanyContactList((long)project.company_id);
-                project.company = await _comp.GetCompany((long)project.company_id);   
             }
 
-            foreach(ProjectOutgoingPayment m in project.outgoing_payments)
-            {
-                m.company = await _comp.GetCompany((long)m.company_id);
-            }
-            
-            if (project.user_id != null)
-            {
-                project.user = await _user.Get((long)project.user_id);
-            }
-            if (project.contact_id != null)
-            {
-                project.contact = await _persona.Get((long)project.contact_id);
-            }
             return View(project);
         }
 

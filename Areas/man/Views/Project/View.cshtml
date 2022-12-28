@@ -141,8 +141,8 @@
                     {
                         <tr data-form-group="timelines">
                             <td scope="row">
-                                @Html.LocalDateTimeInputFor(m => m.timelines[i].due_date, new { @class = "form-control", @data_form_group_subname = "due_date", @required="required" })
-                            </td>
+                            @Html.LocalDateTimeInputFor(m => m.timelines[i].due_date, new { @class = "form-control", @data_form_group_subname = "due_date", @required="required" })
+                        </td>
                             <td scope="row">
                                 @Html.TextBoxFor(m => m.timelines[i].desc, new { @class = "form-control", @data_form_group_subname = "desc" })
                             </td>
@@ -160,7 +160,7 @@
                     }
                     <tr class="d-none" data-form-group-start="timelines" data-form-group="timelines">
                         <td scope="row">
-                            @Html.TextBox("temp", DateTime.Now.ToString("yyyy-MM-dd"), new { @type="date", @class = "form-control", @data_form_group_subname = "due_date", @required="required" })
+                            @Html.TextBox("temp", DateTime.Now.ToString("yyyy-MM-dd"), new { @type="date", @class = "form-control", @data_form_group_subname = "due_date" })
                         </td>
                         <td scope="row">
                             @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "desc" })
@@ -191,7 +191,10 @@
                             <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().due_date, new { @class = "form-label form-view-hide" })</th>
                             <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().item, new { @class = "form-label" })</th>
                             <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().amount, new { @class = "form-label" })</th>
+                            <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().orderslip_number, new { @class = "form-label" })</th>
+                            <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().orderslip_date, new { @class = "form-label" })</th>
                             <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().invoice_number, new { @class = "form-label" })</th>
+                            <th scope="col">@Html.LabelFor(m => m.incoming_payments.FirstOrDefault().invoice_date, new { @class = "form-label" })</th>
                             <th scope="col">功能</th>
                         </tr>
                     </thead>
@@ -210,37 +213,54 @@
                                 @Html.TextBoxFor(m => m.incoming_payments[i].amount, new { @class = "form-control", @data_form_group_subname = "amount", @onchange = "UpdateIncomingPaymentTotals(this)" })
                             </td>
                             <td scope="row">
-                                @Html.TextBoxFor(m => m.incoming_payments[i].invoice_number, new { @class = "form-control", @readonly = "readonly", @data_form_group_subname = "invoice_number" })
+                                @Html.TextBoxFor(m => m.incoming_payments[i].orderslip_number, new { @class = "form-control", @data_form_group_subname = "orderslip_number" })
+                            </td>
+                            <td scope="row">
+                                @Html.LocalDateTimeInputFor(m => m.incoming_payments[i].orderslip_date, new { @class = "form-control", @data_form_group_subname = "orderslip_date" })
+                            </td>
+                            <td scope="row">
+                                @Html.TextBoxFor(m => m.incoming_payments[i].invoice_number, new { @class = "form-control", @data_form_group_subname = "invoice_number" })
+                            </td>
+                            <td scope="row">
+                                @Html.LocalDateTimeInputFor(m => m.incoming_payments[i].invoice_date, new { @class = "form-control", @data_form_group_subname = "invoice_date" })
                             </td>
                             <td scope="row">
                                     @Html.HiddenFor(m => m.incoming_payments[i].ID)
                                     @Html.Hidden("incoming_payments.Index", i)
-                                <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
+                            <button type="button" class="btn btn-secondary" onclick="formIncomingPaymentRemove(this)">
                                     <i class="fa fa-trash" aria-hidden="true"></i>
                                 </button>
                             </td>
                         </tr>
                     }
-                    <tr class="d-none" data-form-group-start="incoming_payments" data-form-group="incoming_payments">
-                        <td scope="row">
-                            @Html.Hidden("temp", "", new { @data_form_group_subname = "ID" } )
-                            @Html.TextBox("temp", DateTime.Now.ToString("yyyy-MM-dd"), new { @type="date", @class = "form-control", @data_form_group_subname = "due_date" })
-                        </td>
-                        <td scope="row">
-                            @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "item" })
-                        </td>
-                        <td scope="row">
-                            @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "amount", @onchange = "UpdateIncomingPaymentTotals(this)" })
-                        </td>
-                        <td scope="row">
-                            @Html.TextBox("temp", "", new { @class = "form-control", @readonly = "readonly", @data_form_group_subname = "invoice_number" })
-                        </td>
-                        <td scope="row">
-                            <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
-                                <i class="fa fa-trash" aria-hidden="true"></i>
-                            </button>
-                        </td>
-                    </tr>
+                        <tr class="d-none" data-form-group-start="incoming_payments" data-form-group="incoming_payments">
+                            <td scope="row">
+                                @Html.TextBox("temp", DateTime.Now.ToString("yyyy-MM-dd"), new { @type="date", @class = "form-control", @data_form_group_subname = "due_date" })
+                            </td>
+                            <td scope="row">
+                                @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "item" })
+                            </td>
+                            <td scope="row">
+                                @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "amount", @onchange = "UpdateIncomingPaymentTotals(this)" })
+                            </td>
+                            <td scope="row">
+                                @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "orderslip_number" })
+                            </td>
+                            <td scope="row">
+                                @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "orderslip_date", @type="date" })
+                            </td>
+                            <td scope="row">
+                                @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "invoice_number" })
+                            </td>
+                            <td scope="row">
+                                @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "invoice_date", @type="date" })
+                            </td>
+                            <td scope="row">
+                        <button type="button" class="btn btn-secondary" onclick="formIncomingPaymentRemove(this)">
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
                     </tbody>
                     <tfoot>
                         <tr>
@@ -251,10 +271,10 @@
                                 @Html.DisplayNameFor(m => m.total_income_amount)
                             </th>
                             <td>
-                                <div class="input-group">
-                                    <span class="input-group-text">$</span>
-                                    @Html.TextBoxFor(m => m.total_income_amount, new { @class = "form-control", @readonly = true})
-                                </div>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            @Html.TextBoxFor(m => m.total_income_amount, new { @class = "form-control", @readonly = true})
+                        </div>
                             </td>
                         </tr>
                     </tfoot>
@@ -295,8 +315,8 @@
                     </td>
                     <td scope="row">
                             @Html.HiddenFor(m => m.outgoing_payments[i].ID)
-                            @Html.Hidden("outgoing_payment.Index", i)
-                        <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
+                            @Html.Hidden("outgoing_payments.Index", i)
+                        <button type="button" class="btn btn-secondary" onclick="formOutgoingPaymentRemove(this)">
                             <i class="fa fa-trash" aria-hidden="true"></i>
                         </button>
                     </td>
@@ -325,7 +345,7 @@
                     @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "amount", @onchange = "UpdateOutgoingPaymentTotals(this)" })
                 </td>
                 <td scope="row">
-                    <button type="button" class="btn btn-secondary" onclick="formGroupRemove(this)">
+                        <button type="button" class="btn btn-secondary" onclick="formOutgoingPaymentRemove(this)">
                         <i class="fa fa-trash" aria-hidden="true"></i>
                     </button>
                 </td>
@@ -466,9 +486,9 @@
 
         var $btnAddDiscount = $('#change-company');
         $btnAddDiscount.on('modal-success', (evt, $formTarget, data) => {
-            console.log($formTarget.find('#persona_name'))
+            console.log($formTarget.find('#contact_name'))
             console.log(data.company_id)
-            UpdatePersona($formTarget.find('#persona_name'), data.company_id)
+            UpdatePersona($formTarget.find('#contact_name'), data.company_id)
         });
 
         let btnRenew = document.getElementById('renew_project');
@@ -561,41 +581,94 @@
             });
         }
 
+    function formIncomingPaymentRemove(element) {
+            let $ele = $(element);
+            let event = $.Event('form-group-remove');
+            var $group = formGroupGetFromChild($ele);
+            $group.trigger(event);
+
+            if (event.isDefaultPrevented()) {
+                return false;    // if default is prevented, then form group doesn't get removed
+            }
+
+            $parent = $group.parent();
+
+            // check if this group came from the server
+            var prefix = formGroupGetPrefix($group);
+            if (prefix != null) {
+                var id = $group.find(`[name="${prefix}.ID"]`);
+                if (id != null && id.length > 0) {
+                    $group.prepend(`<input type="hidden" name="${prefix}.Deleted" value="true" />`);
+                    $group.hide();
+                    UpdateIncomingPaymentTotals(element);
+                    return;
+                }
+            }
+            $group.trigger('form-group-removed');
+            $group.remove();
+            UpdateIncomingPaymentTotals(element);
+        }
+
+        function formOutgoingPaymentRemove(element) {
+            let $ele = $(element);
+            let event = $.Event('form-group-remove');
+            var $group = formGroupGetFromChild($ele);
+            $group.trigger(event);
+
+            if (event.isDefaultPrevented()) {
+                return false;    // if default is prevented, then form group doesn't get removed
+            }
+
+            $parent = $group.parent();
+            console.log($group);
+            // check if this group came from the server
+            var prefix = formGroupGetPrefix($group);
+            if (prefix != null) {
+                var id = $group.find(`[name="${prefix}.ID"]`);
+                if (id != null && id.length > 0) {
+                    $group.prepend(`<input type="hidden" name="${prefix}.Deleted" value="true" />`);
+                    $group.hide();
+                    UpdateOutgoingPaymentTotals(element);
+                    return;
+                }
+            }
+
+            $group.trigger('form-group-removed');
+            $group.remove();
+            UpdateOutgoingPaymentTotals(element);
+        }
+
     var total_income_amount = @Model.total_income_amount;
-        function UpdateIncomingPaymentTotals(_this) {
-            total_income_amount = 0;
-            var t = $('input[name="incoming_payments.Index"]')
-            t.each(function()
-                {
-                    var temp = $('input[name="incoming_payments['+this.value+'].amount"]')
-                    total_income_amount += parseInt(temp[0].value);
-                }
-            );
-            $('#total_income_amount').val(total_income_amount);
-            UpdateNetIncome();
-        }
+    function UpdateIncomingPaymentTotals(_this) {
+        private_total_income_amount = 0;
+            var t = $('[data-form-group=incoming_payments]:visible').not('.d-none').find('[data-form-group-subname=amount]')
+        t.each(function(index, value)
+            {
+                private_total_income_amount += parseInt(t[index].value);
+            }
+        );
+        total_income_amount = private_total_income_amount;
+        $('#total_income_amount').val(private_total_income_amount);
+        UpdateNetIncome();
+    }
 
-        var total_pay_amount = @Model.total_pay_amount;
-        function UpdateOutgoingPaymentTotals(_this) {
-            total_pay_amount = 0;
-            var t = $('input[name="outgoing_payments.Index"]')
-            console.log(t[0].value);
-            t.each(function()
-                {
-                    var temp = $('input[name="outgoing_payments['+this.value+'].amount"]')
+    var total_pay_amount = @Model.total_pay_amount;
+    function UpdateOutgoingPaymentTotals(_this) {
+        private_total_pay_amount = 0;
+        var t = $('[data-form-group=outgoing_payments]:visible').not('.d-none').find('[data-form-group-subname=amount]')
+        t.each(function(index, value)
+            {
+                private_total_pay_amount += parseInt(t[index].value);
+            }
+        );
+        total_pay_amount = private_total_pay_amount;
+        $('#total_pay_amount').val(private_total_pay_amount);
+        UpdateNetIncome();
+    }
 
-                    total_pay_amount += parseInt(temp[0].value);
-                }
-            );
-            $('#total_pay_amount').val(total_pay_amount);
-            UpdateNetIncome();
-        }
-
-        function UpdateNetIncome(){
-            console.log("total_income_amount: ", total_income_amount);
-            console.log("total_pay_amount: ", total_pay_amount);
-            $('#net_income').val(total_income_amount - total_pay_amount);
-        }
+    function UpdateNetIncome(){
+        $('#net_income').val(total_income_amount - total_pay_amount);
+    }
 
 </script>
 }
