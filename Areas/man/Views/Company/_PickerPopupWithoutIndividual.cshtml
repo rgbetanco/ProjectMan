@@ -40,10 +40,33 @@
     </div>
     <div class="modal-footer">
         <button type="button" id="picker_list_ok" class="btn btn-secondary" disabled>確定</button>
+        <button class="btn btn-primary" id="add_company" type="button" onclick="openNewWindow()">新增單位</button>
     </div>
 </div>
 <!--Modal Body End-->  
 <script>
+
+    window.addEventListener('message', (event) => {
+        event.preventDefault();
+        if (event.data?.comp) {
+            
+            let $target = $('#add_company');
+            let fncOnClick = dialog => {
+                return {
+                    "company_id": event.data.comp.id,
+                    "company.name": event.data.comp.name,
+                    "var_id": event.data.comp.vatid
+                }
+            }
+            let data = fncOnClick.call($target.closest('.modal'));
+            $target.dismissModal(true, data)
+            
+        }
+    });
+
+    function openNewWindow() {
+        window.open('@HttpUtility.JavaScriptStringEncode(Url.Action("New", "Company"))');
+    }
 
 function updatePickerList(params, options, table) {
     params.append('search', $('#picker_list_keyword').val());

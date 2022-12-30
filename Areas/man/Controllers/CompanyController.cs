@@ -65,7 +65,7 @@ namespace projectman.Areas.man.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("New")]
-        public async Task<IActionResult> NewPost()
+        public async Task<Company> NewPost()
         {
             var m = new Company();
 
@@ -87,7 +87,7 @@ namespace projectman.Areas.man.Controllers
 
             var result = await CommitModel(m);
 
-            return result;
+            return m;
         }
 
         public async Task<IActionResult> Edit(long ID)

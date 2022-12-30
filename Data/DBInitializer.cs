@@ -132,10 +132,10 @@ namespace projectman.Data
                 var companies = new Company[]
                 {
                 new Company{
-                    name = "CompA",
+                    name = "Individual",
                     credit_rating_code = "A",
-                    vatid = "123",
-                    remarks = "Remarks for company A"
+                    vatid = "",
+                    remarks = "Field for companies without a company"
                 },
                 new Company{
                     name = "CompB",

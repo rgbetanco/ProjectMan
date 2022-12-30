@@ -481,6 +481,24 @@
 <script>
 
     $(function () {
+        /*
+        window.addEventListener('message', (event) => {
+            if (event.data?.foo) {
+                var t = $('[data-form-group=outgoing_payments]').not('.d-none').find('[data-form-group-subname="company_id"]')
+                console.log(t);
+                //t.each(function (index, value) {
+                //    t[index].text(event.data.foo.id);
+                //});
+                t.val(event.data.foo.id)
+                var p = $('[data-form-group=outgoing_payments]:visible').not('.d-none').find('[data-form-group-subname="company.name"]')
+                console.log(p)
+                //p.each(function (index, value) {
+                //    p[index].text(event.data.foo.name);
+                //});
+                p.val(event.data.foo.name)
+            }
+        });
+        */
         $('#subtypes').select2();
         $('#update').initAsToggleForm(false);
 
@@ -508,30 +526,6 @@
         });
 
     })
-
-    //$(function () {
-    //    var form = $('#update');
-    //    form.initAsAjaxForm({
-    //        success: function (data) {
-    //            var result = createErrorList(data);
-    //            if (result == null) {
-    //                window.history.back();
-    //            } else {
-    //                var alert = form.find(".alert");
-    //                alert.html(result);
-    //                alert.removeClass('d-none');
-    //            }
-    //        },
-    //        error: function (xhr, textStatus, errorThrown) {
-    //            var alert = form.find(".alert");
-    //            alert.text(AjaxErrorToString(xhr, textStatus, errorThrown));
-    //            alert.removeClass('d-none');
-    //        },
-    //        validate: function () {
-    //            return null
-    //        }
-    //    });
-    //})
 
     function UpdateBrandModelList(_this) 
     {

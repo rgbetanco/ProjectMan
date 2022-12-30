@@ -117,47 +117,9 @@
                     </div>
                 </div>
             </div>
-@*
-            <table class="table mt-4">
-                <thead>
-                    <tr>
-                       <th scope="col">@Html.LabelFor(m => m.persona.FirstOrDefault().persona.name, new { @class = "form-label" })</th>
-                       <th scope="col">@Html.LabelFor(m => m.persona.FirstOrDefault().persona.company.FirstOrDefault().job_title, new { @class = "form-label" })</th>
-                       <th scope="col">@Html.LabelFor(m => m.persona.FirstOrDefault().persona.phone.FirstOrDefault(), new { @class = "form-label" })</th>
-                       <th scope="col">功能</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="d-none" data-form-group-start="Persona" data-form-group="Persona">
-                        @Html.Hidden("temp", "", new { @data_form_group_subname = "persona_id" } )
-                        <td scope="row">
-                            <div class="input-group">
-                                @Html.TextBox("temp", "", new { @class = "form-control", @readonly = "readonly", @data_form_group_subname = "name" })
-                                <button type="button" class="btn btn-secondary btn-modal"
-                                        data-form-group-target="Persona"
-                                        data-url="@Url.Action("Picker", "Persona")"
-                                        data-toggle="modal"
-                                        data-target="#modal-popup">
-                                    <i class="fa fa-pen"></i>
-                                </button>
-                            </div>
-                        </td>
-                        <td>@Html.TextBox("temp", "", new { @class = "form-control", @readonly = "readonly", @data_form_group_subname = "job_title" })</td>
-                        <td>@Html.TextBox("temp", "", new { @class = "form-control", @readonly = "readonly", @data_form_group_subname = "phone" })</td>
-                        <td>
-                            <button type="button" class="btn btn-delete">
-                                <i class="fa fa-trash" aria-hidden="true"></i>
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <button class="btn btn-secondary" type="button" data-form-group-target="member">新增成員</button>
-*@
+
             <div class="alert alert-danger d-none" role="alert">
             </div>
-@*          <br />
-            <br /> *@
             <button type="submit" class="btn btn-primary mb-4 mt-4">新增</button>
     </div>
     </form>
@@ -173,7 +135,9 @@
                 success: function (data) {
                     var result = createErrorList(data);
                     if (result == null) {
+                        window.opener.postMessage({comp: data}, '*');
                         window.history.back();
+                        window.close();
                     } else {
                         var alert = form.find(".alert");
                         alert.html(result);
