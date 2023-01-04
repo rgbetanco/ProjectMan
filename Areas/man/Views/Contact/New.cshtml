@@ -127,11 +127,12 @@
                 </tr>
             </thead>
             <tbody>
+                
                 <tr class="d-none" data-form-group-start="companies" data-form-group="companies">
                     <td scope="row">
                         <div class="input-group">
-                            @Html.Hidden("temp", "", new {  @class = "form-control",  @readonly = "readonly", @data_form_group_subname = "company_id" } )
-                            @Html.TextBox("temp", "", new { @class = "form-control",  @readonly = "readonly", @data_form_group_subname = "company.name" })
+                            @Html.Hidden("temp", ViewData["company_id"], new {  @class = "form-control",  @readonly = "readonly", @data_form_group_subname = "company_id" } )
+                            @Html.TextBox("temp", ViewData["company_name"], new { @class = "form-control",  @readonly = "readonly", @data_form_group_subname = "company.name" })
                             <button type="button" class="btn btn-secondary btn-modal"
                                     data-form-group-target="companies"
                                     data-url="@Url.Action("PickerWithoutIndividual", "Company")"
@@ -187,7 +188,9 @@
                 success: function (data) {
                     var result = createErrorList(data);
                     if (result == null) {
+                        window.opener.postMessage({ contact: data }, '*');
                         window.history.back();
+                        window.close();
                     } else {
                         var alert = form.find(".alert");
                         alert.html(result);

@@ -106,6 +106,7 @@
                     @Html.LabelFor(m => m.contact, new { @class = "form-label" })
                     <div class="input-group">
                         @Html.DropDownListFor(m => m.contact.name, (IEnumerable<SelectListItem>)ViewData["personas"], new { @class = "form-select" })
+                    <button class="btn btn-secondary" id="addContact">+新增</button>
                     </div>
             </div>
         </div>
@@ -198,13 +199,13 @@
                         @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "orderslip_number" })
                     </td>
                     <td scope="row">
-                        @Html.TextBox("temp", "", new { @type="date", @class = "form-control", @data_form_group_subname = "orderslip_date" })
+                        @Html.TextBox("temp", DateTime.Now.ToString("yyyy-MM-dd"), new { @type="date", @class = "form-control", @data_form_group_subname = "orderslip_date" })
                     </td>
                     <td scope="row">
                         @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "invoice_number" })
                     </td>
                     <td scope="row">
-                        @Html.TextBox("temp", "", new { @type="date", @class = "form-control", @data_form_group_subname = "invoice_date" })
+                        @Html.TextBox("temp", DateTime.Now.ToString("yyyy-MM-dd"), new { @type="date", @class = "form-control", @data_form_group_subname = "invoice_date" })
                     </td>
                     <td scope="row">
                         <button type="button" class="btn btn-secondary" onclick="formIncomingPaymentRemove(this)">
@@ -363,6 +364,24 @@
     <script>
         $(function () {
 
+            window.addEventListener('message', (event) => {
+                event.preventDefault();
+                if (event.data?.contact) {
+                    var contact = $('#contact_name');
+                    var company_id = $('#company_id').val();
+                    if(company_id != null){
+                        console.log(event.data.contact);
+                        UpdatePersona(contact, company_id, event.data.contact);
+                    }
+                }
+            });
+
+            $('#addContact').on('click', function (e){
+                e.preventDefault();
+                var company_id = $('#company_id').val();
+                window.open('@HttpUtility.JavaScriptStringEncode(Url.Action("New", "Contact"))?company_id='+company_id);
+            });
+
             $('.js-data-subtype-ajax').select2({
                 ajax: {
                     method: 'POST',
@@ -399,6 +418,11 @@
                 }
             });
         });
+
+        function updateSelectedContact(){
+            const $selected = document.querySelector('#contact_name');
+            $selected.value = "11";
+        }
 
         function formIncomingPaymentRemove(element) {
             let $ele = $(element);
@@ -525,11 +549,11 @@
                 { ID: _prod });
         }
 
-        function UpdatePersona(_persona, _comp) {
+        function UpdatePersona(_persona, _comp, selectedID) {
             var $target = _persona
             $target.loadSelect(
                 '@HttpUtility.JavaScriptStringEncode(Url.Action("ListPersonaPerCompany", "Project"))',
-                { ID: _comp });
+                { ID: _comp, SelectedID: selectedID });
         }
 
         function UpdateModel(_prod, _this)

@@ -17,6 +17,7 @@ using CSHelper.Authorization;
 using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
 using Microsoft.CodeAnalysis.Options;
 using static System.Net.Mime.MediaTypeNames;
+using Microsoft.IdentityModel.Tokens;
 
 namespace projectman.Areas.Man.Controllers
 {
@@ -112,11 +113,11 @@ namespace projectman.Areas.Man.Controllers
             return result;
         }
 
-        protected IEnumerable<SelectListItem> GetCompanyContactList(long comp_id)
+        protected IEnumerable<SelectListItem> GetCompanyContactList(long comp_id, long selectedID)
         {
             if (comp_id == 1)
             {
-                var c = _persona.GetContacts().Select(n => new SelectListItem { Value = n.ID.ToString(), Text = n.name });
+                var c = _persona.GetContacts().Select(n => new SelectListItem { Value = n.ID.ToString(), Text = n.name, Selected = (n.ID == selectedID) ? true : false });
                 if (!c.Any())
                 {
                     c.Append(new SelectListItem { Value = "所有", Text = "所有" });
@@ -124,7 +125,7 @@ namespace projectman.Areas.Man.Controllers
                 return c;
             }
 
-            var r = _persona.GetCompanyContacts(comp_id).Select(n => new SelectListItem { Value = n.ID.ToString(), Text = n.name });
+            var r = _persona.GetCompanyContacts(comp_id).Select(n => new SelectListItem { Value = n.ID.ToString(), Text = n.name, Selected = (n.ID == selectedID) ? true : false });
             if (!r.Any())
             {
                 r.Append(new SelectListItem { Value = "所有", Text = "所有" });
@@ -179,7 +180,7 @@ namespace projectman.Areas.Man.Controllers
                     {
                         project_id = p.ID,
                         project_name = p.name,
-                        entry_name = e.desc,
+                        entry_name = (!e.desc.IsNullOrEmpty())? e.desc : "開立發票",
                         due_date = e.due_date
                     });
                 }
@@ -189,7 +190,7 @@ namespace projectman.Areas.Man.Controllers
                     {
                         project_id = p.ID,
                         project_name = p.name,
-                        entry_name = i.item,
+                        entry_name = (!i.item.IsNullOrEmpty()) ? i.item : "開立發票",
                         due_date = i.due_date
                     });
                 }
@@ -215,7 +216,7 @@ namespace projectman.Areas.Man.Controllers
             ViewData["service_type"] = GetServiceTypeList();
             // generate list of modules for dropdown lists
             ViewData["subtypes"] = GetProjectSubtypeList(a.type);
-            ViewData["personas"] = GetCompanyContactList(-1);
+            ViewData["personas"] = GetCompanyContactList(-1, 0);
 
             a.starting_datetime = DateTime.UtcNow;
             a.ending_datetime = a.starting_datetime.AddMonths(3);
@@ -287,10 +288,10 @@ namespace projectman.Areas.Man.Controllers
             ViewData["subtypes"] = GetSubtypesByCompanyID2(ID);
 
             // generate list of modules for dropdown lists
-            ViewData["personas"] = GetCompanyContactList(-1);
+            ViewData["personas"] = GetCompanyContactList(-1, 0);
             if (project.company_id != null)
             {
-                ViewData["personas"] = GetCompanyContactList((long)project.company_id);
+                ViewData["personas"] = GetCompanyContactList((long)project.company_id, 0);
             }
 
             return View(project);
@@ -358,9 +359,9 @@ namespace projectman.Areas.Man.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public IActionResult ListPersonaPerCompany(long ID)
+        public IActionResult ListPersonaPerCompany(long ID, long SelectedID)
         {
-            return Json(GetCompanyContactList(ID));
+            return Json(GetCompanyContactList(ID, SelectedID));
         }
             
         public IActionResult Dashboard()

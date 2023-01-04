@@ -60,16 +60,25 @@ namespace projectman.Areas.man.Controllers
         }
 
         [HttpGet]
-        public IActionResult New()
+        public async Task<IActionResult> New(long? company_id)
         {
+            ViewData["company_id"] = "";
+            ViewData["company_name"] = "";
+
+            if (company_id.HasValue) {
+                Company comp = await _comp.GetCompany((long)company_id);
+                ViewData["company_id"] = comp.ID;
+                ViewData["company_name"] = comp.name;
+            }
+            
             return View();
         }
         
-        // new category - save
+        // new contact - save
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("New")]
-        public async Task<IActionResult> NewPost()
+        public async Task<long> NewPost()
         {
             var m = new Contact();
 
@@ -89,7 +98,7 @@ namespace projectman.Areas.man.Controllers
             await _persona.Create(m);
             var result = await CommitModel(m);
 
-            return result;
+            return m.ID;
         }
 
         public async Task<IActionResult> Edit(long ID)

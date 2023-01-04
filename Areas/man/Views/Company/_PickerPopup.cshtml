@@ -11,7 +11,6 @@
     <div class="modal-body">
 
         <div class="row py-2">
-
             <div class="col-auto">
                 @Html.AntiForgeryToken()
                 <label for="query_keyword" class="form-label">品名/統一編號/備註</label>
@@ -36,11 +35,14 @@
                 </tr>
             </thead>
         </table>
-
+        <div class="row">
+            <div class="col-6">
+                <button class="btn btn-primary" id="add_company" type="button" onclick="openNewWindow()">新增單位</button>
+            </div>
+        </div>
     </div>
     <div class="modal-footer">
         <button type="button" id="picker_list_ok" class="btn btn-secondary" disabled>確定</button>
-        <button class="btn btn-primary" id="add_company" type="button" onclick="openNewWindow()">新增單位</button>
     </div>
 </div>
 <!--Modal Body End-->  

@@ -103,6 +103,7 @@
                     @Html.LabelFor(m => m.contact.name, new { @class = "form-label"})
                     <div class="input-group">
                         @Html.DropDownListFor(m => m.contact.name, (IEnumerable<SelectListItem>)ViewData["personas"], new { @class = "form-select" })
+                    <button class="btn btn-secondary" id="addContact">+新增</button>
                     </div>
             </div>
         </div>
@@ -247,13 +248,13 @@
                                 @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "orderslip_number" })
                             </td>
                             <td scope="row">
-                                @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "orderslip_date", @type="date" })
+                        @Html.TextBox("temp", DateTime.Now.ToString("yyyy-MM-dd"), new { @class = "form-control", @data_form_group_subname = "orderslip_date", @type="date" })
                             </td>
                             <td scope="row">
                                 @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "invoice_number" })
                             </td>
                             <td scope="row">
-                                @Html.TextBox("temp", "", new { @class = "form-control", @data_form_group_subname = "invoice_date", @type="date" })
+                        @Html.TextBox("temp", DateTime.Now.ToString("yyyy-MM-dd"), new { @class = "form-control", @data_form_group_subname = "invoice_date", @type="date" })
                             </td>
                             <td scope="row">
                         <button type="button" class="btn btn-secondary" onclick="formIncomingPaymentRemove(this)">
@@ -481,24 +482,24 @@
 <script>
 
     $(function () {
-        /*
-        window.addEventListener('message', (event) => {
-            if (event.data?.foo) {
-                var t = $('[data-form-group=outgoing_payments]').not('.d-none').find('[data-form-group-subname="company_id"]')
-                console.log(t);
-                //t.each(function (index, value) {
-                //    t[index].text(event.data.foo.id);
-                //});
-                t.val(event.data.foo.id)
-                var p = $('[data-form-group=outgoing_payments]:visible').not('.d-none').find('[data-form-group-subname="company.name"]')
-                console.log(p)
-                //p.each(function (index, value) {
-                //    p[index].text(event.data.foo.name);
-                //});
-                p.val(event.data.foo.name)
-            }
-        });
-        */
+        
+            window.addEventListener('message', (event) => {
+                event.preventDefault();
+                if (event.data?.contact) {
+                    var contact = $('#contact_name');
+                    var company_id = $('#company_id').val();
+                    if (company_id != null) {
+                        UpdatePersona(contact, company_id, event.data.contact);
+                    }
+                }
+            });
+
+            $('#addContact').on('click', function (e) {
+                e.preventDefault();
+                var company_id = $('#company_id').val();
+                window.open('@HttpUtility.JavaScriptStringEncode(Url.Action("New", "Contact"))?company_id='+company_id);
+            });
+
         $('#subtypes').select2();
         $('#update').initAsToggleForm(false);
 
@@ -543,12 +544,11 @@
             { ID: _prod });
     }
 
-    function UpdatePersona(_persona, _comp)
-    {
+        function UpdatePersona(_persona, _comp, selectedID) {
         var $target = _persona
         $target.loadSelect(
         '@HttpUtility.JavaScriptStringEncode(Url.Action("ListPersonaPerCompany", "Project"))',
-            { ID: _comp });
+                { ID: _comp, SelectedID: selectedID });
     }
 
     function UpdateModel(_prod, _this)

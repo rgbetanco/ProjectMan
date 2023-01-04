@@ -48,13 +48,7 @@
             </div>
 <!-- FOR EACH PHONE -->
             <div class="row mt-4">
-                <div class="col text-start">
-                    @if (Model.phones.Count > 0)
-                    {
-                        @Html.LabelFor(m => m.phones, new { @class = "form-label" })
-                    }
-                </div>
-
+             
                 @for (var i = 0; i < Model.phones.Count(); i++)
                 {
                     <div class="row mb-1" data-form-group="phones">
@@ -79,7 +73,7 @@
 <!-- PHONE -->
             <div class="row mt-4">
                 <div class="col text-start">
-                    @*@Html.LabelFor(m => m.phones, new { @class = "form-label" })*@
+                    @Html.LabelFor(m => m.phones, new { @class = "form-label" })
                     <div class="row mb-1" data-form-group-start="phones">
                         <div class="col-auto">
                             <div class="row mb-1 d-none" data-form-group="phones">
@@ -103,12 +97,6 @@
 <!-- END PHONES -->
 <!-- FOR EACH ADDRESS -->
             <div class="row mt-4">
-                <div class="col text-start">
-                    @if (Model.addresses.Count > 0)
-                    {
-                        @Html.LabelFor(m => m.addresses, new { @class = "form-label" })
-                    }
-                </div>
 
                 @for (var i = 0; i < Model.addresses.Count(); i++)
                 {
@@ -133,7 +121,7 @@
 <!-- ADDRESS -->
             <div class="row mt-4">
                 <div class="col text-start">
-                    @*@Html.LabelFor(m => m.addresses, new { @class = "form-label" })*@
+                    @Html.LabelFor(m => m.addresses, new { @class = "form-label" })
 
                     <div class="row mb-1" data-form-group-start="addresses">
                         <div class="col-auto">
@@ -159,13 +147,6 @@
 
 <!-- FOR EACH EMAIL -->
             <div class="row mt-4">
-                <div class="col text-start">
-                    @if (Model.addresses.Count > 0)
-                    {
-                        @Html.LabelFor(m => m.emails, new { @class = "form-label" })
-                    }
-                </div>
-
                 @for (var i = 0; i < Model.emails.Count(); i++)
                 {
                     <div class="row mb-1" data-form-group="emails">
@@ -189,7 +170,7 @@
 <!--EMAIL-->
             <div class="row mt-4">
                 <div class="col text-start">
-                    @*@Html.LabelFor(m => m.emails, new { @class = "form-label" })*@
+                    @Html.LabelFor(m => m.emails, new { @class = "form-label" })
 
                     <div class="row mb-1" data-form-group-start="emails">
                         <div class="col-auto">

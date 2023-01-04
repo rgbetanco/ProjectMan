@@ -303,8 +303,8 @@ namespace projectman.Models
         // set to UtcNow, when order slip number is set for the first time
         [Display(Name = "銷貨單建檔日期")]
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "yyyy-MM-dd, HH:mm:ss.FFF")]
-        public DateTime? orderslip_date { get; set; }
+        [DisplayFormat(DataFormatString = "yyyy-MM-dd")]        //[DisplayFormat(DataFormatString = "yyyy-MM-dd, HH:mm:ss.FFF")]
+        public DateTime? orderslip_date { get; set; } = DateTime.UtcNow;
 
         [Display(Name = "發票")]
         public string invoice_number { get => _invoice_number; set
@@ -318,8 +318,8 @@ namespace projectman.Models
         // set to UtcNow, when invoice number is set for the first time
         [Display(Name = "發票建檔日期")]
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "yyyy-MM-dd, HH:mm:ss.FFF")]
-        public DateTime? invoice_date { get; set; }
+        [DisplayFormat(DataFormatString = "yyyy-MM-dd")]
+        public DateTime? invoice_date { get; set; } = DateTime.UtcNow;
     }
 
     [Table("project_outgoing_payment")]
