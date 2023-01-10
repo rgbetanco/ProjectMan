@@ -42,7 +42,7 @@
             </div>
             <div class="col-3">
                 @Html.LabelFor(m => m.subtypes, new { @class = "form-label" })
-                    @Html.ListBoxFor(m => m.subtypes, m => m.subtype_id, (IEnumerable<SelectListItem>)ViewData["subtypes"], new { @class = "form-select" })
+                    @Html.ListBoxFor(m => m.subtypes, m => m.subtype_id, (IEnumerable<SelectListItem>)ViewData["subtypes"], new { @class = "js-data-subtype-ajax form-select" })
             </div>
         </div>
         @*status, duplicate project, starting date, and ending date*@
@@ -544,7 +544,7 @@
             { ID: _prod });
     }
 
-        function UpdatePersona(_persona, _comp, selectedID) {
+    function UpdatePersona(_persona, _comp, selectedID) {
         var $target = _persona
         $target.loadSelect(
         '@HttpUtility.JavaScriptStringEncode(Url.Action("ListPersonaPerCompany", "Project"))',

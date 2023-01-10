@@ -31,5 +31,6 @@ namespace projectman.Repositories
         Task<ProjectSubtype> CreateProjectSubtype(ProjectSubtype t);
         void DelProjectSubtypeUnsafe(long ID);
         Task<ProjectSubtype> GetProjectSubtypeAsync(long t);
+        Task<bool> DelSubTypesByProjectID(long ID);
     }
 }
