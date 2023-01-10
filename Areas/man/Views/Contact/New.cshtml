@@ -188,7 +188,11 @@
                 success: function (data) {
                     var result = createErrorList(data);
                     if (result == null) {
-                        window.opener.postMessage({ contact: data }, '*');
+                        try {
+                            window.opener.postMessage({ contact: data }, '*');
+                        } catch (err){
+                            console.log("Call not made from popup");
+                        }
                         window.history.back();
                         window.close();
                     } else {

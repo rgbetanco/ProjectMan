@@ -135,7 +135,11 @@
                 success: function (data) {
                     var result = createErrorList(data);
                     if (result == null) {
-                        window.opener.postMessage({comp: data}, '*');
+                        try {
+                            window.opener.postMessage({comp: data}, '*');
+                        } catch (err){
+                            console.log(err);
+                        }
                         window.history.back();
                         window.close();
                     } else {
