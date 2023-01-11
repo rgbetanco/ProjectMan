@@ -198,13 +198,7 @@ namespace projectman.Repositories
         {
             var q = await _context.Projects.AsQueryable().Include(a => a.subtypes).FirstOrDefaultAsync(u => u.ID == ID);
             q.subtypes.RemoveAll(i => i.project_id == ID);
-            //for (int i = 0; i < q.subtypes.Count; i++)
-            //{
-            //    q.subtypes.Remove(q.subtypes[i]);
-            //}
-
-            //await _context.SaveChangesAsync();
-
+            
             return true;
         }
 

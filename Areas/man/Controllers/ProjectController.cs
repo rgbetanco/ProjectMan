@@ -261,14 +261,7 @@ namespace projectman.Areas.Man.Controllers
             await this.TryUpdateModelListAsync(m, a => a.timelines, b => b.due_date, b => b.desc, b => b.complete_date);
             await this.TryUpdateModelListAsync(m, a => a.incoming_payments, b => b.due_date, b => b.item, b => b.amount, b => b.invoice_number, b => b.orderslip_number, b => b.invoice_date, b => b.orderslip_date);
             await this.TryUpdateModelListAsync(m, a => a.outgoing_payments, b => b.due_date, b => b.company_id, b => b.amount);
-
-            var s = new List<ProjectSubtypeEntry>();
-            foreach(string sub in subtypes)
-            {
-                s.Add(new ProjectSubtypeEntry { subtype_id = long.Parse(sub) });
-            }
-
-            m.subtypes = s;
+            await this.TryUpdateModelKeyListAsync(m, "", a => a.subtypes, b => b.subtype_id);
 
             await _proj.CreateProject(m);
             var result = await CommitModel(m);
@@ -300,28 +293,19 @@ namespace projectman.Areas.Man.Controllers
         [HttpPost]
         public async Task<IActionResult> Update(long ID, string[] subtypes)
         {
-            await _proj.DelSubTypesByProjectID(ID);
-
+            
             Project project = await _proj.GetProject(ID, "products", "products.product", "products.product.brand", "incoming_payments", "outgoing_payments","subtypes","timelines");
             if (project == null)
             {
                 return NotFound();
             }
 
-            var s = new List<ProjectSubtypeEntry>();
-            foreach (string sub in subtypes)
-            {
-                s.Add(new ProjectSubtypeEntry { project_id = ID, subtype_id = long.Parse(sub) });
-            }
-
             await this.TryUpdateModelListAsync(project, a => a.products, b => b.product_id, b => b.serial_number);
             await this.TryUpdateModelListAsync(project, a => a.incoming_payments, b => b.due_date, b => b.item, b => b.amount, b => b.invoice_number, b => b.orderslip_number, b => b.invoice_date, b => b.orderslip_date);
             await this.TryUpdateModelListAsync(project, a => a.outgoing_payments, b => b.due_date, b => b.company_id, b => b.amount);
-            //await this.TryUpdateModelListAsync(project, a => a.subtypes, b => b.subtype_id);
+            await this.TryUpdateModelKeyListAsync(project, "", a => a.subtypes, b => b.subtype_id);
             await this.TryUpdateModelListAsync(project, a => a.timelines, b => b.due_date, b => b.desc, b => b.complete_date);
             
-            project.subtypes = s;
-
             await TryUpdateModelAsync<Project>(
                 project,
                 "",
