@@ -34,10 +34,10 @@ namespace projectman.Repositories
 
         public IQueryable<Company> FindCompanies(string keyword = null, bool showIndividual = false)
         {
-            var result = _context.Companies.AsQueryable().Where(n => n.ID > 1);
-            if (showIndividual)
+            var result = _context.Companies.AsQueryable();
+            if (!showIndividual)
             {
-                result = _context.Companies.AsQueryable();
+                result = _context.Companies.AsQueryable().Where(n => n.ID > 1);
             }
 
             if (!string.IsNullOrWhiteSpace(keyword))
