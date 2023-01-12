@@ -385,7 +385,7 @@
             $('.js-data-subtype-ajax').select2({
                 ajax: {
                     method: 'POST',
-                    url: '/Project/ListSubType',
+                    url: @Url.JSAction("ListSubType", "Project"),
                     dataType: 'json',
                     data: { comp_type: '' }
                 },
@@ -527,7 +527,7 @@
             $('.js-data-subtype-ajax').select2({
                 ajax: {
                     method: 'POST',
-                    url: '/Project/ListSubType',
+                    url: @Url.JSAction("ListSubType", "Project"),
                     dataType: 'json',
                     data: { comp_type: _proj_type }
                 },
